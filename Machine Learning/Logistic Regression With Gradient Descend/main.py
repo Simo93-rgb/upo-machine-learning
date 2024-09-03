@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
@@ -43,6 +45,15 @@ def leave_one_out_cross_validation(model, X, y):
 
 
 if __name__ == "__main__":
+    start_time = time.time()
+    # iperparametri
+    _lambda = 0.1
+    learning_rate = 0.01
+    n_iterations = 1000
+    k = 5  # numero fold per la cross validation k-fold
+    tolerance = 1e-6
+    regularization = 'ridge'  # ['ridge', 'lasso', 'none']
+
     # Fetch dataset
     breast_cancer_wisconsin_diagnostic = fetch_ucirepo(id=17)
 
@@ -65,7 +76,8 @@ if __name__ == "__main__":
     X_train, X_val, y_train, y_val = train_test_split(X_normalized, y_encoded, test_size=0.3, random_state=42)
 
     # Inizializza e addestra il modello
-    model = LogisticRegressionGD(learning_rate=0.05, n_iterations=100, lambda_=1, regularization='l2')
+    model = LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations, lambda_=_lambda,
+                                 regularization=regularization)
     model.fit(X_train, y_train)
 
     # Prevedi i risultati sul set di validazione
@@ -84,16 +96,22 @@ if __name__ == "__main__":
 
     # Esegui K-Fold Cross-Validation
     k_fold_accuracy = k_fold_cross_validation(
-        LogisticRegressionGD(learning_rate=0.05, n_iterations=100, lambda_=1, regularization='l2'), X_normalized,
+        LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations, lambda_=_lambda,
+                             regularization=regularization), X_normalized,
         y_encoded, k=10)
 
     # Esegui Leave-One-Out Cross-Validation
-    loo_accuracy = leave_one_out_cross_validation(
-        LogisticRegressionGD(learning_rate=0.05, n_iterations=100, lambda_=1, regularization='l2'), X_normalized,
-        y_encoded)
+    # loo_accuracy = leave_one_out_cross_validation(
+    #     LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations, lambda_=_lambda,
+    #                          regularization=regularization), X_normalized,
+    #     y_encoded)
 
+       # Tempo di esecuzione
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Execution time: {elapsed_time:.4f} seconds")
     # Stampa delle accuratezze
     print(f'Accuracy del modello implementato: {accuracy_custom}')
     print(f'Accuracy del modello Scikit-learn: {accuracy_sk}')
     print(f'K-Fold Cross-Validated Accuracy: {k_fold_accuracy}')
-    print(f'Leave-One-Out Cross-Validated Accuracy: {loo_accuracy}')
+    # print(f'Leave-One-Out Cross-Validated Accuracy: {loo_accuracy}')
