@@ -48,7 +48,7 @@ if __name__ == "__main__":
     start_time = time.time()
     # iperparametri
     _lambda = 0.1
-    learning_rate = 0.01
+    learning_rate = 0.05
     n_iterations = 1000
     k = 5  # numero fold per la cross validation k-fold
     tolerance = 1e-6
@@ -101,10 +101,10 @@ if __name__ == "__main__":
         y_encoded, k=10)
 
     # Esegui Leave-One-Out Cross-Validation
-    # loo_accuracy = leave_one_out_cross_validation(
-    #     LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations, lambda_=_lambda,
-    #                          regularization=regularization), X_normalized,
-    #     y_encoded)
+    loo_accuracy = leave_one_out_cross_validation(
+        LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations, lambda_=_lambda,
+                             regularization=regularization), X_normalized,
+        y_encoded)
 
        # Tempo di esecuzione
     end_time = time.time()
@@ -114,4 +114,4 @@ if __name__ == "__main__":
     print(f'Accuracy del modello implementato: {accuracy_custom}')
     print(f'Accuracy del modello Scikit-learn: {accuracy_sk}')
     print(f'K-Fold Cross-Validated Accuracy: {k_fold_accuracy}')
-    # print(f'Leave-One-Out Cross-Validated Accuracy: {loo_accuracy}')
+    print(f'Leave-One-Out Cross-Validated Accuracy: {loo_accuracy}')
