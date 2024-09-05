@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class LogisticRegressionGD:
     def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='ridge', lambda_=0.01):
         self.learning_rate = learning_rate
@@ -38,8 +37,6 @@ class LogisticRegressionGD:
 
             loss = - (1 / n_samples) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h)) + regularization_term
             self.losses.append(loss)
-            if i % (self.n_iterations // 10) == 0:
-                print(f'Iteration {i}, Loss: {loss}')
 
             dw = (1 / n_samples) * np.dot(X.T, (h - y))
             db = (1 / n_samples) * np.sum(h - y)
@@ -54,12 +51,25 @@ class LogisticRegressionGD:
             self.bias -= self.learning_rate * db
 
             if i > 0 and abs(self.losses[-2] - loss) < self.tolerance:
-                print(f"Convergence reached at iteration {i}")
                 break
 
     def predict(self, X):
         linear_model = np.dot(X, self.theta) + self.bias
         y_predicted = self.sigmoid(linear_model)
-        y_predicted_cls = [1 if i > 0.5 else 0 for i in y_predicted]
-        return np.array(y_predicted_cls)
+        return np.array([1 if i > 0.5 else 0 for i in y_predicted])
 
+    # Metodo per ottenere i parametri (necessario per scikit-learn)
+    def get_params(self, deep=True):
+        return {
+            'learning_rate': self.learning_rate,
+            'n_iterations': self.n_iterations,
+            'tolerance': self.tolerance,
+            'regularization': self.regularization,
+            'lambda_': self.lambda_
+        }
+
+    # Metodo per impostare i parametri (necessario per scikit-learn)
+    def set_params(self, **params):
+        for key, value in params.items():
+            setattr(self, key, value)
+        return self
