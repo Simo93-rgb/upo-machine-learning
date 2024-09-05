@@ -38,6 +38,8 @@ class LogisticRegressionGD:
 
             loss = - (1 / n_samples) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h)) + regularization_term
             self.losses.append(loss)
+            if i % (self.n_iterations // 10) == 0:
+                print(f'Iteration {i}, Loss: {loss}')
 
             dw = (1 / n_samples) * np.dot(X.T, (h - y))
             db = (1 / n_samples) * np.sum(h - y)
@@ -52,12 +54,14 @@ class LogisticRegressionGD:
             self.bias -= self.learning_rate * db
 
             if i > 0 and abs(self.losses[-2] - loss) < self.tolerance:
+                print(f"Convergence reached at iteration {i}")
                 break
 
     def predict(self, X):
         linear_model = np.dot(X, self.theta) + self.bias
         y_predicted = self.sigmoid(linear_model)
-        return np.array([1 if i > 0.5 else 0 for i in y_predicted])
+        y_predicted_cls = [1 if i > 0.5 else 0 for i in y_predicted]
+        return np.array(y_predicted_cls)
 
     # Metodo per ottenere i parametri (necessario per scikit-learn)
     def get_params(self, deep=True):
