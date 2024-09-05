@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class LogisticRegressionGD:
     def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='ridge', lambda_=0.01):
         self.learning_rate = learning_rate

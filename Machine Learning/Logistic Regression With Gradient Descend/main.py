@@ -11,6 +11,7 @@ from ucimlrepo import fetch_ucirepo
 from skopt import BayesSearchCV
 
 
+
 def carica_dati():
     dataset = fetch_ucirepo(id=17)
     X = dataset.data.features

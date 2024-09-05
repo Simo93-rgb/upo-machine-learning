@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_curve, roc_auc_score
 
+
 # Funzione per valutare precision, recall e F1
 def evaluate_model(predictions, y_val, model_name=""):
     print(f"\nValutazione {model_name}")
