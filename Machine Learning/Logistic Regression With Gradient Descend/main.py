@@ -9,6 +9,9 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 from ucimlrepo import fetch_ucirepo
 from skopt import BayesSearchCV
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 
 
@@ -107,6 +110,20 @@ def main():
     # Carica e pre-processa i dati
     X, y = carica_dati()
     X_normalized, y_encoded = preprocessa_dati(X, y)
+
+    # Calcola la matrice di correlazione
+    corr_matrix = np.corrcoef(X_normalized, rowvar=False)
+
+    # Visualizza la matrice di correlazione
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f')
+    plt.title("Matrice di Correlazione delle Feature")
+    # plt.show()
+
+    # Salva l'immagine come PNG
+    plt.savefig('matrice_correlazione.png', format='png', dpi=600)
+    plt.show()
+    plt.close()
 
     # Split train/validation
     X_train, X_val, y_train, y_val = train_test_split(X_normalized, y_encoded, test_size=0.3, random_state=42)

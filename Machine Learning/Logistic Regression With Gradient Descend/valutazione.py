@@ -52,7 +52,7 @@ def cohen_kappa(y_val, y_pred):
 def calculate_auc(model, X_val, y_val):
     y_probs = model.sigmoid(np.dot(X_val, model.theta) + model.bias)
     auc = roc_auc_score(y_val, y_probs)
-    print(f'AUC: {auc:.2f}')
+    print(f'AUC: {auc:.3f}')
     return auc
 
 
@@ -60,7 +60,7 @@ def calculate_auc(model, X_val, y_val):
 def calculate_auc_sklearn(model, X_val, y_val):
     y_probs = model.predict_proba(X_val)[:, 1]
     auc = roc_auc_score(y_val, y_probs)
-    print(f'AUC Scikit-learn: {auc:.2f}')
+    print(f'AUC Scikit-learn: {auc:.3f}')
     return auc
 
 
@@ -71,7 +71,7 @@ def plot_roc_curve(model, X_val, y_val, model_name=""):
     auc = roc_auc_score(y_val, y_probs)
 
     plt.figure()
-    plt.plot(fpr, tpr, label=f'ROC curve {model_name} (AUC = {auc:.2f})')
+    plt.plot(fpr, tpr, label=f'ROC curve {model_name} (AUC = {auc:.3f})')
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
@@ -89,7 +89,7 @@ def plot_roc_curve_sklearn(model, X_val, y_val, model_name=""):
     auc = roc_auc_score(y_val, y_probs)
 
     plt.figure()
-    plt.plot(fpr, tpr, label=f'ROC curve {model_name} (AUC = {auc:.2f})')
+    plt.plot(fpr, tpr, label=f'ROC curve {model_name} (AUC = {auc:.3f})')
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
