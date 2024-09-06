@@ -15,7 +15,7 @@ class LogisticRegressionGD:
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
 
-    def fit(self, X, y):
+    def fit(self, X, y, print_iteration=False):
         y = np.array(y).ravel()
         n_samples, n_features = X.shape
         self.theta = np.zeros(n_features)
@@ -38,7 +38,7 @@ class LogisticRegressionGD:
 
             loss = - (1 / n_samples) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h)) + regularization_term
             self.losses.append(loss)
-            if i % (self.n_iterations // 10) == 0:
+            if print_iteration and i % (self.n_iterations // 10) == 0:
                 print(f'Iteration {i}, Loss: {loss}')
 
             dw = (1 / n_samples) * np.dot(X.T, (h - y))

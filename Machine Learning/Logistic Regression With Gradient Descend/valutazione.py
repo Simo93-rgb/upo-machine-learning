@@ -10,11 +10,43 @@ def evaluate_model(predictions, y_val, model_name=""):
     precision = precision_score(y_val, predictions)
     recall = recall_score(y_val, predictions)
     f1 = f1_score(y_val, predictions)
-
+    cohen_k = cohen_kappa(y_val, y_pred=predictions)
     print(f"Matrice di confusione:\n{conf_matrix}")
     print(f'Precision: {precision}')
+    print(f'Cohen\'s Kappa Coefficient: {cohen_k}')
     print(f'Recall: {recall}')
     print(f'F1-Score: {f1}')
+
+
+def cohen_kappa(y_val, y_pred):
+    # Calcola la matrice di confusione
+    conf_matrix = confusion_matrix(y_val, y_pred)
+
+    # Totale dei campioni
+    n = np.sum(conf_matrix)
+
+    # Calcola le probabilità marginali (per le righe e le colonne della matrice di confusione)
+    p0 = np.sum(np.diag(conf_matrix)) / n  # Accord osservato (percentuale di corrispondenza)
+
+    # Frequenze marginali (righe e colonne)
+    pe_rows = np.sum(conf_matrix, axis=1) / n
+    pe_cols = np.sum(conf_matrix, axis=0) / n
+
+    # Calcolo dell'accordo atteso
+    pe = np.sum(pe_rows * pe_cols)
+
+    # Formula di Cohen's Kappa
+    kappa = (p0 - pe) / (1 - pe) if (1 - pe) != 0 else 1.0
+
+    return kappa
+
+
+# def cohen_kappa(y_val, y_pred):
+#     p_o = np.mean(y_val == y_pred)  # accuracy
+#     p_e = ((np.sum(y_val == 1) * np.sum(y_pred == 1)) +
+#            (np.sum(y_val == 0) * np.sum(y_pred == 0))) / len(y_val) ** 2
+#     return (p_o - p_e) / (1 - p_e)
+
 
 # Funzione per calcolare l'AUC (modello personalizzato)
 def calculate_auc(model, X_val, y_val):
@@ -23,12 +55,14 @@ def calculate_auc(model, X_val, y_val):
     print(f'AUC: {auc:.2f}')
     return auc
 
+
 # Funzione per calcolare l'AUC (modello scikit-learn)
 def calculate_auc_sklearn(model, X_val, y_val):
     y_probs = model.predict_proba(X_val)[:, 1]
     auc = roc_auc_score(y_val, y_probs)
     print(f'AUC Scikit-learn: {auc:.2f}')
     return auc
+
 
 # Funzione per tracciare la curva ROC (modello personalizzato)
 def plot_roc_curve(model, X_val, y_val, model_name=""):
@@ -46,6 +80,7 @@ def plot_roc_curve(model, X_val, y_val, model_name=""):
     plt.title(f'Curva ROC - {model_name}')
     plt.legend(loc="lower right")
     plt.show()
+
 
 # Funzione per tracciare la curva ROC (modello scikit-learn)
 def plot_roc_curve_sklearn(model, X_val, y_val, model_name=""):
