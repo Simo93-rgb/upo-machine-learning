@@ -40,14 +40,6 @@ def cohen_kappa(y_val, y_pred):
 
     return kappa
 
-
-# def cohen_kappa(y_val, y_pred):
-#     p_o = np.mean(y_val == y_pred)  # accuracy
-#     p_e = ((np.sum(y_val == 1) * np.sum(y_pred == 1)) +
-#            (np.sum(y_val == 0) * np.sum(y_pred == 0))) / len(y_val) ** 2
-#     return (p_o - p_e) / (1 - p_e)
-
-
 # Funzione per calcolare l'AUC (modello personalizzato)
 def calculate_auc(model, X_val, y_val):
     y_probs = model.sigmoid(np.dot(X_val, model.theta) + model.bias)
