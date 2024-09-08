@@ -1,7 +1,6 @@
 import numpy as np
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import KFold, LeaveOneOut
-
+from sklearn.model_selection import KFold, LeaveOneOut, StratifiedKFold, cross_val_score
 
 
 def k_fold_cross_validation(model, X, y, k=5):
@@ -36,3 +35,10 @@ def leave_one_out_cross_validation(model, X, y):
 
     mean_accuracy = np.mean(accuracies)
     return mean_accuracy
+
+
+# Funzione per Stratified K-Fold Cross-Validation
+def stratified_k_fold_cross_validation(model, X_train, y_train, n_splits=5):
+    stratified_kfold = StratifiedKFold(n_splits=n_splits)
+    stratified_scores = cross_val_score(model, X_train, y_train, cv=stratified_kfold, scoring='accuracy')
+    return stratified_scores.mean()

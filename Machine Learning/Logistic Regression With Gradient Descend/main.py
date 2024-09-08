@@ -1,16 +1,18 @@
 import time
 import numpy as np
-from validazione import k_fold_cross_validation, leave_one_out_cross_validation
-from valutazione import evaluate_model, calculate_auc, plot_roc_curve, calculate_auc_sklearn, plot_roc_curve_sklearn
+from sklearn.metrics import precision_score, recall_score, f1_score
+
+from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
+from valutazione import evaluate_model, calculate_auc, calculate_auc_sklearn
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 from ucimlrepo import fetch_ucirepo
 from skopt import BayesSearchCV
-import matplotlib.pyplot as plt
-import seaborn as sns
+from plot import plot_class_distribution, plot_corr_matrix, plot_roc_curve, plot_roc_curve_sklearn, \
+    plot_metrics_comparison, plot_sigmoid, plot_confusion_matrix
 
 
 def carica_dati():
@@ -33,22 +35,9 @@ def preprocessa_dati(X, y):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y).ravel()
 
-    return X_normalized, y_encoded
+    return X_normalized, features_eliminate, y_encoded
 
 
-def plot_corr_matrix(corr_matrix):
-    # Visualizza la matrice di correlazione
-    plt.figure(figsize=(20, 16))
-    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', annot_kws={"size": 10})
-    plt.title("Matrice di Correlazione delle Feature")
-
-    # Salva l'immagine come PNG
-    plt.savefig('matrice_correlazione_breast_cancer.png', format='png', dpi=600, bbox_inches='tight')
-    plt.show()
-    plt.close()
-
-
-# elimina features correlate tramite matrice di correlazione
 def elimina_feature_correlate(X, soglia=0.95):
     # Calcola la matrice di correlazione
     corr_matrix = np.corrcoef(X, rowvar=False)
@@ -80,34 +69,21 @@ def addestra_modelli(X_train, y_train, X_val, best_params, k):
                                  regularization=regularization)
     model.fit(X_train, y_train)
 
-    # Predizione con il modello implementato
+    # Predizione sul set di validazione
     predictions = model.predict(X_val)
 
-    # Cross-Validation con K-Fold (solo per stimare l'accuratezza)
-    k_fold_accuracy = k_fold_cross_validation(
-        LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations,
-                             lambda_=_lambda, regularization=regularization), X_train, y_train, k=k)
+    # Valutazione Cross-Validation
+    k_fold_accuracy = k_fold_cross_validation(model, X_train, y_train, k)
+    stratified_k_fold_accuracy = stratified_k_fold_cross_validation(model, X_train, y_train, n_splits=5)
 
-    # Stratified K-Fold Cross-Validation con K=5
-    stratified_kfold = StratifiedKFold(n_splits=5)
-
-    # Esegui la cross-validation stratificata
-    stratified_k_fold_scores = cross_val_score(model, X_train, y_train, cv=stratified_kfold, scoring='accuracy')
-
-    # Calcola la media delle performance
-    mean_stratified_score = stratified_k_fold_scores.mean()
-
-    print(f"Accuratezza media con Stratified 5-Fold Cross-Validation: {mean_stratified_score}")
-    # Cross-Validation con LOO (solo per stimare l'accuratezza)
-    loo_accuracy = leave_one_out_cross_validation(
-        LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations,
-                             lambda_=_lambda, regularization=regularization), X_train, y_train)
-
-    # Stampa le accuratezze delle cross-validation
+    print(f"Accuratezza media con Stratified 5-Fold Cross-Validation: {stratified_k_fold_accuracy}")
     print(f"Accuratezza con K-Fold {k} Cross-Validation: {k_fold_accuracy}")
+
+    # Esegui Leave-One-Out Cross-Validation (solo se necessario)
+    loo_accuracy = leave_one_out_cross_validation(model, X_train, y_train)
     print(f"Accuratezza con Leave-One-Out Cross-Validation: {loo_accuracy}")
 
-    # Modello Logistic Regression di scikit-learn
+    # Modello di scikit-learn Logistic Regression
     sk_model = LogisticRegression(max_iter=100)
     sk_model.fit(X_train, y_train)
     sk_predictions = sk_model.predict(X_val)
@@ -115,37 +91,32 @@ def addestra_modelli(X_train, y_train, X_val, best_params, k):
     return model, predictions, sk_model, sk_predictions
 
 
-# Funzione per eseguire la ricerca bayesiana degli iperparametri
 def bayesian_optimization(X_train, y_train):
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
-        'learning_rate': (1e-4, 1e-1, 'log-uniform'),  # Intervallo per il learning rate (logaritmico)
-        'lambda_': (1e-4, 1e1, 'log-uniform'),  # Parametro di regolarizzazione (lambda)
-        'n_iterations': (100, 1000),  # Numero massimo di iterazioni
-        'regularization': ['ridge', 'lasso', 'none']  # Tipo di regolarizzazione
+        'learning_rate': (1e-4, 1e-1, 'log-uniform'),
+        'lambda_': (1e-4, 1e1, 'log-uniform'),
+        'n_iterations': (100, 1000),
+        'regularization': ['ridge', 'lasso', 'none']
     }
 
-    # Wrapper per il modello LogisticRegressionGD per l'uso con BayesSearchCV
     def model_fit(learning_rate, lambda_, n_iterations, regularization):
         model = LogisticRegressionGD(learning_rate=learning_rate, lambda_=lambda_,
                                      n_iterations=n_iterations, regularization=regularization)
         return model
 
-    # BayesSearchCV per ottimizzare il modello
     bayes_search = BayesSearchCV(
         estimator=model_fit(learning_rate=0.01, lambda_=0.1, n_iterations=1000, regularization='ridge'),
         search_spaces=param_space,
-        n_iter=32,  # Numero di iterazioni dell'ottimizzazione
-        cv=5,  # Cross-validation con 5 fold
-        scoring='accuracy',  # Misura di performance da ottimizzare
-        n_jobs=-1,  # Usare tutti i core
+        n_iter=32,
+        cv=5,
+        scoring='accuracy',
+        n_jobs=-1,
         random_state=42
     )
 
-    # Fitting del modello con ottimizzazione bayesiana
     bayes_search.fit(X_train, y_train)
 
-    # Migliori iperparametri trovati
     best_params = bayes_search.best_params_
     best_score = bayes_search.best_score_
 
@@ -154,15 +125,13 @@ def bayesian_optimization(X_train, y_train):
 
 def validation_test(predictions, X_val, y_val, model, model_name=""):
     if model_name == "Modello Scikit-learn":
-        # Valutazione del modello Scikit-learn
         evaluate_model(predictions, y_val, model_name="Modello Scikit-learn")
         auc_sk = calculate_auc_sklearn(model, X_val, y_val)
-        plot_roc_curve_sklearn(model, X_val, y_val, model_name="Modello Scikit-learn")
+        # plot_roc_curve_sklearn(model, X_val, y_val, model_name="Modello Scikit-learn")
         return auc_sk
     else:
         evaluate_model(predictions, y_val, model_name=model_name)
         auc = calculate_auc(model, X_val, y_val)
-        plot_roc_curve(model, X_val, y_val, model_name=model_name)
         return auc
 
 
@@ -171,7 +140,10 @@ if __name__ == "__main__":
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, y_encoded = preprocessa_dati(X, y)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y)
+
+    # Plot distribuzione delle classi
+    plot_class_distribution(y_encoded)
 
     # Split train/validation/test
     X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.2, random_state=42)
@@ -180,30 +152,60 @@ if __name__ == "__main__":
     # Eseguire l'ottimizzazione bayesiana sugli iperparametri
     best_params, best_score = bayesian_optimization(X_train, y_train)
 
-    # Stampa dei risultati migliori dell'ottimizzazione
     print(f"Migliori iperparametri trovati: {best_params}")
     print(f"Accuracy del modello ottimizzato (validazione): {best_score}")
 
-    # Usa i migliori iperparametri per addestrare i modelli
+    # Misura il tempo di esecuzione del tuo modello LogisticRegressionGD
+    start_model_time = time.time()
+
     model, predictions, sk_model, sk_predictions = addestra_modelli(
-        X_train,
-        y_train,
-        X_val,
-        best_params,
-        k=5
-    )
+        X_train, y_train, X_val, best_params, k=5)
+
+    end_model_time = time.time()
+    print(f"\nTempo di esecuzione del modello Logistic Implementato: {end_model_time - start_model_time:.4f} secondi")
 
     # Valutazione finale sul Test Set
     print("\nValutazione finale sul Test Set:")
 
-    # Valutazione del modello Logistic Implementato sul Test Set
     test_predictions = model.predict(X_test)
     auc = validation_test(test_predictions, X_test, y_test, model, model_name="Modello Logistic Implementato")
 
-    # Valutazione del modello Logistic Scikit-learn sul Test Set
     test_sk_predictions = sk_model.predict(X_test)
     sk_auc = validation_test(test_sk_predictions, X_test, y_test, sk_model, model_name="Modello Scikit-learn")
 
-    # Tempo di esecuzione
+    print(f"\nTempo di esecuzione del modello Scikit-learn: {end_model_time - start_model_time:.4f} secondi")
+
+    # Plottare la funzione sigmoidale
+    plot_sigmoid()
+
+    # Matrici di confusione
+    plot_confusion_matrix(y_test, test_predictions, "Modello Logistic Implementato")
+    plot_confusion_matrix(y_test, test_sk_predictions, "Modello Scikit-learn")
+
+    # Curve ROC
+    y_probs = model.sigmoid(np.dot(X_test, model.theta) + model.bias)
+    plot_roc_curve(y_test, y_probs, "Modello Logistic Implementato")
+
+    y_sk_probs = sk_model.predict_proba(X_test)[:, 1]
+    plot_roc_curve(y_test, y_sk_probs, "Modello Scikit-learn")
+
+    # Confronto delle metriche
+    metrics_dict = {
+        "Modello Logistic Implementato": {
+            "Precision": precision_score(y_test, test_predictions),
+            "Recall": recall_score(y_test, test_predictions),
+            "F1-Score": f1_score(y_test, test_predictions),
+            "AUC": auc
+        },
+        "Modello Scikit-learn": {
+            "Precision": precision_score(y_test, test_sk_predictions),
+            "Recall": recall_score(y_test, test_sk_predictions),
+            "F1-Score": f1_score(y_test, test_sk_predictions),
+            "AUC": sk_auc
+        }
+    }
+
+    plot_metrics_comparison(metrics_dict, ["Modello Logistic Implementato", "Modello Scikit-learn"])
+
     end_time = time.time()
-    print(f"Execution time: {end_time - start_time:.4f} seconds")
+    print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")
