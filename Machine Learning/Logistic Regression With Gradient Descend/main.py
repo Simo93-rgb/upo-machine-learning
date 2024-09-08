@@ -1,5 +1,7 @@
 import time
 import numpy as np
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
@@ -22,7 +24,7 @@ def carica_dati():
     return X, y
 
 
-def preprocessa_dati(X, y):
+def preprocessa_dati(X, y, class_balancer=""):
     # Imputazione dei NaN e normalizzazione
     imputer = SimpleImputer(strategy='mean')
     X_imputed = imputer.fit_transform(X)
@@ -34,6 +36,15 @@ def preprocessa_dati(X, y):
     # Encoding delle classi
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y).ravel()
+
+    if class_balancer == "SMOTE":
+        # Applicare SMOTE per bilanciare le classi sul training set
+        smote = SMOTE(random_state=42)
+        X_normalized, y_encoded = smote.fit_resample(X_normalized, y_encoded)
+    if class_balancer == "undersampling":
+        # Eseguire il bilanciamento usando Random UnderSampler
+        undersample = RandomUnderSampler(random_state=42)
+        X_normalized, y_encoded = undersample.fit_resample(X_normalized, y_encoded)
 
     return X_normalized, features_eliminate, y_encoded
 
@@ -140,7 +151,7 @@ if __name__ == "__main__":
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, "SMOTE")
 
     # Plot distribuzione delle classi
     plot_class_distribution(y_encoded)
