@@ -15,6 +15,8 @@ from ucimlrepo import fetch_ucirepo
 from skopt import BayesSearchCV
 from plot import plot_class_distribution, plot_corr_matrix, plot_roc_curve, plot_roc_curve_sklearn, \
     plot_metrics_comparison, plot_sigmoid, plot_confusion_matrix
+import os
+import json
 
 
 def carica_dati():
@@ -106,7 +108,7 @@ def addestra_modelli(X_train, y_train, X_val, best_params, k):
     return model, predictions, sk_model, sk_predictions
 
 
-def bayesian_optimization(X_train, y_train):
+def bayesian_optimization(X_train, y_train, file_path="best_parameters.json"):
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
         'learning_rate': (1e-4, 1e-1, 'log-uniform'),
@@ -134,8 +136,29 @@ def bayesian_optimization(X_train, y_train):
 
     best_params = bayes_search.best_params_
     best_score = bayes_search.best_score_
+    return best_params, best_score
+
+
+def bayesian_optimization_wrapper(X_train, y_train, file_path="best_parameters.json"):
+    # Controllo se esiste il file con i parametri salvati
+    if os.path.exists(file_path):
+        print(f"Caricamento dei parametri ottimali da {file_path}...")
+        with open(file_path, 'r') as file:
+            best_params = json.load(file)
+        best_score = None  # Se hai il best_score salvato puoi caricarlo anche qui
+    else:
+        # Eseguire l'ottimizzazione bayesiana se il file non esiste
+        print("Eseguendo l'ottimizzazione bayesiana...")
+        best_params, best_score = bayesian_optimization(X_train, y_train)
+        save_best_params(best_params, file_path)
 
     return best_params, best_score
+
+
+def save_best_params(best_params, file_path="best_parameters.json"):
+    with open(file_path, 'w') as file:
+        json.dump(best_params, file)
+    print(f"Parametri salvati in {file_path}.")
 
 
 def validation_test(predictions, X_val, y_val, model, model_name=""):
@@ -162,7 +185,7 @@ if __name__ == "__main__":
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
     # Eseguire l'ottimizzazione bayesiana sugli iperparametri
-    best_params, best_score = bayesian_optimization(X_train, y_train)
+    best_params, best_score = bayesian_optimization_wrapper(X_train, y_train)
 
     print(f"Migliori iperparametri trovati: {best_params}")
     print(f"Accuracy del modello ottimizzato (validazione): {best_score}")
