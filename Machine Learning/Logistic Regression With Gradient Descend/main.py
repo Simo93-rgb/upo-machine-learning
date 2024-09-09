@@ -37,14 +37,18 @@ def preprocessa_dati(X, y, class_balancer=""):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y).ravel()
 
+    # Plotting delle classi prima del bilanciamento
+    plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer')
     if class_balancer == "SMOTE":
         # Applicare SMOTE per bilanciare le classi sul training set
         smote = SMOTE(random_state=42)
         X_normalized, y_encoded = smote.fit_resample(X_normalized, y_encoded)
+        plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer_SMOTE')
     if class_balancer == "undersampling":
         # Eseguire il bilanciamento usando Random UnderSampler
         undersample = RandomUnderSampler(random_state=42)
         X_normalized, y_encoded = undersample.fit_resample(X_normalized, y_encoded)
+        plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer_undersampling')
 
     return X_normalized, features_eliminate, y_encoded
 
@@ -152,9 +156,6 @@ if __name__ == "__main__":
     # Carica e pre-processa i dati
     X, y = carica_dati()
     X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, "SMOTE")
-
-    # Plot distribuzione delle classi
-    plot_class_distribution(y_encoded)
 
     # Split train/validation/test
     X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.2, random_state=42)
