@@ -3,6 +3,7 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
     matthews_corrcoef
 
 
+
 # Funzione per valutare precision, recall e F1
 def evaluate_model(predictions, y_val, model_name=""):
     print(f"\nValutazione {model_name}")

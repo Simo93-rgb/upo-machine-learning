@@ -3,9 +3,8 @@ import numpy as np
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.metrics import precision_score, recall_score, f1_score
-
-from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
-from valutazione import evaluate_model, calculate_auc, calculate_auc_sklearn
+from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation, \
+    validation_test
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -161,28 +160,16 @@ def save_best_params(best_params, file_path="best_parameters.json"):
     print(f"Parametri salvati in {file_path}.")
 
 
-def validation_test(predictions, X_val, y_val, model, model_name=""):
-    if model_name == "Modello Scikit-learn":
-        evaluate_model(predictions, y_val, model_name="Modello Scikit-learn")
-        auc_sk = calculate_auc_sklearn(model, X_val, y_val)
-        # plot_roc_curve_sklearn(model, X_val, y_val, model_name="Modello Scikit-learn")
-        return auc_sk
-    else:
-        evaluate_model(predictions, y_val, model_name=model_name)
-        auc = calculate_auc(model, X_val, y_val)
-        return auc
-
-
 if __name__ == "__main__":
     start_time = time.time()
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, "SMOTE")
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, "undersampling")
 
-    # Split train/validation/test
-    X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.2, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+    # Suddivisione in train (60%), validation (20%) e test (20%)
+    X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.4, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.5, random_state=42)
 
     # Eseguire l'ottimizzazione bayesiana sugli iperparametri
     best_params, best_score = bayesian_optimization_wrapper(X_train, y_train)

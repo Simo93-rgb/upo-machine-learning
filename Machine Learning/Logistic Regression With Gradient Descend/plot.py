@@ -44,6 +44,7 @@ def plot_corr_matrix(X_normalized, features_eliminate=None):
 
 def plot_class_distribution(y, file_name=""):
     x_dim, y_dim = [16, 12]
+
     # Conta il numero di campioni per ciascuna classe
     unique, counts = np.unique(y, return_counts=True)
 
@@ -51,17 +52,23 @@ def plot_class_distribution(y, file_name=""):
     total = np.sum(counts)
     percentages = [(count / total) * 100 for count in counts]
 
-    # Etichette con la percentuale
-    labels = [f'B (Benigno) - {percentages[0]:.1f}%', f'M (Maligno) - {percentages[1]:.1f}%']
+    # Etichette con la percentuale e il numero di elementi
+    labels = [f'B (Benigno) - {counts[0]} ({percentages[0]:.1f}%)',
+              f'M (Maligno) - {counts[1]} ({percentages[1]:.1f}%)']
 
     # Crea un grafico a torta
     plt.figure(figsize=(x_dim, y_dim))
     plt.pie(counts, labels=labels, autopct='%1.1f%%', colors=['skyblue', 'orange'], startangle=90,
-            textprops={'fontsize': 18})  # Font migliorato
-    plt.title('Distribuzione delle Classi', fontsize=24)
+            textprops={'fontsize': 27})  # Font ingrandito del 50% (18 * 1.5 = 27)
+
+    plt.title('Distribuzione delle Classi', fontsize=36)  # Font titolo ingrandito del 50% (24 * 1.5 = 36)
     plt.axis('equal')  # Assicura che il grafico sia disegnato come un cerchio
+
+    # Salva l'immagine, se specificato
     if file_name:
         plt.savefig(f'{file_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+
+    # Mostra il grafico
     plt.show()
 
 
