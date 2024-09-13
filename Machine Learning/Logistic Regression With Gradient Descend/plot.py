@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
+from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, precision_recall_curve, auc
 import matplotlib.pyplot as plt
 import seaborn as sns
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
@@ -166,4 +166,30 @@ def plot_regularization_effect(X_train, y_train, lambdas, regularization_type='r
     plt.ylabel("Coefficients", fontsize=18)
     plt.legend(loc='best', fontsize=16)
     plt.savefig('regularization_effect.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.show()
+
+
+def plot_precision_recall(y_true, y_scores, model_name=""):
+    # Calcola precisione, recall e soglie
+    precisions, recalls, thresholds = precision_recall_curve(y_true, y_scores)
+
+    # Calcola l'AUC (Area Under the Curve) per la curva Precision-Recall
+    auc_score = auc(recalls, precisions)
+
+    # Crea il plot
+    plt.figure(figsize=(10, 7))
+    plt.plot(recalls, precisions, label=f'AUC = {auc_score:.2f}', linewidth=2)
+
+    # Impostazioni del grafico
+    plt.xlabel('Recall', fontsize=16)
+    plt.ylabel('Precision', fontsize=16)
+    plt.title('Curva Precision-Recall', fontsize=20)
+    plt.legend(loc='lower left', fontsize=14)
+    plt.grid(True)
+
+    # Salva il grafico, se richiesto
+    if model_name:
+        plt.savefig(f'precision_vs_recall_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+
+    # Mostra il grafico
     plt.show()

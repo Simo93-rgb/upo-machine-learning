@@ -12,8 +12,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 from ucimlrepo import fetch_ucirepo
 from skopt import BayesSearchCV
-from plot import plot_class_distribution, plot_corr_matrix, plot_roc_curve, plot_roc_curve_sklearn, \
-    plot_metrics_comparison, plot_sigmoid, plot_confusion_matrix
+from plot import plot_class_distribution, plot_corr_matrix, plot_roc_curve, \
+    plot_metrics_comparison, plot_sigmoid, plot_confusion_matrix, plot_precision_recall, plot_regularization_effect
 import os
 import json
 
@@ -30,9 +30,10 @@ def preprocessa_dati(X, y, class_balancer=""):
     imputer = SimpleImputer(strategy='mean')
     X_imputed = imputer.fit_transform(X)
     X_normalized = (X_imputed - X_imputed.mean(axis=0)) / X_imputed.std(axis=0)
-    (X_ridotto, features_eliminate) = elimina_feature_correlate(X_normalized)
+
+    # Elimina le feature altamente correlate
+    X_normalized, features_eliminate = elimina_feature_correlate(X_normalized)
     print(f"Features eliminate: {features_eliminate}")
-    X_normalized = X_ridotto
 
     # Encoding delle classi
     label_encoder = LabelEncoder()
@@ -40,18 +41,15 @@ def preprocessa_dati(X, y, class_balancer=""):
 
     # Plotting delle classi prima del bilanciamento
     plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer')
-    if class_balancer == "SMOTE":
-        # Applicare SMOTE per bilanciare le classi sul training set
-        smote = SMOTE(random_state=42)
-        X_normalized, y_encoded = smote.fit_resample(X_normalized, y_encoded)
-        plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer_SMOTE')
-    if class_balancer == "undersampling":
-        # Eseguire il bilanciamento usando Random UnderSampler
-        undersample = RandomUnderSampler(random_state=42)
-        X_normalized, y_encoded = undersample.fit_resample(X_normalized, y_encoded)
-        plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer_undersampling')
+
+    # Gestione del bilanciamento delle classi
+    if class_balancer:
+        resampler = SMOTE(random_state=42) if class_balancer == "SMOTE" else RandomUnderSampler(random_state=42)
+        X_normalized, y_encoded = resampler.fit_resample(X_normalized, y_encoded)
+        plot_class_distribution(y_encoded, file_name=f'class_distribution_pie_breast_cancer_{class_balancer}')
 
     return X_normalized, features_eliminate, y_encoded
+
 
 
 def elimina_feature_correlate(X, soglia=0.95):
@@ -73,7 +71,7 @@ def elimina_feature_correlate(X, soglia=0.95):
     return X_ridotto, feature_da_eliminare
 
 
-def addestra_modelli(X_train, y_train, X_val, best_params, k):
+def addestra_modelli(X_train, y_train, X_val, best_params, k=5):
     # Estrai i migliori iperparametri trovati con l'ottimizzazione bayesiana
     learning_rate = best_params['learning_rate']
     n_iterations = best_params['n_iterations']
@@ -111,8 +109,8 @@ def bayesian_optimization(X_train, y_train, file_path="best_parameters.json"):
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
         'learning_rate': (1e-4, 1e-1, 'log-uniform'),
-        'lambda_': (1e-4, 1e1, 'log-uniform'),
-        'n_iterations': (100, 1000),
+        'lambda_': (1e-4, 10e2, 'log-uniform'),
+        'n_iterations': (100, 10000),
         'regularization': ['ridge', 'lasso', 'none']
     }
 
@@ -124,7 +122,7 @@ def bayesian_optimization(X_train, y_train, file_path="best_parameters.json"):
     bayes_search = BayesSearchCV(
         estimator=model_fit(learning_rate=0.01, lambda_=0.1, n_iterations=1000, regularization='ridge'),
         search_spaces=param_space,
-        n_iter=32,
+        n_iter=50,
         cv=5,
         scoring='accuracy',
         n_jobs=-1,
@@ -165,10 +163,10 @@ if __name__ == "__main__":
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, "undersampling")
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="")
 
-    # Suddivisione in train (60%), validation (20%) e test (20%)
-    X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.4, random_state=42)
+    # Suddivisione in train (70%), validation (20%) e test (20%)
+    X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.3, random_state=42)
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.5, random_state=42)
 
     # Eseguire l'ottimizzazione bayesiana sugli iperparametri
@@ -211,6 +209,8 @@ if __name__ == "__main__":
     y_sk_probs = sk_model.predict_proba(X_test)[:, 1]
     plot_roc_curve(y_test, y_sk_probs, "Modello Scikit-learn")
 
+    plot_precision_recall(y_test, test_predictions, model_name="Modello Logistic Implementato")
+    plot_precision_recall(y_test, test_sk_predictions, model_name="Modello Scikit-learn")
     # Confronto delle metriche
     metrics_dict = {
         "Modello Logistic Implementato": {
@@ -228,6 +228,11 @@ if __name__ == "__main__":
     }
 
     plot_metrics_comparison(metrics_dict, ["Modello Logistic Implementato", "Modello Scikit-learn"])
+
+    # Plottare l'effetto della regolarizzazione
+    lambdas = np.logspace(-4, 2, 100)  # Lista di valori di lambda su scala logaritmica
+    plot_regularization_effect(X_train, y_train, lambdas, regularization_type='ridge')
+    plot_regularization_effect(X_train, y_train, lambdas, regularization_type='lasso')
 
     end_time = time.time()
     print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")
