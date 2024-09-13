@@ -1,15 +1,20 @@
 from funzioni import *
 
-
-
-
 if __name__ == "__main__":
     start_time = time.time()
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="")
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="SMOTE")
 
+    # Ottieni i nomi delle feature
+    all_feature_names = X.columns
+
+    # Elimina i nomi delle feature corrispondenti agli indici delle feature eliminate
+    remaining_feature_names = [all_feature_names[i] for i in range(len(all_feature_names)) if
+                               i not in features_eliminate]
+
+    print(remaining_feature_names)  # Questo sarà l'elenco delle feature rimaste
     # Suddivisione in train (70%), validation (20%) e test (20%)
     X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.8, random_state=42)
     # X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.5, random_state=42)
@@ -77,8 +82,8 @@ if __name__ == "__main__":
 
     # Plottare l'effetto della regolarizzazione
     lambdas = np.logspace(-4, 2, 100)  # Lista di valori di lambda su scala logaritmica
-    plot_regularization_effect(X_train, y_train, lambdas, regularization_type='ridge')
-    plot_regularization_effect(X_train, y_train, lambdas, regularization_type='lasso')
+    plot_regularization_effect(X_train, feature_names=remaining_feature_names, y_train=y_train, lambdas=lambdas, regularization_type='ridge')
+    plot_regularization_effect(X_train, feature_names=remaining_feature_names, y_train=y_train, lambdas=lambdas, regularization_type='lasso')
 
     end_time = time.time()
     print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")

@@ -144,7 +144,7 @@ def plot_metrics_comparison(metrics_dict, model_names):
     plt.show()
 
 
-def plot_regularization_effect(X_train, y_train, lambdas, regularization_type='ridge'):
+def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regularization_type='ridge'):
     x_dim, y_dim = [20, 12]
     coefficients = []
 
@@ -158,7 +158,7 @@ def plot_regularization_effect(X_train, y_train, lambdas, regularization_type='r
 
     plt.figure(figsize=(x_dim, y_dim))
     for i in range(coefficients.shape[1]):
-        plt.plot(lambdas, coefficients[:, i], label=f'Feature {i}', lw=2)
+        plt.plot(lambdas, coefficients[:, i], label=f'{feature_names[i]}', lw=2)
 
     plt.xscale('log')
     plt.title(f"Effetto della Regolarizzazione {regularization_type.capitalize()} sui Coefficienti", fontsize=24)
