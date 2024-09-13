@@ -20,7 +20,7 @@ def plot_sigmoid():
     plt.xlabel('z', fontsize=18)
     plt.ylabel('Sigmoid(z)', fontsize=18)
     plt.grid(True)
-    plt.savefig('sigmoid_function.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig('Assets/sigmoid_function.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -38,7 +38,7 @@ def plot_corr_matrix(X_normalized, features_eliminate=None):
         for feature in features_eliminate:
             plt.gca().add_patch(plt.Rectangle((feature, feature), 1, 1, fill=False, edgecolor='red', lw=2))
 
-    plt.savefig('correlation_matrix_breast_cancer.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig('Assets/correlation_matrix_breast_cancer.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -66,7 +66,7 @@ def plot_class_distribution(y, file_name=""):
 
     # Salva l'immagine, se specificato
     if file_name:
-        plt.savefig(f'{file_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+        plt.savefig(f'Assets/{file_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
 
     # Mostra il grafico
     plt.show()
@@ -81,7 +81,7 @@ def plot_confusion_matrix(y_true, y_pred, model_name):
     plt.title(f"Matrice di Confusione - {model_name}", fontsize=24)
     plt.xlabel("Predicted", fontsize=18)
     plt.ylabel("True", fontsize=18)
-    plt.savefig(f'confusion_matrix_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/confusion_matrix_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -99,7 +99,7 @@ def plot_roc_curve(y_true, y_probs, model_name):
     plt.ylabel('True Positive Rate', fontsize=18)
     plt.title(f"Curva ROC - {model_name}", fontsize=24)
     plt.legend(loc="lower right", fontsize=16)
-    plt.savefig(f'ROC_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/ROC_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -118,7 +118,7 @@ def plot_roc_curve_sklearn(model, X_val, y_val, model_name=""):
     plt.ylabel('True Positive Rate', fontsize=18)
     plt.title(f'Curva ROC - {model_name}', fontsize=24)
     plt.legend(loc="lower right", fontsize=16)
-    plt.savefig(f'ROC_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/ROC_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -140,7 +140,7 @@ def plot_metrics_comparison(metrics_dict, model_names):
     ax.set_xticks(index + bar_width / 2)
     ax.set_xticklabels(metrics, fontsize=16)
     ax.legend(fontsize=16)
-    plt.savefig('metrics_comparison.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig('Assets/metrics_comparison.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -165,7 +165,7 @@ def plot_regularization_effect(X_train, y_train, lambdas, regularization_type='r
     plt.xlabel("Lambda", fontsize=18)
     plt.ylabel("Coefficients", fontsize=18)
     plt.legend(loc='best', fontsize=16)
-    plt.savefig('regularization_effect.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig('Assets/regularization_effect.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -189,7 +189,7 @@ def plot_precision_recall(y_true, y_scores, model_name=""):
 
     # Salva il grafico, se richiesto
     if model_name:
-        plt.savefig(f'precision_vs_recall_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+        plt.savefig(f'Assets/precision_vs_recall_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
 
     # Mostra il grafico
     plt.show()
