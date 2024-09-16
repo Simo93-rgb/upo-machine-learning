@@ -1,3 +1,4 @@
+import numpy
 import numpy as np
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, precision_recall_curve, auc
 import matplotlib.pyplot as plt
@@ -24,10 +25,8 @@ def plot_sigmoid():
     plt.show()
 
 
-def plot_corr_matrix(X_normalized, features_eliminate=None):
+def plot_corr_matrix(corr_matrix: numpy.ndarray, features_eliminate=None):
     x_dim, y_dim = [20, 16]
-    # Calcola la matrice di correlazione
-    corr_matrix = np.corrcoef(X_normalized, rowvar=False)
 
     plt.figure(figsize=(x_dim, y_dim))
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', annot_kws={"size": 12})  # Font migliorato
@@ -165,7 +164,7 @@ def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regular
     plt.xlabel("Lambda", fontsize=18)
     plt.ylabel("Coefficients", fontsize=18)
     plt.legend(loc='best', fontsize=16)
-    plt.savefig('Assets/regularization_effect.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/regularization_effect_{regularization_type}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 

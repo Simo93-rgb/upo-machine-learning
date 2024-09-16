@@ -26,14 +26,14 @@ def carica_dati():
 
 
 def preprocessa_dati(X, y, class_balancer=""):
+    # Elimina le feature altamente correlate
+    X, features_eliminate = elimina_feature_correlate(X)
+    print(f"Features eliminate: {features_eliminate}")
+
     # Imputazione dei NaN e normalizzazione
     imputer = SimpleImputer(strategy='mean')
     X_imputed = imputer.fit_transform(X)
     X_normalized = (X_imputed - X_imputed.mean(axis=0)) / X_imputed.std(axis=0)
-
-    # Elimina le feature altamente correlate
-    X_normalized, features_eliminate = elimina_feature_correlate(X_normalized)
-    print(f"Features eliminate: {features_eliminate}")
 
     # Encoding delle classi
     label_encoder = LabelEncoder()
@@ -52,17 +52,39 @@ def preprocessa_dati(X, y, class_balancer=""):
 
 
 def elimina_feature_correlate(X, soglia=0.95):
+    """
+    Elimina feature altamente correlate da un array numpy X basandosi sulla soglia fornita.
+
+    Parametri:
+    - X: array numpy bidimensionale, dove le colonne sono le feature.
+    - soglia: valore soglia per la correlazione (default 0.95).
+
+    Restituisce:
+    - X_ridotto: array numpy con le feature eliminate.
+    - feature_da_eliminare: set degli indici delle feature eliminate.
+    """
     # Calcola la matrice di correlazione
     corr_matrix = np.corrcoef(X, rowvar=False)
-
     plot_corr_matrix(corr_matrix)
+    # Calcola la varianza di ogni feature
+    feature_variances = np.var(X, axis=0)
 
-    # Trova le feature da eliminare (quelle altamente correlate)
+    num_features = corr_matrix.shape[0]
     feature_da_eliminare = set()
-    for i in range(len(corr_matrix)):
-        for j in range(i):
-            if abs(corr_matrix[i, j]) > soglia:
-                feature_da_eliminare.add(i)
+
+    for i in range(num_features):
+        if i in feature_da_eliminare:
+            continue  # Salta le feature già eliminate
+        for j in range(i + 1, num_features):
+            if j in feature_da_eliminare:
+                continue  # Salta le feature già eliminate
+            if abs(corr_matrix[i, j]) >= soglia:
+                # Confronta le varianze per decidere quale eliminare
+                if feature_variances[i] < feature_variances[j]:
+                    feature_da_eliminare.add(i)
+                    break  # Esci dal loop interno se la feature i è eliminata
+                else:
+                    feature_da_eliminare.add(j)
 
     # Elimina le feature dal dataset
     X_ridotto = np.delete(X, list(feature_da_eliminare), axis=1)
@@ -70,7 +92,8 @@ def elimina_feature_correlate(X, soglia=0.95):
     return X_ridotto, feature_da_eliminare
 
 
-def addestra_modelli(X_train, y_train, X_val, best_params, k=5):
+
+def addestra_modelli(X_train, y_train, best_params):
     # Estrai i migliori iperparametri trovati con l'ottimizzazione bayesiana
     learning_rate = best_params['learning_rate']
     n_iterations = best_params['n_iterations']
@@ -157,3 +180,15 @@ def save_best_params(best_params, best_score, file_path="best_parameters.json"):
     with open(file_path, 'w') as file:
         json.dump(best_params, file)
     print(f"Parametri salvati in {file_path}.")
+
+def load_best_params(file_path="Assets/best_parameters.json"):
+    # Controllo se esiste il file con i parametri salvati
+    if os.path.exists(file_path):
+        print(f"Caricamento dei parametri ottimali da {file_path}...")
+        with open(file_path, 'r') as file:
+            best_params = json.load(file)
+        best_score = best_params.pop("accuracy", None)  # Rimuovi 'accuracy' se presente
+    else:
+        raise FileNotFoundError(f"Il file {file_path} non esiste. Assicurati di aver salvato gli iperparametri.")
+
+    return best_params, best_score

@@ -1,10 +1,12 @@
 import numpy as np
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold, LeaveOneOut, StratifiedKFold, cross_val_score
 from valutazione import evaluate_model, calculate_auc, calculate_auc_sklearn
+from logistic_regression_with_gradient_descend import LogisticRegressionGD
 
-
-def k_fold_cross_validation(model, X, y, k=5):
+def k_fold_cross_validation(X, y, k=5):
+    model = LogisticRegressionGD()
     kf = KFold(n_splits=k, shuffle=True, random_state=42)
     accuracies = []
 
@@ -21,7 +23,8 @@ def k_fold_cross_validation(model, X, y, k=5):
     return mean_accuracy
 
 
-def leave_one_out_cross_validation(model, X, y):
+def leave_one_out_cross_validation(X, y):
+    model = LogisticRegressionGD()
     loo = LeaveOneOut()
     accuracies = []
 

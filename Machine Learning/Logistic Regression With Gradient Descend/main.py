@@ -5,7 +5,7 @@ if __name__ == "__main__":
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="SMOTE")
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="Undersampling")
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns
@@ -15,22 +15,27 @@ if __name__ == "__main__":
                                i not in features_eliminate]
 
     print(remaining_feature_names)  # Questo sarà l'elenco delle feature rimaste
-    # Suddivisione in train (70%), validation (20%) e test (20%)
+
+    # Suddivisione in train (80%), test (20%)
     X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.8, random_state=42)
     # X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.5, random_state=42)
 
-    # Eseguire l'ottimizzazione bayesiana sugli iperparametri
-    best_params, best_score = bayesian_optimization_wrapper(X_train, y_train)
+    # caricamento da file degli iperparametri
+    best_params, best_score = load_best_params()
 
     print(f"Migliori iperparametri trovati: {best_params}")
-    print(f"Accuracy del modello ottimizzato (validazione): {best_score}")
+    # print(f"Accuracy del modello ottimizzato (validazione): {best_score}")
+
+    # Esegui Leave-One-Out Cross-Validation (solo se necessario)
+    loo_accuracy = leave_one_out_cross_validation(X_train, y_train)
+    print(f"Accuratezza con Leave-One-Out Cross-Validation: {loo_accuracy}")
 
     # Misura il tempo di esecuzione del tuo modello LogisticRegressionGD
     start_model_time = time.time()
 
     # model, predictions, sk_model, sk_predictions = addestra_modelli(
     #     X_train, y_train, X_val, best_params, k=5)
-    model, sk_model = addestra_modelli(X_train, y_train, [], best_params, k=5)
+    model, sk_model = addestra_modelli(X_train, y_train, best_params)
 
     end_model_time = time.time()
     print(f"\nTempo di esecuzione del modello Logistic Implementato: {end_model_time - start_model_time:.4f} secondi")
