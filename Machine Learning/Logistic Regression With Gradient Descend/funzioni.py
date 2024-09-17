@@ -12,8 +12,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 from ucimlrepo import fetch_ucirepo
 from skopt import BayesSearchCV
-from plot import plot_class_distribution, plot_corr_matrix, plot_roc_curve, \
-    plot_metrics_comparison, plot_sigmoid, plot_confusion_matrix, plot_precision_recall, plot_regularization_effect
+from plot import *
 import os
 import json
 
@@ -93,16 +92,10 @@ def elimina_feature_correlate(X, soglia=0.95):
 
 
 
-def addestra_modelli(X_train, y_train, best_params):
-    # Estrai i migliori iperparametri trovati con l'ottimizzazione bayesiana
-    learning_rate = best_params['learning_rate']
-    n_iterations = best_params['n_iterations']
-    _lambda = best_params['lambda_']
-    regularization = best_params['regularization']
-
+def addestra_modelli(X_train, y_train, **best_params):
     # Modello Logistic Regression implementato
-    model = LogisticRegressionGD(learning_rate=learning_rate, n_iterations=n_iterations, lambda_=_lambda,
-                                 regularization=regularization)
+    model = LogisticRegressionGD()
+    model.set_params(**best_params)
     model.fit(X_train, y_train)
 
     # Predizione sul set di validazione

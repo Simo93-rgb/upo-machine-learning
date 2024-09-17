@@ -2,7 +2,32 @@ import numpy as np
 
 
 class LogisticRegressionGD:
+    """Classificatore di Regressione Logistica utilizzando la Discesa del Gradiente.
+
+       Questa classe implementa la regressione logistica per problemi di classificazione binaria
+       utilizzando l'ottimizzazione tramite discesa del gradiente. Supporta la regolarizzazione
+       L1 (Lasso) e L2 (Ridge).
+
+       Attributes:
+           learning_rate (float): Tasso di apprendimento per l'aggiornamento dei parametri.
+           n_iterations (int): Numero massimo di iterazioni per la discesa del gradiente.
+           tolerance (float): Soglia per la variazione della perdita per determinare la convergenza.
+           regularization (str): Tipo di regolarizzazione ('ridge', 'lasso' o None).
+           lambda_ (float): Forza della regolarizzazione.
+           theta (np.ndarray): Parametri dei pesi.
+           bias (float): Parametro di bias.
+           losses (list): Valori della perdita per ogni iterazione.
+       """
     def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='ridge', lambda_=0.01):
+        """Inizializza il classificatore LogisticRegressionGD.
+
+                Args:
+                    learning_rate (float, optional): Tasso di apprendimento. Default a 0.1.
+                    n_iterations (int, optional): Numero massimo di iterazioni. Default a 1000.
+                    tolerance (float, optional): Soglia per la convergenza. Default a 1e-10.
+                    regularization (str, optional): Tipo di regolarizzazione ('ridge', 'lasso' o None). Default a 'ridge'.
+                    lambda_ (float, optional): Forza della regolarizzazione. Default a 0.01.
+                """
         self.learning_rate = learning_rate
         self.n_iterations = n_iterations
         self.tolerance = tolerance
@@ -13,9 +38,27 @@ class LogisticRegressionGD:
         self.losses = []
 
     def sigmoid(self, z):
+        """Calcola la funzione sigmoide.
+
+        Args:
+            z (np.ndarray): Input array.
+
+        Returns:
+            np.ndarray: Output dopo l'applicazione della funzione sigmoide.
+        """
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, y, print_iteration=False):
+        """Addestra il modello sui dati forniti.
+
+                Args:
+                    X (np.ndarray): Matrice delle caratteristiche di forma (n_campioni, n_caratteristiche).
+                    y (np.ndarray): Vettore target di forma (n_campioni,).
+                    print_iteration (bool, optional): Se True, stampa la perdita a intervalli regolari. Default a False.
+
+                Raises:
+                    ValueError: Se il parametro 'regularization' non è valido.
+                """
         y = np.array(y).ravel()
         n_samples, n_features = X.shape
         self.theta = np.zeros(n_features)
@@ -26,6 +69,7 @@ class LogisticRegressionGD:
             linear_model = np.dot(X, self.theta) + self.bias
             h = self.sigmoid(linear_model)
 
+            # Precauzione per evitare NaN
             h = np.clip(h, 1e-10, 1 - 1e-10)
 
             # Funzione di costo con regolarizzazione
@@ -41,6 +85,7 @@ class LogisticRegressionGD:
             if print_iteration and i % (self.n_iterations // 10) == 0:
                 print(f'Iteration {i}, Loss: {loss}')
 
+            # Discesa del gradiente
             dw = (1 / n_samples) * np.dot(X.T, (h - y))
             db = (1 / n_samples) * np.sum(h - y)
 
@@ -58,13 +103,28 @@ class LogisticRegressionGD:
                 break
 
     def predict(self, X):
+        """Predice le etichette di classe per i campioni di input.
+
+                Args:
+                    X (np.ndarray): Matrice delle caratteristiche di forma (n_campioni, n_caratteristiche).
+
+                Returns:
+                    np.ndarray: Etichette di classe predette (0 o 1) per ciascun campione.
+                """
         linear_model = np.dot(X, self.theta) + self.bias
         y_predicted = self.sigmoid(linear_model)
-        y_predicted_cls = [1 if i > 0.5 else 0 for i in y_predicted]
-        return np.array(y_predicted_cls)
+        return np.array((y_predicted >= 0.5).astype(int))
 
     # Metodo per ottenere i parametri (necessario per scikit-learn)
     def get_params(self, deep=True):
+        """Ottiene i parametri per questo stimatore.
+
+                Args:
+                    deep (bool, optional): Per compatibilità con scikit-learn. Default a True.
+
+                Returns:
+                    dict: Nomi dei parametri mappati ai loro valori.
+                """
         return {
             'learning_rate': self.learning_rate,
             'n_iterations': self.n_iterations,
@@ -75,6 +135,14 @@ class LogisticRegressionGD:
 
     # Metodo per impostare i parametri (necessario per scikit-learn)
     def set_params(self, **params):
+        """Imposta i parametri per questo stimatore.
+
+                Args:
+                    **params: Nomi dei parametri mappati ai nuovi valori.
+
+                Returns:
+                    LogisticRegressionGD: Se stesso con i parametri aggiornati.
+                """
         for key, value in params.items():
             setattr(self, key, value)
         return self

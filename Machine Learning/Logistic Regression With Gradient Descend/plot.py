@@ -3,6 +3,8 @@ import numpy as np
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, precision_recall_curve, auc
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.model_selection import learning_curve
+
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 
 
@@ -130,6 +132,16 @@ def plot_metrics_comparison(metrics_dict, model_names):
     bar_width = 0.35
     index = np.arange(len(metrics))
 
+    # Trova il minimo e il massimo delle metriche per adattare i limiti dell'asse y
+    all_results = [metrics_dict[model_name][metric] for model_name in model_names for metric in metrics]
+    min_metric = min(all_results)
+    max_metric = max(all_results)
+
+    # Definisci i limiti dell'asse y per fare zoom solo sulla parte alta delle barre
+    zoom_factor = 0.1  # Puoi regolare questo fattore per aumentare/diminuire lo zoom
+    y_min = min_metric - zoom_factor * (max_metric - min_metric)
+    y_max = max_metric + zoom_factor * (max_metric - min_metric)
+
     for i, model_name in enumerate(model_names):
         results = [metrics_dict[model_name][metric] for metric in metrics]
         ax.bar(index + i * bar_width, results, bar_width, label=model_name)
@@ -139,8 +151,13 @@ def plot_metrics_comparison(metrics_dict, model_names):
     ax.set_xticks(index + bar_width / 2)
     ax.set_xticklabels(metrics, fontsize=16)
     ax.legend(fontsize=16)
+
+    # Imposta i limiti dell'asse y per il "zoom"
+    ax.set_ylim([y_min, y_max])
+
     plt.savefig('Assets/metrics_comparison.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
+
 
 
 def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regularization_type='ridge'):
@@ -191,4 +208,50 @@ def plot_precision_recall(y_true, y_scores, model_name=""):
         plt.savefig(f'Assets/precision_vs_recall_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
 
     # Mostra il grafico
+    plt.show()
+
+
+def plot_learning_curve(estimator, X_train, y_train, cv=5, scoring='accuracy', train_sizes=np.linspace(0.1, 1.0, 10), model_name=""):
+    """
+    Funzione per plottare la curva di apprendimento confrontando il training set e il validation/test set.
+
+    Parametri:
+    - estimator: il modello (es. LogisticRegression)
+    - X_train: dataset di training (feature)
+    - y_train: dataset di training (target)
+    - cv: numero di fold per la cross-validation
+    - scoring: metrica di valutazione (default: 'accuracy')
+    - train_sizes: frazioni di training set da usare per calcolare il punteggio
+
+    Output:
+    - Grafico delle curve di apprendimento per il training e il validation set
+    """
+    plt.figure(figsize=(10, 6))
+
+    # Calcola le curve di apprendimento
+    train_sizes, train_scores, validation_scores = learning_curve(
+        estimator, X_train, y_train, train_sizes=train_sizes, cv=cv, scoring=scoring, n_jobs=-1
+    )
+
+    # Calcola la media e la deviazione standard dei punteggi
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    validation_scores_mean = np.mean(validation_scores, axis=1)
+    validation_scores_std = np.std(validation_scores, axis=1)
+
+    # Plottiamo i risultati
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")
+    plt.plot(train_sizes, validation_scores_mean, 'o-', color="g", label="Validation score")
+
+    # Plottiamo anche le aree di deviazione standard
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std, color="r",
+                     alpha=0.2)
+    plt.fill_between(train_sizes, validation_scores_mean - validation_scores_std,
+                     validation_scores_mean + validation_scores_std, color="g", alpha=0.2)
+
+    plt.title(f"Curva di Apprendimento {model_name}")
+    plt.xlabel("Numero di campioni di training")
+    plt.ylabel(scoring.capitalize())
+    plt.legend(loc="best")
+    plt.grid()
     plt.show()
