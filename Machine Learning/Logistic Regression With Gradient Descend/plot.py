@@ -1,6 +1,7 @@
 import numpy
 import numpy as np
-from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, precision_recall_curve, auc
+from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, precision_recall_curve, auc, precision_score, \
+    f1_score, recall_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import learning_curve
@@ -289,3 +290,48 @@ def plot_learning_curve_with_loss(estimator, X_train, y_train, cv=5, train_sizes
     plt.legend(loc="best")
     plt.grid()
     plt.show()
+
+def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, auc, sk_auc, model_enum):
+
+    # Curve ROC
+    y_probs = model.sigmoid(np.dot(X_test, model.theta) + model.bias)
+    plot_roc_curve(y_test, y_probs, f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
+
+    y_sk_probs = sk_model.predict_proba(X_test)[:, 1]
+    plot_roc_curve(y_test, y_sk_probs, f"Modello {model_enum.SCIKIT_LEARN.value}")
+
+    plot_precision_recall(y_test, test_predictions, model_name=f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
+    plot_precision_recall(y_test, test_sk_predictions, model_name=f"Modello {model_enum.SCIKIT_LEARN.value}")
+
+    # Confronto delle metriche
+    metrics_dict = {
+        f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}": {
+            "Precision": precision_score(y_test, test_predictions),
+            "Recall": recall_score(y_test, test_predictions),
+            "F1-Score": f1_score(y_test, test_predictions),
+            "AUC": auc
+        },
+        f"Modello {model_enum.SCIKIT_LEARN.value}": {
+            "Precision": precision_score(y_test, test_sk_predictions),
+            "Recall": recall_score(y_test, test_sk_predictions),
+            "F1-Score": f1_score(y_test, test_sk_predictions),
+            "AUC": sk_auc
+        }
+    }
+
+    plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}", f"Modello {model_enum.SCIKIT_LEARN.value}"])
+
+def plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, model_enum, remaining_feature_names):
+    # Plottare la funzione sigmoidale
+    plot_sigmoid()
+
+    # Matrici di confusione
+    plot_confusion_matrix(y_test, test_predictions, f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
+    plot_confusion_matrix(y_test, test_sk_predictions, f"Modello {model_enum.SCIKIT_LEARN.value}")
+
+    # Plottare l'effetto della regolarizzazione
+    lambdas = np.logspace(-4, 2, 100)  # Lista di valori di lambda su scala logaritmica
+    plot_regularization_effect(X_train, feature_names=remaining_feature_names, y_train=y_train, lambdas=lambdas,
+                               regularization_type='ridge')
+    plot_regularization_effect(X_train, feature_names=remaining_feature_names, y_train=y_train, lambdas=lambdas,
+                               regularization_type='lasso')
