@@ -1,11 +1,12 @@
 from funzioni import *
 
+
 if __name__ == "__main__":
     start_time = time.time()
 
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="Undersampling")
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.9)
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns
@@ -26,10 +27,12 @@ if __name__ == "__main__":
     print(f"Migliori iperparametri trovati: {best_params}")
     print(f"Accuracy del modello con iperparametri trovati tramite baesyan optimization: {best_score}")
 
-    # Esegui Leave-One-Out Cross-Validation
-    loo_accuracy = leave_one_out_cross_validation(X_train, y_train)
-    print(f"Accuratezza con Leave-One-Out Cross-Validation: {loo_accuracy}")
-
+    # Esegui cross validation
+    k=10
+    k_fold_accuracy = k_fold_cross_validation(X_train, y_train, k=k)
+    print(f"Accuratezza con k-fold (k={k}) Cross-Validation: {k_fold_accuracy}")
+    model = LogisticRegressionGD(**best_params)
+    plot_learning_curve_with_kfold(model, X_normalized, y_encoded, cv=k, model_name="LogisticRegressionGD")
     # Misura il tempo di esecuzione del tuo modello LogisticRegressionGD
     start_model_time = time.time()
 
@@ -50,8 +53,6 @@ if __name__ == "__main__":
     sk_auc = validation_test(test_sk_predictions, X_test, y_test, sk_model, model_name="Modello Scikit-learn")
 
     print(f"\nTempo di esecuzione del modello Scikit-learn: {end_model_time - start_model_time:.4f} secondi")
-    plot_learning_curve(model, X_train, y_train, cv=5, scoring="accuracy", model_name="Modello Logistic Implementato")
-    plot_learning_curve(sk_model, X_train, y_train, cv=5, scoring="accuracy", model_name="Modello Scikit-learn")
     # Plottare la funzione sigmoidale
     plot_sigmoid()
 

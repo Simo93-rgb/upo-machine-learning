@@ -1,7 +1,8 @@
 import numpy as np
+from sklearn.base import BaseEstimator, ClassifierMixin
 
 
-class LogisticRegressionGD:
+class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
     """Classificatore di Regressione Logistica utilizzando la Discesa del Gradiente.
 
        Questa classe implementa la regressione logistica per problemi di classificazione binaria
@@ -18,6 +19,7 @@ class LogisticRegressionGD:
            bias (float): Parametro di bias.
            losses (list): Valori della perdita per ogni iterazione.
        """
+
     def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='ridge', lambda_=0.01):
         """Inizializza il classificatore LogisticRegressionGD.
 
@@ -36,6 +38,7 @@ class LogisticRegressionGD:
         self.theta = None
         self.bias = None
         self.losses = []
+        self.classes_ = None
 
     def sigmoid(self, z):
         """Calcola la funzione sigmoide.
@@ -59,6 +62,7 @@ class LogisticRegressionGD:
                 Raises:
                     ValueError: Se il parametro 'regularization' non è valido.
                 """
+        self.classes_ = np.unique(y)  # Memorizza le classi uniche del target
         y = np.array(y).ravel()
         n_samples, n_features = X.shape
         self.theta = np.zeros(n_features)
@@ -111,9 +115,13 @@ class LogisticRegressionGD:
                 Returns:
                     np.ndarray: Etichette di classe predette (0 o 1) per ciascun campione.
                 """
+        proba = self.predict_proba(X)
+        return np.argmax(proba, axis=1)
+
+    def predict_proba(self, X):
         linear_model = np.dot(X, self.theta) + self.bias
-        y_predicted = self.sigmoid(linear_model)
-        return np.array((y_predicted >= 0.5).astype(int))
+        probabilities = self.sigmoid(linear_model)
+        return np.vstack([1 - probabilities, probabilities]).T
 
     # Metodo per ottenere i parametri (necessario per scikit-learn)
     def get_params(self, deep=True):

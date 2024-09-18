@@ -211,20 +211,54 @@ def plot_precision_recall(y_true, y_scores, model_name=""):
     plt.show()
 
 
-def plot_learning_curve(estimator, X_train, y_train, cv=5, scoring='accuracy', train_sizes=np.linspace(0.1, 1.0, 10), model_name=""):
+def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name=""):
+    fig_size = (16, 12)
+    # Frazioni del training set da usare (es. dal 10% al 100%)
+    train_sizes = np.linspace(0.1, 1.0, 10)
+
+    # Calcola learning curve con K-Fold CV
+    train_sizes, train_scores, val_scores = learning_curve(
+        model, X, y, cv=cv, train_sizes=train_sizes, scoring='neg_log_loss', n_jobs=-1
+    )
+
+    # Calcola la media e deviazione standard delle performance
+    train_mean = np.mean(train_scores, axis=1)
+    train_std = np.std(train_scores, axis=1)
+    val_mean = np.mean(val_scores, axis=1)
+    val_std = np.std(val_scores, axis=1)
+
+    # Plot della learning curve
+    plt.figure(figsize=fig_size)
+    plt.plot(train_sizes, -train_mean, label="Train Loss", color="blue")
+    plt.fill_between(train_sizes, -train_mean - train_std, -train_mean + train_std, alpha=0.1, color="blue")
+    plt.plot(train_sizes, -val_mean, label="Validation Loss", color="orange")
+    plt.fill_between(train_sizes, -val_mean - val_std, -val_mean + val_std, alpha=0.1, color="orange")
+
+    plt.title(f"Learning Curve {model_name}", fontsize=24)
+    plt.xlabel("Training Set Size", fontsize=18)
+    plt.ylabel("Loss", fontsize=18)
+    plt.legend(loc="best", fontsize=16)
+    plt.grid(True)
+    if model_name:
+        plt.savefig(f'Assets/learnin_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+    plt.show()
+
+
+def plot_learning_curve_with_loss(estimator, X_train, y_train, cv=5, train_sizes=np.linspace(0.1, 1.0, 10),
+                                  scoring='neg_log_loss', model_name=""):
     """
-    Funzione per plottare la curva di apprendimento confrontando il training set e il validation/test set.
+    Funzione per plottare la curva di apprendimento con la loss sui dati di training e validation.
 
     Parametri:
     - estimator: il modello (es. LogisticRegression)
     - X_train: dataset di training (feature)
     - y_train: dataset di training (target)
     - cv: numero di fold per la cross-validation
-    - scoring: metrica di valutazione (default: 'accuracy')
     - train_sizes: frazioni di training set da usare per calcolare il punteggio
+    - scoring: metrica di valutazione ('neg_log_loss' per la loss)
 
     Output:
-    - Grafico delle curve di apprendimento per il training e il validation set
+    - Grafico delle curve di apprendimento per il training e il validation set con la loss.
     """
     plt.figure(figsize=(10, 6))
 
@@ -233,15 +267,15 @@ def plot_learning_curve(estimator, X_train, y_train, cv=5, scoring='accuracy', t
         estimator, X_train, y_train, train_sizes=train_sizes, cv=cv, scoring=scoring, n_jobs=-1
     )
 
-    # Calcola la media e la deviazione standard dei punteggi
-    train_scores_mean = np.mean(train_scores, axis=1)
+    # Convertiamo i punteggi negativi delle loss in valori positivi (perchè scikit-learn usa score, non loss)
+    train_scores_mean = -np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
-    validation_scores_mean = np.mean(validation_scores, axis=1)
+    validation_scores_mean = -np.mean(validation_scores, axis=1)
     validation_scores_std = np.std(validation_scores, axis=1)
 
     # Plottiamo i risultati
-    plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")
-    plt.plot(train_sizes, validation_scores_mean, 'o-', color="g", label="Validation score")
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training loss")
+    plt.plot(train_sizes, validation_scores_mean, 'o-', color="g", label="Validation loss")
 
     # Plottiamo anche le aree di deviazione standard
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std, color="r",
@@ -249,9 +283,9 @@ def plot_learning_curve(estimator, X_train, y_train, cv=5, scoring='accuracy', t
     plt.fill_between(train_sizes, validation_scores_mean - validation_scores_std,
                      validation_scores_mean + validation_scores_std, color="g", alpha=0.2)
 
-    plt.title(f"Curva di Apprendimento {model_name}")
+    plt.title(f"Curva di Apprendimento (Loss) {model_name}")
     plt.xlabel("Numero di campioni di training")
-    plt.ylabel(scoring.capitalize())
+    plt.ylabel("Loss (Log-Loss)")
     plt.legend(loc="best")
     plt.grid()
     plt.show()

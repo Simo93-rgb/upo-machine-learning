@@ -24,9 +24,9 @@ def carica_dati():
     return X, y
 
 
-def preprocessa_dati(X, y, class_balancer=""):
+def preprocessa_dati(X, y, class_balancer="", corr=0.95):
     # Elimina le feature altamente correlate
-    X, features_eliminate = elimina_feature_correlate(X)
+    X, features_eliminate = elimina_feature_correlate(X, soglia=corr)
     print(f"Features eliminate: {features_eliminate}")
 
     # Imputazione dei NaN e normalizzazione
