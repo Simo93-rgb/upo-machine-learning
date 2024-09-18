@@ -1,1 +1,23 @@
-{"lambda_": 0.12996535162010367, "learning_rate": 0.057038430274030945, "n_iterations": 1138, "regularization": "lasso", "accuracy": 0.9646017699115044}
+[
+  {
+    "lambda_": 0.12996535162010367,
+    "learning_rate": 0.057038430274030945,
+    "n_iterations": 1138,
+    "regularization": "lasso",
+    "accuracy": 0.9646017699115044
+  },
+  {
+    "alpha": 0.0569,
+    "lambda_": 0.0845,
+    "n_iterations": 3795,
+    "regularization": "none",
+    "ne_log_loss": -0.11278228654726097
+  },
+  {
+    "lambda_": 0.054025693269002174,
+    "learning_rate": 0.0464830780878883,
+    "n_iterations": 5622,
+    "regularization": "none",
+    "ne_log_loss": -0.07231317107356905
+  }
+]

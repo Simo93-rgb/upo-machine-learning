@@ -11,7 +11,7 @@ if __name__ == "__main__":
     plotting = False
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.9)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="SMOTE", corr=0.9)
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.8, random_state=42)
 
     # Caricamento iperparametri
-    best_params, best_score = load_best_params()
+    best_params, best_score = load_best_params(X_train, y_train)
     print(f"Migliori iperparametri trovati: {best_params}")
     print(f"Accuracy del modello con iperparametri trovati tramite Bayesian optimization: {best_score}")
 
@@ -31,7 +31,12 @@ if __name__ == "__main__":
     k_fold_accuracy = k_fold_cross_validation(X_train, y_train, k=k)
     print(f"Accuratezza con k-fold (k={k}) Cross-Validation: {k_fold_accuracy}")
 
-    model = LogisticRegressionGD(**best_params)
+    model = LogisticRegressionGD(
+        learning_rate=best_params["learning_rate"],
+        lambda_=best_params["lambda_"],
+        n_iterations=best_params["n_iterations"],
+        regularization=best_params["regularization"]
+    )
     plot_learning_curve_with_kfold(model, X_normalized, y_encoded, cv=k, model_name=ModelName.LOGISTIC_REGRESSION_GD.value)
 
     # Addestramento del modello

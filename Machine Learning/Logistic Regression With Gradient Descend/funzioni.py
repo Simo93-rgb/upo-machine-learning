@@ -121,7 +121,7 @@ def addestra_modelli(X_train, y_train, **best_params):
     return model, sk_model
 
 
-def bayesian_optimization(X_train, y_train, file_path="best_parameters.json"):
+def bayesian_optimization(X_train, y_train):
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
         'learning_rate': (1e-4, 1e-1, 'log-uniform'),
@@ -130,17 +130,13 @@ def bayesian_optimization(X_train, y_train, file_path="best_parameters.json"):
         'regularization': ['ridge', 'lasso', 'none']
     }
 
-    def model_fit(learning_rate, lambda_, n_iterations, regularization):
-        model = LogisticRegressionGD(learning_rate=learning_rate, lambda_=lambda_,
-                                     n_iterations=n_iterations, regularization=regularization)
-        return model
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
         search_spaces=param_space,
         n_iter=150,
-        cv=len(X_train),
-        scoring='accuracy',
+        cv=5,
+        scoring='neg_log_loss',
         n_jobs=-1,
         random_state=42
     )
@@ -152,25 +148,24 @@ def bayesian_optimization(X_train, y_train, file_path="best_parameters.json"):
     return best_params, best_score
 
 
-def save_best_params(best_params, best_score, file_path="best_parameters.json"):
-    best_params['accuracy'] = best_score
+def save_best_params(best_params, file_path="best_parameters.json"):
     with open(file_path, 'w') as file:
         json.dump(best_params, file)
     print(f"Parametri salvati in {file_path}.")
 
 
-def load_best_params(file_path="Assets/best_parameters.json", X_train=None, y_train=None):
+def load_best_params(X_train=None, y_train=None, file_path="Assets/best_parameters.json"):
     # Controllo se esiste il file con i parametri salvati
-    if os.path.exists(file_path) and X_train is None and y_train is None:
+    if os.path.exists(file_path):
         print(f"Caricamento dei parametri ottimali da {file_path}...")
         with open(file_path, 'r') as file:
             best_params = json.load(file)
         best_score = best_params.pop("accuracy", None)  # Rimuovi 'accuracy' se presente
-    elif X_train is not None and y_train is not None:
+    elif not os.path.exists(file_path) and X_train is not None and y_train is not None:
         # Eseguire l'ottimizzazione bayesiana se il file non esiste
         print("Eseguendo l'ottimizzazione bayesiana...")
         best_params, best_score = bayesian_optimization(X_train, y_train)
-        save_best_params(best_params, best_score, file_path)
+        save_best_params(best_params, file_path)
     else:
         raise FileNotFoundError(f"Il file {file_path} non esiste. Assicurati di aver salvato gli iperparametri.")
 
