@@ -1,5 +1,8 @@
 import time
+from enum import Enum
+
 import numpy as np
+import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.metrics import precision_score, recall_score, f1_score
@@ -15,6 +18,7 @@ from skopt import BayesSearchCV
 from plot import *
 import os
 import json
+
 
 
 def carica_dati():
@@ -170,3 +174,30 @@ def load_best_params(X_train=None, y_train=None, file_path="Assets/best_paramete
         raise FileNotFoundError(f"Il file {file_path} non esiste. Assicurati di aver salvato gli iperparametri.")
 
     return best_params, best_score
+
+def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="Assets/"):
+    # Creazione della lista delle metriche
+    lista_metriche = [metriche_modello1, metriche_modello2]
+
+    # Creazione del DataFrame escludendo 'conf_matrix'
+    df_metriche = pd.DataFrame(lista_metriche).set_index('model_name').drop(columns=['conf_matrix'])
+
+    # Ordinare le colonne se necessario
+    df_metriche = df_metriche[sorted(df_metriche.columns)]
+
+    # Stampare il DataFrame
+    print(df_metriche)
+
+    # Salvataggio su file
+    # Controlla se la directory esiste, altrimenti la crea
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
+    # Salva il DataFrame in un file CSV
+    csv_file = os.path.join(file_path, 'metriche_modelli.csv')
+    df_metriche.to_csv(csv_file)
+
+    for metriche in lista_metriche:
+        print(f"Matrice di confusione per {metriche['model_name']}:")
+        print(metriche['conf_matrix'])
+        print()

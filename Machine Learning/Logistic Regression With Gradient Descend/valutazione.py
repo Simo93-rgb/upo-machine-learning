@@ -5,12 +5,9 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
 
 
 # Funzione per valutare precision, recall e F1
-def evaluate_model(predictions, y_val, model_name=""):
-    print(f"\nValutazione {model_name}")
-
+def evaluate_model(model, X_val, predictions, y_val, model_name=""):
     # Confusion Matrix
     conf_matrix = confusion_matrix(y_val, predictions)
-    print(f"Matrice di confusione:\n{conf_matrix}")
 
     # Precision, Recall, F1-Score
     precision = precision_score(y_val, predictions)
@@ -24,19 +21,10 @@ def evaluate_model(predictions, y_val, model_name=""):
     mcc = matthews_corrcoef(y_val, predictions)
 
     # AUC (Area under ROC curve)
-    auc = roc_auc_score(y_val, predictions)
+    auc = calculate_auc(model, X_val, y_val)
 
     # Precision-Recall AUC
     precision_recall_curve_auc = roc_auc_score(y_val, predictions)
-
-    # Stampa i risultati
-    print(f'Precision: {precision}')
-    print(f'Recall (TP Rate): {recall}')
-    print(f'False Positive Rate: {fp_rate}')
-    print(f'F1-Score: {f1}')
-    print(f'MCC: {mcc}')
-    print(f'AUC: {auc}')
-    print(f'Precision-Recall AUC: {precision_recall_curve_auc}')
 
     return {
         'precision': precision,
@@ -45,7 +33,9 @@ def evaluate_model(predictions, y_val, model_name=""):
         'f1_score': f1,
         'mcc': mcc,
         'auc': auc,
-        'prc_auc': precision_recall_curve_auc
+        'prc_auc': precision_recall_curve_auc,
+        'conf_matrix': conf_matrix,
+        'model_name': model_name
     }
 
 
@@ -72,19 +62,17 @@ def cohen_kappa(y_val, y_pred):
     return kappa
 
 
-# Funzione per calcolare l'AUC (modello personalizzato)
-def calculate_auc(model, X_val, y_val):
-    y_probs = model.sigmoid(np.dot(X_val, model.theta) + model.bias)
-    auc = roc_auc_score(y_val, y_probs)
-    print(f'AUC: {auc:.3f}')
-    return auc
+# # Funzione per calcolare l'AUC (modello personalizzato)
+# def calculate_auc(model, X_val, y_val):
+#     y_probs = model.sigmoid(np.dot(X_val, model.theta) + model.bias)
+#     auc = roc_auc_score(y_val, y_probs)
+#     return auc
 
 
 # Funzione per calcolare l'AUC (modello scikit-learn)
-def calculate_auc_sklearn(model, X_val, y_val):
+def calculate_auc(model, X_val, y_val):
     y_probs = model.predict_proba(X_val)[:, 1]
     auc = roc_auc_score(y_val, y_probs)
-    print(f'AUC Scikit-learn: {auc:.3f}')
     return auc
 
 

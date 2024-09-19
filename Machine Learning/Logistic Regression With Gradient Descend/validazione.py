@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold, LeaveOneOut, StratifiedKFold, cross_val_score
-from valutazione import evaluate_model, calculate_auc, calculate_auc_sklearn
+from valutazione import evaluate_model, calculate_auc, calculate_auc
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 
 def k_fold_cross_validation(X, y, k=5):
@@ -49,11 +49,10 @@ def stratified_k_fold_cross_validation(model, X_train, y_train, n_splits=5):
 
 
 def validation_test(predictions, X_val, y_val, model, model_name=""):
-    if model_name == "Modello Scikit-learn":
-        evaluate_model(predictions, y_val, model_name="Modello Scikit-learn")
-        auc_sk = calculate_auc_sklearn(model, X_val, y_val)
-        return auc_sk
-    else:
-        evaluate_model(predictions, y_val, model_name=model_name)
-        auc = calculate_auc(model, X_val, y_val)
-        return auc
+    scores = evaluate_model(
+        model=model,
+        X_val=X_val,
+        predictions=predictions,
+        y_val=y_val,
+        model_name=model_name)
+    return scores
