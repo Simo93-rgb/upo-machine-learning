@@ -1,0 +1,30 @@
+{
+  "auc": {
+    "LogisticRegressionGD": 0.9944,
+    "Scikit-learn": 0.9944
+  },
+  "f1_score": {
+    "LogisticRegressionGD": 0.9709,
+    "Scikit-learn": 0.9559
+  },
+  "fp_rate": {
+    "LogisticRegressionGD": 0.056,
+    "Scikit-learn": 0.056
+  },
+  "mcc": {
+    "LogisticRegressionGD": 0.9292,
+    "Scikit-learn": 0.9049
+  },
+  "prc_auc": {
+    "LogisticRegressionGD": 0.9609,
+    "Scikit-learn": 0.9482
+  },
+  "precision": {
+    "LogisticRegressionGD": 0.9659,
+    "Scikit-learn": 0.9641
+  },
+  "recall": {
+    "LogisticRegressionGD": 0.9778,
+    "Scikit-learn": 0.9524
+  }
+}

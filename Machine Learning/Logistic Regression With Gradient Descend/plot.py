@@ -1,3 +1,5 @@
+import os
+
 import numpy
 import numpy as np
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, precision_recall_curve, auc, precision_score, \
@@ -212,14 +214,32 @@ def plot_precision_recall(y_true, y_scores, model_name=""):
     plt.show()
 
 
-def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name=""):
-    fig_size = (16, 12)
+def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name="", scoring='neg_log_loss', fig_size=(16, 12)):
+    """
+    Plotta la learning curve utilizzando k-fold cross-validation.
+
+    Parameters:
+    - model: Il modello scikit-learn da valutare.
+    - X: Matrice delle feature.
+    - y: Vettore target.
+    - cv: Numero di fold per la cross-validation (default=5).
+    - model_name: Nome del modello per il titolo del grafico e il file (default="").
+    - scoring: Metrica di scoring (default='neg_log_loss').
+    - fig_size: Dimensioni del grafico (default=(16, 12)).
+
+    Returns:
+    - None. Mostra e salva il grafico della learning curve.
+    """
+    # Se model_name non è fornito, ottieni il nome del modello
+    if not model_name:
+        model_name = type(model).__name__
+
     # Frazioni del training set da usare (es. dal 10% al 100%)
     train_sizes = np.linspace(0.1, 1.0, 10)
 
     # Calcola learning curve con K-Fold CV
     train_sizes, train_scores, val_scores = learning_curve(
-        model, X, y, cv=cv, train_sizes=train_sizes, scoring='neg_log_loss', n_jobs=-1
+        model, X, y, cv=cv, train_sizes=train_sizes, scoring=scoring, n_jobs=-1
     )
 
     # Calcola la media e deviazione standard delle performance
@@ -228,20 +248,30 @@ def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name=""):
     val_mean = np.mean(val_scores, axis=1)
     val_std = np.std(val_scores, axis=1)
 
+    # Invertiamo il segno se usiamo una metrica negativa (come 'neg_log_loss')
+    if scoring in ['neg_log_loss', 'neg_mean_squared_error', 'neg_mean_absolute_error']:
+        train_mean *= -1
+        train_std *= -1
+        val_mean *= -1
+        val_std *= -1
+
     # Plot della learning curve
     plt.figure(figsize=fig_size)
-    plt.plot(train_sizes, -train_mean, label="Train Loss", color="blue")
-    plt.fill_between(train_sizes, -train_mean - train_std, -train_mean + train_std, alpha=0.1, color="blue")
-    plt.plot(train_sizes, -val_mean, label="Validation Loss", color="orange")
-    plt.fill_between(train_sizes, -val_mean - val_std, -val_mean + val_std, alpha=0.1, color="orange")
+    plt.plot(train_sizes, train_mean, label="Training Error", color="blue")
+    plt.fill_between(train_sizes, train_mean - train_std, train_mean + train_std, alpha=0.1, color="blue")
+    plt.plot(train_sizes, val_mean, label="Cross-validation Error", color="orange")
+    plt.fill_between(train_sizes, val_mean - val_std, val_mean + val_std, alpha=0.1, color="orange")
 
-    plt.title(f"Learning Curve {model_name}", fontsize=24)
-    plt.xlabel("Training Set Size", fontsize=18)
-    plt.ylabel("Loss", fontsize=18)
+    plt.title(f"Learning Curve: {model_name}", fontsize=24)
+    plt.xlabel("Number of Training Samples", fontsize=18)
+    plt.ylabel("Error (Cost Function)", fontsize=18)
     plt.legend(loc="best", fontsize=16)
     plt.grid(True)
+
+    # Assicurati che la directory 'Assets' esista
     if model_name:
-        plt.savefig(f'Assets/learnin_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+        os.makedirs('Assets', exist_ok=True)
+        plt.savefig(f'Assets/learning_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
     plt.show()
 
 

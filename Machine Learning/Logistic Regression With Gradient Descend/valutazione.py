@@ -5,7 +5,7 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
 
 
 # Funzione per valutare precision, recall e F1
-def evaluate_model(model, X_val, predictions, y_val, model_name=""):
+def evaluate_model(model, X_val, predictions, y_val, model_name="") -> dict:
     # Confusion Matrix
     conf_matrix = confusion_matrix(y_val, predictions)
 
@@ -34,7 +34,7 @@ def evaluate_model(model, X_val, predictions, y_val, model_name=""):
         'mcc': mcc,
         'auc': auc,
         'prc_auc': precision_recall_curve_auc,
-        'conf_matrix': conf_matrix,
+        # 'conf_matrix': conf_matrix,
         'model_name': model_name
     }
 

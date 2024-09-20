@@ -6,8 +6,7 @@ import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.metrics import precision_score, recall_score, f1_score
-from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation, \
-    validation_test
+from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -102,26 +101,10 @@ def addestra_modelli(X_train, y_train, **best_params):
     model.set_params(**best_params)
     model.fit(X_train, y_train)
 
-    # Predizione sul set di validazione
-    # predictions = model.predict(X_val)
-
-    # # Valutazione Cross-Validation
-    # k_fold_accuracy = k_fold_cross_validation(model, X_train, y_train, k)
-    # stratified_k_fold_accuracy = stratified_k_fold_cross_validation(model, X_train, y_train, n_splits=5)
-    #
-    # print(f"Accuratezza media con Stratified 5-Fold Cross-Validation: {stratified_k_fold_accuracy}")
-    # print(f"Accuratezza con K-Fold {k} Cross-Validation: {k_fold_accuracy}")
-    #
-    # # Esegui Leave-One-Out Cross-Validation (solo se necessario)
-    # loo_accuracy = leave_one_out_cross_validation(model, X_train, y_train)
-    # print(f"Accuratezza con Leave-One-Out Cross-Validation: {loo_accuracy}")
-
     # Modello di scikit-learn Logistic Regression
-    sk_model = LogisticRegression(max_iter=100)
+    sk_model = LogisticRegression(max_iter=best_params.get('n_iterations', 1000))
     sk_model.fit(X_train, y_train)
-    # sk_predictions = sk_model.predict(X_val)
 
-    # return model, predictions, sk_model, sk_predictions
     return model, sk_model
 
 
@@ -130,7 +113,7 @@ def bayesian_optimization(X_train, y_train):
     param_space = {
         'learning_rate': (1e-4, 1e-1, 'log-uniform'),
         'lambda_': (1e-4, 10e2, 'log-uniform'),
-        'n_iterations': (100, 10000),
+        'n_iterations': (1000, 10000),
         'regularization': ['ridge', 'lasso', 'none']
     }
 
@@ -139,7 +122,7 @@ def bayesian_optimization(X_train, y_train):
         estimator=LogisticRegressionGD(),
         search_spaces=param_space,
         n_iter=150,
-        cv=5,
+        cv=10,
         scoring='neg_log_loss',
         n_jobs=-1,
         random_state=42
@@ -175,12 +158,12 @@ def load_best_params(X_train=None, y_train=None, file_path="Assets/best_paramete
 
     return best_params, best_score
 
-def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="Assets/"):
+def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="Assets/", save_to_file=True, file_name=""):
     # Creazione della lista delle metriche
     lista_metriche = [metriche_modello1, metriche_modello2]
 
     # Creazione del DataFrame escludendo 'conf_matrix'
-    df_metriche = pd.DataFrame(lista_metriche).set_index('model_name').drop(columns=['conf_matrix'])
+    df_metriche = pd.DataFrame(lista_metriche).set_index('model_name')#.drop(columns=['conf_matrix'])
 
     # Ordinare le colonne se necessario
     df_metriche = df_metriche[sorted(df_metriche.columns)]
@@ -190,14 +173,13 @@ def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="As
 
     # Salvataggio su file
     # Controlla se la directory esiste, altrimenti la crea
-    if not os.path.exists(file_path):
-        os.makedirs(file_path)
+    if save_to_file:
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
 
-    # Salva il DataFrame in un file CSV
-    csv_file = os.path.join(file_path, 'metriche_modelli.csv')
-    df_metriche.to_csv(csv_file)
+        # Salva il DataFrame in un file CSV
+        csv_file = os.path.join(file_path, f'{file_name}.csv' if file_name else "metriche_modelli.csv")
+        json_file = os.path.join(file_path, f'{file_name}.json' if file_name else "metriche_modelli.json")
+        df_metriche.to_csv(csv_file)
+        df_metriche.to_json(json_file)
 
-    for metriche in lista_metriche:
-        print(f"Matrice di confusione per {metriche['model_name']}:")
-        print(metriche['conf_matrix'])
-        print()

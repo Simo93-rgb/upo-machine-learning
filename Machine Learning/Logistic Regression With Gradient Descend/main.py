@@ -1,12 +1,8 @@
 from funzioni import *
 from enum import Enum
 import pandas as pd
-
-
-class ModelName(Enum):
-    LOGISTIC_REGRESSION_GD = "LogisticRegressionGD"
-    SCIKIT_LEARN = "Scikit-learn"
-
+from valutazione import *
+from ModelName import ModelName
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -26,21 +22,34 @@ if __name__ == "__main__":
 
     # Caricamento iperparametri
     best_params, best_score = load_best_params(X_train, y_train)
+
     print(f"Migliori iperparametri trovati: {best_params}")
 
     # Cross-validation
     k = 10
-    k_fold_accuracy = k_fold_cross_validation(X_train, y_train, k=k)
-    print(f"Accuratezza con k-fold (k={k}) Cross-Validation: {k_fold_accuracy}")
+    k_fold_metrics, k_fold_sk_metrics = k_fold_cross_validation(X_train, y_train, ModelName, k=k)
+    stampa_metriche_ordinate(k_fold_metrics, k_fold_sk_metrics, file_name="k_fold_metriche_modelli_parametri_base")
 
     model = LogisticRegressionGD(
-        learning_rate=best_params["learning_rate"],
-        lambda_=best_params["lambda_"],
-        n_iterations=best_params["n_iterations"],
-        regularization=best_params["regularization"]
+        # learning_rate=best_params["learning_rate"],
+        # lambda_=best_params["lambda_"],
+        # n_iterations=best_params["n_iterations"],
+        # regularization=best_params["regularization"]
     )
-    plot_learning_curve_with_kfold(model, X_normalized, y_encoded, cv=k,
-                                   model_name=ModelName.LOGISTIC_REGRESSION_GD.value)
+    plot_learning_curve_with_kfold(
+        model=model,
+        X=X_normalized,
+        y=y_encoded,
+        cv=k,
+        model_name=ModelName.LOGISTIC_REGRESSION_GD.value
+    )
+    plot_learning_curve_with_kfold(
+        model=LogisticRegression(max_iter=best_params["n_iterations"]),
+        X=X_normalized,
+        y=y_encoded,
+        cv=k,
+        model_name=ModelName.SCIKIT_LEARN.value
+    )
 
     # Addestramento del modello
     start_model_time = time.time()
@@ -52,17 +61,28 @@ if __name__ == "__main__":
     # Valutazione finale
     print("\nValutazione finale sul Test Set:")
     test_predictions = model.predict(X_test)
-    scores = validation_test(test_predictions, X_test, y_test, model,
-                             model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}")
+    scores = evaluate_model(
+        predictions=test_predictions,
+        X_val=X_test,
+        y_val=y_test,
+        model=model,
+        model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}"
+    )
 
     test_sk_predictions = sk_model.predict(X_test)
-    sk_scores = validation_test(test_sk_predictions, X_test, y_test, sk_model,
-                                model_name=f"Modello {ModelName.SCIKIT_LEARN.value}")
+    sk_scores = evaluate_model(
+        predictions=test_sk_predictions,
+        X_val=X_test,
+        y_val=y_test,
+        model=sk_model,
+        model_name=f"Modello {ModelName.SCIKIT_LEARN.value}"
+    )
 
     print(
-        f"\nTempo di esecuzione del modello {ModelName.SCIKIT_LEARN.value}: {end_model_time - start_model_time:.4f} secondi")
+        f"\nTempo di esecuzione del modello {ModelName.SCIKIT_LEARN.value}: {end_model_time - start_model_time:.4f} secondi"
+    )
 
-    stampa_metriche_ordinate(scores, sk_scores)
+    stampa_metriche_ordinate(scores, sk_scores, save_to_file=True)
 
     # Plotting
     if plotting:
