@@ -30,21 +30,15 @@ if __name__ == "__main__":
     k_fold_metrics, k_fold_sk_metrics = k_fold_cross_validation(X_train, y_train, ModelName, k=k)
     stampa_metriche_ordinate(k_fold_metrics, k_fold_sk_metrics, file_name="k_fold_metriche_modelli_parametri_base")
 
-    model = LogisticRegressionGD(
-        # learning_rate=best_params["learning_rate"],
-        # lambda_=best_params["lambda_"],
-        # n_iterations=best_params["n_iterations"],
-        # regularization=best_params["regularization"]
-    )
     plot_learning_curve_with_kfold(
-        model=model,
+        model=LogisticRegressionGD(n_iterations=1000),
         X=X_normalized,
         y=y_encoded,
         cv=k,
         model_name=ModelName.LOGISTIC_REGRESSION_GD.value
     )
     plot_learning_curve_with_kfold(
-        model=LogisticRegression(max_iter=best_params["n_iterations"]),
+        model=LogisticRegression(max_iter=1000),
         X=X_normalized,
         y=y_encoded,
         cv=k,

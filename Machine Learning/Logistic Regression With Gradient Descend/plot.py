@@ -42,7 +42,8 @@ def plot_corr_matrix(corr_matrix: numpy.ndarray, features_eliminate=None):
         for feature in features_eliminate:
             plt.gca().add_patch(plt.Rectangle((feature, feature), 1, 1, fill=False, edgecolor='red', lw=2))
 
-    plt.savefig('Assets/correlation_matrix_breast_cancer.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig('Assets/correlation_matrix_breast_cancer.png', format='png', dpi=600,
+                bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -85,7 +86,8 @@ def plot_confusion_matrix(y_true, y_pred, model_name):
     plt.title(f"Matrice di Confusione - {model_name}", fontsize=24)
     plt.xlabel("Predicted", fontsize=18)
     plt.ylabel("True", fontsize=18)
-    plt.savefig(f'Assets/confusion_matrix_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/confusion_matrix_{model_name}.png', format='png', dpi=600,
+                bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -103,7 +105,8 @@ def plot_roc_curve(y_true, y_probs, model_name):
     plt.ylabel('True Positive Rate', fontsize=18)
     plt.title(f"Curva ROC - {model_name}", fontsize=24)
     plt.legend(loc="lower right", fontsize=16)
-    plt.savefig(f'Assets/ROC_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/ROC_curve_{model_name}.png', format='png', dpi=600,
+                bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -122,7 +125,8 @@ def plot_roc_curve_sklearn(model, X_val, y_val, model_name=""):
     plt.ylabel('True Positive Rate', fontsize=18)
     plt.title(f'Curva ROC - {model_name}', fontsize=24)
     plt.legend(loc="lower right", fontsize=16)
-    plt.savefig(f'Assets/ROC_curve_{model_name}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/ROC_curve_{model_name}.png', format='png', dpi=600,
+                bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -162,7 +166,6 @@ def plot_metrics_comparison(metrics_dict, model_names):
     plt.show()
 
 
-
 def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regularization_type='ridge'):
     x_dim, y_dim = [20, 12]
     coefficients = []
@@ -184,7 +187,8 @@ def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regular
     plt.xlabel("Lambda", fontsize=18)
     plt.ylabel("Coefficients", fontsize=18)
     plt.legend(loc='best', fontsize=16)
-    plt.savefig(f'Assets/regularization_effect_{regularization_type}.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
+    plt.savefig(f'Assets/regularization_effect_{regularization_type}.png', format='png', dpi=600,
+                bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
@@ -321,8 +325,8 @@ def plot_learning_curve_with_loss(estimator, X_train, y_train, cv=5, train_sizes
     plt.grid()
     plt.show()
 
-def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, auc, sk_auc, model_enum):
 
+def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, auc, sk_auc, model_enum):
     # Curve ROC
     y_probs = model.sigmoid(np.dot(X_test, model.theta) + model.bias)
     plot_roc_curve(y_test, y_probs, f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
@@ -349,7 +353,9 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
         }
     }
 
-    plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}", f"Modello {model_enum.SCIKIT_LEARN.value}"])
+    plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}",
+                                           f"Modello {model_enum.SCIKIT_LEARN.value}"])
+
 
 def plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, model_enum, remaining_feature_names):
     # Plottare la funzione sigmoidale

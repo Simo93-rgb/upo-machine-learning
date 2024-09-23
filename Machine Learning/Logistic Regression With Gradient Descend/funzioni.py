@@ -19,7 +19,6 @@ import os
 import json
 
 
-
 def carica_dati():
     dataset = fetch_ucirepo(id=17)
     X = dataset.data.features
@@ -94,7 +93,6 @@ def elimina_feature_correlate(X, soglia=0.95):
     return X_ridotto, feature_da_eliminare
 
 
-
 def addestra_modelli(X_train, y_train, **best_params):
     # Modello Logistic Regression implementato
     model = LogisticRegressionGD()
@@ -116,7 +114,6 @@ def bayesian_optimization(X_train, y_train):
         'n_iterations': (1000, 10000),
         'regularization': ['ridge', 'lasso', 'none']
     }
-
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
@@ -158,12 +155,14 @@ def load_best_params(X_train=None, y_train=None, file_path="Assets/best_paramete
 
     return best_params, best_score
 
-def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="Assets/", save_to_file=True, file_name=""):
+
+def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="Assets/", save_to_file=True,
+                             file_name=""):
     # Creazione della lista delle metriche
     lista_metriche = [metriche_modello1, metriche_modello2]
 
     # Creazione del DataFrame escludendo 'conf_matrix'
-    df_metriche = pd.DataFrame(lista_metriche).set_index('model_name')#.drop(columns=['conf_matrix'])
+    df_metriche = pd.DataFrame(lista_metriche).set_index('model_name')  # .drop(columns=['conf_matrix'])
 
     # Ordinare le colonne se necessario
     df_metriche = df_metriche[sorted(df_metriche.columns)]
@@ -182,4 +181,3 @@ def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="As
         json_file = os.path.join(file_path, f'{file_name}.json' if file_name else "metriche_modelli.json")
         df_metriche.to_csv(csv_file)
         df_metriche.to_json(json_file)
-
