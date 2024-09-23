@@ -1,0 +1,3 @@
+model_name,auc,f1_score,fp_rate,mcc,prc_auc,precision,recall
+LogisticRegressionGD,0.988826,0.937976,0.063258,0.881054,0.940909,0.932576,0.945076
+Scikit-learn,0.988826,0.916071,0.038258,0.869332,0.936742,0.925,0.911742

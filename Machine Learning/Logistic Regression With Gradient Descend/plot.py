@@ -265,7 +265,7 @@ def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name="", scoring='ne
     plt.fill_between(train_sizes, train_mean - train_std, train_mean + train_std, alpha=0.1, color="blue")
     plt.plot(train_sizes, val_mean, label="Cross-validation Error", color="orange")
     plt.fill_between(train_sizes, val_mean - val_std, val_mean + val_std, alpha=0.1, color="orange")
-
+    plt.ylim(0, 0.5)
     plt.title(f"Learning Curve: {model_name}", fontsize=24)
     plt.xlabel("Number of Training Samples", fontsize=18)
     plt.ylabel("Error (Cost Function)", fontsize=18)
@@ -356,6 +356,42 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
     plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}",
                                            f"Modello {model_enum.SCIKIT_LEARN.value}"])
 
+def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8)):
+    """
+    Plotta la curva Precision-Recall e calcola l'AUC per un modello scikit-learn.
+
+    Parameters:
+    - model: Il modello scikit-learn da valutare.
+    - X_test: Matrice delle feature di test.
+    - y_test: Vettore target di test.
+    - model_name: Nome del modello per il titolo del grafico (default="").
+    - fig_size: Dimensioni del grafico (default=(10, 8)).
+
+    Returns:
+    - None. Mostra il grafico della curva Precision-Recall.
+    """
+    # Prevedi le probabilità per la classe positiva
+    y_prob = model.predict_proba(X_test)[:, 1]
+
+    # Calcola precisione, recall e soglie
+    precision, recall, _ = precision_recall_curve(y_test, y_prob)
+
+    # Calcola l'AUC della curva PRC
+    prc_auc = auc(recall, precision)
+
+    # Plot della curva Precision-Recall
+    plt.figure(figsize=fig_size)
+    plt.plot(recall, precision, label=f'PRC AUC = {prc_auc:.2f}', color='blue')
+
+    # Configura il grafico
+    plt.title(f'Precision-Recall Curve: {model_name}', fontsize=18)
+    plt.xlabel('Recall', fontsize=14)
+    plt.ylabel('Precision', fontsize=14)
+    plt.legend(loc='best', fontsize=12)
+    plt.grid(True)
+
+    # Mostra il grafico
+    plt.show()
 
 def plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, model_enum, remaining_feature_names):
     # Plottare la funzione sigmoidale

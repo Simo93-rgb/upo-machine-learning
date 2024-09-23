@@ -1,11 +1,13 @@
 import time
 from enum import Enum
+from sklearn.utils import shuffle
 
 import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.metrics import precision_score, recall_score, f1_score
+from pandas.core.common import random_state
+from sklearn.metrics import precision_score, recall_score, f1_score, make_scorer
 from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from sklearn.linear_model import LogisticRegression
@@ -23,6 +25,9 @@ def carica_dati():
     dataset = fetch_ucirepo(id=17)
     X = dataset.data.features
     y = dataset.data.targets
+    # Se esiste una colonna chiamata 'ID', la eliminiamo
+    if 'ID' in X.columns:
+        X = X.drop(columns=['ID'])
     return X, y
 
 
@@ -41,14 +46,15 @@ def preprocessa_dati(X, y, class_balancer="", corr=0.95):
     y_encoded = label_encoder.fit_transform(y).ravel()
 
     # Plotting delle classi prima del bilanciamento
-    plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer')
+    # plot_class_distribution(y_encoded, file_name='class_distribution_pie_breast_cancer')
 
     # Gestione del bilanciamento delle classi
     if class_balancer:
         resampler = SMOTE(random_state=42) if class_balancer == "SMOTE" else RandomUnderSampler(random_state=42)
         X_normalized, y_encoded = resampler.fit_resample(X_normalized, y_encoded)
         plot_class_distribution(y_encoded, file_name=f'class_distribution_pie_breast_cancer_{class_balancer}')
-
+        # Mescola i dati dopo il resampling
+    X_normalized, y_encoded = shuffle(X_normalized, y_encoded, random_state=42)
     return X_normalized, features_eliminate, y_encoded
 
 
@@ -106,21 +112,26 @@ def addestra_modelli(X_train, y_train, **best_params):
     return model, sk_model
 
 
-def bayesian_optimization(X_train, y_train):
+def bayesian_optimization(X_train, y_train, scorer=None):
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
-        'learning_rate': (1e-4, 1e-1, 'log-uniform'),
-        'lambda_': (1e-4, 10e2, 'log-uniform'),
-        'n_iterations': (1000, 10000),
+        'learning_rate': (1e-3, 1e-1, 'log-uniform'),
+        'lambda_': (1e-4, 1e1, 'log-uniform'),
+        'n_iterations': (1000, 5000),
         'regularization': ['ridge', 'lasso', 'none']
     }
+
+    if not scorer:
+        # Definire uno scorer basato sulla recall
+        scorer = make_scorer(recall_score)
+
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
         search_spaces=param_space,
-        n_iter=150,
+        n_iter=50,
         cv=10,
-        scoring='neg_log_loss',
+        scoring=scorer,
         n_jobs=-1,
         random_state=42
     )
@@ -138,7 +149,7 @@ def save_best_params(best_params, file_path="best_parameters.json"):
     print(f"Parametri salvati in {file_path}.")
 
 
-def load_best_params(X_train=None, y_train=None, file_path="Assets/best_parameters.json"):
+def load_best_params(X_train=None, y_train=None, file_path="Assets/best_parameters.json", scorer=None):
     # Controllo se esiste il file con i parametri salvati
     if os.path.exists(file_path):
         print(f"Caricamento dei parametri ottimali da {file_path}...")
@@ -148,7 +159,7 @@ def load_best_params(X_train=None, y_train=None, file_path="Assets/best_paramete
     elif not os.path.exists(file_path) and X_train is not None and y_train is not None:
         # Eseguire l'ottimizzazione bayesiana se il file non esiste
         print("Eseguendo l'ottimizzazione bayesiana...")
-        best_params, best_score = bayesian_optimization(X_train, y_train)
+        best_params, best_score = bayesian_optimization(X_train, y_train, scorer=scorer)
         save_best_params(best_params, file_path)
     else:
         raise FileNotFoundError(f"Il file {file_path} non esiste. Assicurati di aver salvato gli iperparametri.")
@@ -160,6 +171,10 @@ def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="As
                              file_name=""):
     # Creazione della lista delle metriche
     lista_metriche = [metriche_modello1, metriche_modello2]
+    for metriche in lista_metriche:
+        for chiave, valore in metriche.items():
+            if isinstance(valore, (int, float)):  # Verifica se il valore è numerico
+                metriche[chiave] = round(valore, 6)  # Arrotonda a 6 cifre decimali
 
     # Creazione del DataFrame escludendo 'conf_matrix'
     df_metriche = pd.DataFrame(lista_metriche).set_index('model_name')  # .drop(columns=['conf_matrix'])

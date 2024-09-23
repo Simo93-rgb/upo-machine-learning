@@ -1,6 +1,1 @@
-{
-    "lambda_": 0.054025693269002174,
-    "learning_rate": 0.0464830780878883,
-    "n_iterations": 5622,
-    "regularization": "none"
-}
+{"lambda_": 1.1533999859559563, "learning_rate": 0.0022066991249460105, "n_iterations": 3392, "regularization": "lasso"}

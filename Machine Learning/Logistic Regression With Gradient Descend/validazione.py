@@ -42,8 +42,8 @@ def k_fold_cross_validation(X, y, model_enum, k=5) -> tuple[dict, dict]:
     non_numeric_metrics = ['model_name']
 
     # Calcola la media delle metriche numeriche con alta precisione
-    mean_metrics = metrics_df[numeric_metrics].mean().apply(lambda x: round(x, 4)).to_dict()
-    sk_mean_metrics = sk_metrics_df[numeric_metrics].mean().apply(lambda x: round(x, 4)).to_dict()
+    mean_metrics = metrics_df[numeric_metrics].mean().apply(lambda x: round(x, 6)).to_dict()
+    sk_mean_metrics = sk_metrics_df[numeric_metrics].mean().apply(lambda x: round(x, 6)).to_dict()
 
     # Ripristina i dizionari originali, mantenendo i campi non numerici invariati
     final_metrics_dict = {**mean_metrics, 'model_name': model_enum.LOGISTIC_REGRESSION_GD.value}
