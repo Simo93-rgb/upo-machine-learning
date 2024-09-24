@@ -9,7 +9,7 @@ if __name__ == "__main__":
     plotting = True
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="undersampling", corr=0.98)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.95)
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns

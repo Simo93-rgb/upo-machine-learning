@@ -1,1 +1,34 @@
-{"accuracy":{"Modello LogisticRegressionGD":0.958824,"Modello Scikit_learn":0.955882},"auc":{"Modello LogisticRegressionGD":0.98826,"Modello Scikit_learn":0.988398},"f1_score":{"Modello LogisticRegressionGD":0.95977,"Modello Scikit_learn":0.956772},"fp_rate":{"Modello LogisticRegressionGD":0.036364,"Modello Scikit_learn":0.036364},"mcc":{"Modello LogisticRegressionGD":0.917668,"Modello Scikit_learn":0.911876},"prc_auc":{"Modello LogisticRegressionGD":0.958961,"Modello Scikit_learn":0.956104},"precision":{"Modello LogisticRegressionGD":0.965318,"Modello Scikit_learn":0.965116},"recall":{"Modello LogisticRegressionGD":0.954286,"Modello Scikit_learn":0.948571}}
+{
+  "accuracy": {
+    "Modello LogisticRegressionGD": 0.958333,
+    "Modello Scikit_learn": 0.960526
+  },
+  "auc": {
+    "Modello LogisticRegressionGD": 0.991857,
+    "Modello Scikit_learn": 0.991525
+  },
+  "f1_score": {
+    "Modello LogisticRegressionGD": 0.943284,
+    "Modello Scikit_learn": 0.945783
+  },
+  "fp_rate": {
+    "Modello LogisticRegressionGD": 0.037931,
+    "Modello Scikit_learn": 0.031034
+  },
+  "mcc": {
+    "Modello LogisticRegressionGD": 0.91045,
+    "Modello Scikit_learn": 0.914749
+  },
+  "prc_auc": {
+    "Modello LogisticRegressionGD": 0.956938,
+    "Modello Scikit_learn": 0.957374
+  },
+  "precision": {
+    "Modello LogisticRegressionGD": 0.934911,
+    "Modello Scikit_learn": 0.945783
+  },
+  "recall": {
+    "Modello LogisticRegressionGD": 0.951807,
+    "Modello Scikit_learn": 0.945783
+  }
+}

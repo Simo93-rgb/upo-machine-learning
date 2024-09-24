@@ -200,14 +200,14 @@ def plot_precision_recall(y_true, y_scores, model_name="", save_file=True):
     auc_score = auc(recalls, precisions)
 
     # Crea il plot
-    plt.figure(figsize=(20, 15))
-    plt.plot(recalls, precisions, label=f'AUC = {auc_score:.2f}', linewidth=2)
+    plt.figure(figsize=(16, 12))
+    plt.plot(recalls, precisions, label=f'AUC = {auc_score:.3f}', linewidth=2)
 
     # Impostazioni del grafico
-    plt.xlabel('Recall', fontsize=16)
-    plt.ylabel('Precision', fontsize=16)
-    plt.title(f'Curva Precision-Recall: {model_name}', fontsize=20)
-    plt.legend(loc='lower left', fontsize=14)
+    plt.xlabel('Recall', fontsize=18)
+    plt.ylabel('Precision', fontsize=18)
+    plt.title(f'Curva Precision-Recall: {model_name}', fontsize=24)
+    plt.legend(loc='lower left', fontsize=16)
     plt.grid(True)
 
     # Salva il grafico, se richiesto
