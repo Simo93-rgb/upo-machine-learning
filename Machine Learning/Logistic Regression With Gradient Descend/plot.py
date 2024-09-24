@@ -186,13 +186,13 @@ def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regular
     plt.title(f"Effetto della Regolarizzazione {regularization_type.capitalize()} sui Coefficienti", fontsize=24)
     plt.xlabel("Lambda", fontsize=18)
     plt.ylabel("Coefficients", fontsize=18)
-    plt.legend(loc='best', fontsize=16)
+    plt.legend(loc='upper left', fontsize=16)
     plt.savefig(f'Assets/regularization_effect_{regularization_type}.png', format='png', dpi=600,
                 bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
 
 
-def plot_precision_recall(y_true, y_scores, model_name=""):
+def plot_precision_recall(y_true, y_scores, model_name="", save_file=True):
     # Calcola precisione, recall e soglie
     precisions, recalls, thresholds = precision_recall_curve(y_true, y_scores)
 
@@ -200,18 +200,18 @@ def plot_precision_recall(y_true, y_scores, model_name=""):
     auc_score = auc(recalls, precisions)
 
     # Crea il plot
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(20, 15))
     plt.plot(recalls, precisions, label=f'AUC = {auc_score:.2f}', linewidth=2)
 
     # Impostazioni del grafico
     plt.xlabel('Recall', fontsize=16)
     plt.ylabel('Precision', fontsize=16)
-    plt.title('Curva Precision-Recall', fontsize=20)
+    plt.title(f'Curva Precision-Recall: {model_name}', fontsize=20)
     plt.legend(loc='lower left', fontsize=14)
     plt.grid(True)
 
     # Salva il grafico, se richiesto
-    if model_name:
+    if save_file:
         plt.savefig(f'Assets/precision_vs_recall_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
 
     # Mostra il grafico
@@ -239,7 +239,7 @@ def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name="", scoring='ne
         model_name = type(model).__name__
 
     # Frazioni del training set da usare (es. dal 10% al 100%)
-    train_sizes = np.linspace(0.1, 1.0, 10)
+    train_sizes = np.linspace(0.1, 1.0, cv)
 
     # Calcola learning curve con K-Fold CV
     train_sizes, train_scores, val_scores = learning_curve(
@@ -279,7 +279,7 @@ def plot_learning_curve_with_kfold(model, X, y, cv=5, model_name="", scoring='ne
     plt.show()
 
 
-def plot_learning_curve_with_loss(estimator, X_train, y_train, cv=5, train_sizes=np.linspace(0.1, 1.0, 10),
+def plot_learning_curve_with_loss(estimator, X_train, y_train, cv=10, train_sizes=np.linspace(0.1, 1.0, 10),
                                   scoring='neg_log_loss', model_name=""):
     """
     Funzione per plottare la curva di apprendimento con la loss sui dati di training e validation.
@@ -356,7 +356,7 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
     plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}",
                                            f"Modello {model_enum.SCIKIT_LEARN.value}"])
 
-def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8)):
+def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_file=True):
     """
     Plotta la curva Precision-Recall e calcola l'AUC per un modello scikit-learn.
 
@@ -390,6 +390,8 @@ def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8)):
     plt.legend(loc='best', fontsize=12)
     plt.grid(True)
 
+    if save_file:
+        plt.savefig(f'Assets/prc_auc_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
     # Mostra il grafico
     plt.show()
 

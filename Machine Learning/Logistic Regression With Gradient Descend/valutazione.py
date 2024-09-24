@@ -16,7 +16,7 @@ def evaluate_model(model, X_val, predictions, y_val, model_name="") -> dict:
 
     # False Positive Rate
     fp_rate = conf_matrix[0][1] / (conf_matrix[0][1] + conf_matrix[0][0])  # FP / (FP + TN)
-
+    accuracy = (conf_matrix[1][1] + conf_matrix[0][0]) / len(predictions) # (TN + TF) / n
     # Matthews Correlation Coefficient (MCC)
     mcc = matthews_corrcoef(y_val, predictions)
 
@@ -27,6 +27,7 @@ def evaluate_model(model, X_val, predictions, y_val, model_name="") -> dict:
     precision_recall_curve_auc = roc_auc_score(y_val, predictions)
 
     return {
+        'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
         'fp_rate': fp_rate,

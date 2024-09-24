@@ -7,7 +7,7 @@ import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from pandas.core.common import random_state
-from sklearn.metrics import precision_score, recall_score, f1_score, make_scorer
+from sklearn.metrics import precision_score, recall_score, f1_score, make_scorer, accuracy_score
 from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from sklearn.linear_model import LogisticRegression
@@ -118,12 +118,12 @@ def bayesian_optimization(X_train, y_train, scorer=None):
         'learning_rate': (1e-3, 1e-1, 'log-uniform'),
         'lambda_': (1e-4, 1e1, 'log-uniform'),
         'n_iterations': (1000, 5000),
-        'regularization': ['ridge', 'lasso', 'none']
+        'regularization': ['ridge', 'lasso']
     }
 
     if not scorer:
         # Definire uno scorer basato sulla recall
-        scorer = make_scorer(recall_score)
+        scorer = make_scorer(accuracy_score)
 
 
     bayes_search = BayesSearchCV(

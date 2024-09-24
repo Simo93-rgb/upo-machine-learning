@@ -6,10 +6,10 @@ from ModelName import ModelName
 
 if __name__ == "__main__":
     start_time = time.time()
-    plotting = False
+    plotting = True
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=1)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="undersampling", corr=0.98)
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # Caricamento iperparametri
     best_params, best_score = load_best_params(X_train, y_train,
-                                               scorer=make_scorer(greater_is_better=True, score_func=recall_score))
+                                               scorer=make_scorer(greater_is_better=True, score_func=f1_score))
 
     print(f"Migliori iperparametri trovati: {best_params}")
 
@@ -84,6 +84,7 @@ if __name__ == "__main__":
         plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, ModelName, remaining_feature_names)
         plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores["auc"],
                      sk_scores["auc"], ModelName)
+
 
     end_time = time.time()
     print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")
