@@ -1,11 +1,12 @@
 import numpy as np
+import pandas as pd
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
     matthews_corrcoef
 
 
 
 # Funzione per valutare precision, recall e F1
-def evaluate_model(model, X_val, predictions, y_val, model_name="") -> dict:
+def evaluate_model(model, X_val, predictions, y_val, model_name="", print_conf_matrix=False) -> dict:
     # Confusion Matrix
     conf_matrix = confusion_matrix(y_val, predictions)
 
@@ -16,7 +17,10 @@ def evaluate_model(model, X_val, predictions, y_val, model_name="") -> dict:
 
     # False Positive Rate
     fp_rate = conf_matrix[0][1] / (conf_matrix[0][1] + conf_matrix[0][0])  # FP / (FP + TN)
+    # accuracy
     accuracy = (conf_matrix[1][1] + conf_matrix[0][0]) / len(predictions) # (TN + TF) / n
+    # False Negative Rate
+    fn_rate = conf_matrix[1][0] / (conf_matrix[1][0] + conf_matrix[1][1])
     # Matthews Correlation Coefficient (MCC)
     mcc = matthews_corrcoef(y_val, predictions)
 
@@ -26,16 +30,22 @@ def evaluate_model(model, X_val, predictions, y_val, model_name="") -> dict:
     # Precision-Recall AUC
     precision_recall_curve_auc = roc_auc_score(y_val, predictions)
 
+    if print_conf_matrix:
+        # Trasforma in DataFrame per una visualizzazione più chiara
+        cm_df = pd.DataFrame(conf_matrix, index=["B (Vera)", "M (Vera)"], columns=["B (Predetta)", "M (Predetta)"])
+        # Stampa il DataFrame
+        print(f'{model_name} Confusion Matrix')
+        print(cm_df)
     return {
         'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
         'fp_rate': fp_rate,
+        'fn_rate':fn_rate,
         'f1_score': f1,
         'mcc': mcc,
         'auc': auc,
         'prc_auc': precision_recall_curve_auc,
-        # 'conf_matrix': conf_matrix,
         'model_name': model_name
     }
 

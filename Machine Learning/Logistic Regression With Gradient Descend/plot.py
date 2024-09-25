@@ -81,14 +81,28 @@ def plot_confusion_matrix(y_true, y_pred, model_name):
     x_dim, y_dim = [16, 12]
     conf_matrix = confusion_matrix(y_true, y_pred)
 
+    # Etichette per le classi
+    class_names = ['B', 'M']
+
     plt.figure(figsize=(x_dim, y_dim))
-    sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", cbar=False, annot_kws={"size": 16})  # Font migliorato
-    plt.title(f"Matrice di Confusione - {model_name}", fontsize=24)
-    plt.xlabel("Predicted", fontsize=18)
-    plt.ylabel("True", fontsize=18)
-    plt.savefig(f'Assets/confusion_matrix_{model_name}.png', format='png', dpi=600,
-                bbox_inches='tight')  # Risoluzione migliorata
+
+    # Heatmap con font migliorato
+    sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", cbar=False,
+                xticklabels=class_names, yticklabels=class_names, annot_kws={"size": 20})  # Ingrandisci i numeri nelle celle
+
+    # Aumentare la dimensione dei font per titolo, etichette degli assi e tick
+    plt.title(f"Matrice di Confusione - {model_name}", fontsize=28, weight='bold')  # Titolo più grande e in grassetto
+    plt.xlabel("Predicted", fontsize=24, weight='bold')  # Etichetta asse X più grande e in grassetto
+    plt.ylabel("True", fontsize=24, weight='bold')  # Etichetta asse Y più grande e in grassetto
+
+    # Aumenta le dimensioni delle etichette degli assi (tick labels)
+    plt.xticks(fontsize=20, weight='bold')
+    plt.yticks(fontsize=20, weight='bold')
+
+    # Salva il plot con maggiore risoluzione
+    plt.savefig(f'Assets/confusion_matrix_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
     plt.show()
+
 
 
 def plot_roc_curve(y_true, y_probs, model_name):
@@ -356,6 +370,7 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
     plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}",
                                            f"Modello {model_enum.SCIKIT_LEARN.value}"])
 
+
 def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_file=True):
     """
     Plotta la curva Precision-Recall e calcola l'AUC per un modello scikit-learn.
@@ -394,6 +409,7 @@ def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_fi
         plt.savefig(f'Assets/prc_auc_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
     # Mostra il grafico
     plt.show()
+
 
 def plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, model_enum, remaining_feature_names):
     # Plottare la funzione sigmoidale

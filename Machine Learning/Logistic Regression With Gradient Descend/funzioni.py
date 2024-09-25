@@ -31,10 +31,16 @@ def carica_dati():
     return X, y
 
 
-def preprocessa_dati(X, y, class_balancer="", corr=0.95):
+def preprocessa_dati(X, y, class_balancer="", corr=0.95, save_dataset=False, file_path='Assets/'):
     # Elimina le feature altamente correlate
+    X_df = X
     X, features_eliminate = elimina_feature_correlate(X, soglia=corr)
     print(f"Features eliminate: {features_eliminate}")
+    # Ottieni i nomi delle feature
+    all_feature_names = X_df.columns
+    remaining_feature_names = [all_feature_names[i] for i in range(len(all_feature_names)) if
+                               i not in features_eliminate]
+    # print(remaining_feature_names)
 
     # Imputazione dei NaN e normalizzazione
     imputer = SimpleImputer(strategy='mean')
@@ -53,8 +59,19 @@ def preprocessa_dati(X, y, class_balancer="", corr=0.95):
         resampler = SMOTE(random_state=42) if class_balancer == "SMOTE" else RandomUnderSampler(random_state=42)
         X_normalized, y_encoded = resampler.fit_resample(X_normalized, y_encoded)
         plot_class_distribution(y_encoded, file_name=f'class_distribution_pie_breast_cancer_{class_balancer}')
-        # Mescola i dati dopo il resampling
+    # Mescola i dati dopo il resampling
     X_normalized, y_encoded = shuffle(X_normalized, y_encoded, random_state=42)
+
+    if save_dataset:
+        file_name = 'breast_cancer_wisconsin'
+        # Crea un DataFrame unendo X_normalized e y_encoded
+        df = pd.DataFrame(X_normalized, columns=remaining_feature_names)
+        df['target'] = y_encoded
+        # Salva in CSV
+        csv_file = os.path.join(file_path, f'{file_name}.csv')
+        df.to_csv(csv_file, index=False)
+        print(f"Dataset salvato in {csv_file}")
+
     return X_normalized, features_eliminate, y_encoded
 
 
@@ -113,18 +130,15 @@ def addestra_modelli(X_train, y_train, **best_params):
 
 
 def bayesian_optimization(X_train, y_train, scorer=None):
+    if not scorer:
+        scorer = make_scorer(false_negative_penalty, greater_is_better=False)
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
-        'learning_rate': (1e-3, 1e-1, 'log-uniform'),
+        'learning_rate': (1, 50, 'log-uniform'),
         'lambda_': (1e-4, 1e1, 'log-uniform'),
-        'n_iterations': (1000, 5000),
-        'regularization': ['ridge', 'lasso']
+        'n_iterations': (1000, 10000),
+        'regularization': ['none']
     }
-
-    if not scorer:
-        # Definire uno scorer basato sulla recall
-        scorer = make_scorer(accuracy_score)
-
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
@@ -149,20 +163,21 @@ def save_best_params(best_params, file_path="best_parameters.json"):
     print(f"Parametri salvati in {file_path}.")
 
 
-def load_best_params(X_train=None, y_train=None, file_path="Assets/best_parameters.json", scorer=None):
+def load_best_params(X_train=None, y_train=None, file_path="Assets/best_parameters.json"):
     # Controllo se esiste il file con i parametri salvati
     if os.path.exists(file_path):
         print(f"Caricamento dei parametri ottimali da {file_path}...")
         with open(file_path, 'r') as file:
             best_params = json.load(file)
         best_score = best_params.pop("accuracy", None)  # Rimuovi 'accuracy' se presente
-    elif not os.path.exists(file_path) and X_train is not None and y_train is not None:
-        # Eseguire l'ottimizzazione bayesiana se il file non esiste
-        print("Eseguendo l'ottimizzazione bayesiana...")
-        best_params, best_score = bayesian_optimization(X_train, y_train, scorer=scorer)
-        save_best_params(best_params, file_path)
     else:
-        raise FileNotFoundError(f"Il file {file_path} non esiste. Assicurati di aver salvato gli iperparametri.")
+        best_params = {
+            "lambda_": 0.0,
+            "learning_rate": 0.1,
+            "n_iterations": 1000,
+            "regularization": "none"
+        }
+        best_score = None
 
     return best_params, best_score
 
@@ -196,3 +211,14 @@ def stampa_metriche_ordinate(metriche_modello1, metriche_modello2, file_path="As
         json_file = os.path.join(file_path, f'{file_name}.json' if file_name else "metriche_modelli.json")
         df_metriche.to_csv(csv_file)
         df_metriche.to_json(json_file)
+
+
+def false_negative_penalty(y_true, y_pred):
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    return -fn  # Penalizza fortemente i falsi negativi (obiettivo minimizzazione)
+
+
+def false_negative_rate(y_true, y_pred):
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    fnr = fn / (fn + tp)  # Calcolo della FNR
+    return fnr

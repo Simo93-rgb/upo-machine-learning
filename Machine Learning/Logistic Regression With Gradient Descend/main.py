@@ -6,10 +6,11 @@ from ModelName import ModelName
 
 if __name__ == "__main__":
     start_time = time.time()
-    plotting = True
+    plotting = False
+    file_path = 'Assets/best_parameters.json'
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.95)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.9)
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns
@@ -21,30 +22,15 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.8, random_state=42)
 
     # Caricamento iperparametri
-    best_params, best_score = load_best_params(X_train, y_train,
-                                               scorer=make_scorer(greater_is_better=True, score_func=f1_score))
+    best_params, best_score = load_best_params()
 
-    print(f"Migliori iperparametri trovati: {best_params}")
+    print(f"Iperparametri caricati: {best_params}")
 
     # Cross-validation
     k = 10
     k_fold_metrics, k_fold_sk_metrics = k_fold_cross_validation(X_train, y_train, ModelName, k=k)
+    print('Stampa delle metriche in fase di cross validazione')
     stampa_metriche_ordinate(k_fold_metrics, k_fold_sk_metrics, file_name="k_fold_metriche_modelli_parametri_base")
-
-    plot_learning_curve_with_kfold(
-        model=LogisticRegressionGD(n_iterations=1000),
-        X=X_normalized,
-        y=y_encoded,
-        cv=k,
-        model_name=ModelName.LOGISTIC_REGRESSION_GD.value
-    )
-    plot_learning_curve_with_kfold(
-        model=LogisticRegression(max_iter=1000),
-        X=X_normalized,
-        y=y_encoded,
-        cv=k,
-        model_name=ModelName.SCIKIT_LEARN.value
-    )
 
     # Addestramento del modello
     start_model_time = time.time()
@@ -52,7 +38,7 @@ if __name__ == "__main__":
     end_model_time = time.time()
     print(
         f"\nTempo di esecuzione del modello {ModelName.LOGISTIC_REGRESSION_GD.value}: {end_model_time - start_model_time:.4f} secondi")
-
+    model.plot_losses()
     # Valutazione finale
     print("\nValutazione finale sul Test Set:")
     test_predictions = model.predict(X_test)
@@ -61,7 +47,8 @@ if __name__ == "__main__":
         X_val=X_test,
         y_val=y_test,
         model=model,
-        model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}"
+        model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}",
+        print_conf_matrix=True
     )
 
     test_sk_predictions = sk_model.predict(X_test)
@@ -70,21 +57,78 @@ if __name__ == "__main__":
         X_val=X_test,
         y_val=y_test,
         model=sk_model,
-        model_name=f"Modello {ModelName.SCIKIT_LEARN.value}"
+        model_name=f"Modello {ModelName.SCIKIT_LEARN.value}",
+        print_conf_matrix=True
     )
 
     print(
         f"\nTempo di esecuzione del modello {ModelName.SCIKIT_LEARN.value}: {end_model_time - start_model_time:.4f} secondi"
     )
 
-    stampa_metriche_ordinate(scores, sk_scores, save_to_file=True)
+    print('Stampa metriche dopo addestramento con X_test')
+    stampa_metriche_ordinate(scores, sk_scores, save_to_file=True, file_name='metriche_modelli_test')
+
+    if not os.path.exists(file_path):
+        # Eseguire l'ottimizzazione bayesiana se il file non esiste
+        print("Eseguendo l'ottimizzazione bayesiana...")
+        best_params, best_score = bayesian_optimization(
+            X_normalized,
+            y_encoded,
+            scorer=make_scorer(false_negative_rate, greater_is_better=False)
+        )
+        save_best_params(best_params, file_path)
+        print("Ottimizzazione bayesiana eseguita")
+
+    print('Addestramento finale con tutto il dataset...')
+    # Addestramento modelli finali
+    final_model, sk_final_model = addestra_modelli(X_normalized, y_encoded, **best_params)
+    # Predizioni con modelli finali
+    predictions = final_model.predict(X_normalized)
+    sk_predictions = sk_final_model.predict(X_normalized)
+
+    final_scores = evaluate_model(
+        predictions=predictions,
+        X_val=X_normalized,
+        y_val=y_encoded,
+        model=final_model,
+        model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}",
+        print_conf_matrix=True
+    )
+    sk_final_scores = evaluate_model(
+        predictions=sk_predictions,
+        X_val=X_normalized,
+        y_val=y_encoded,
+        model=sk_final_model,
+        model_name=f"Modello {ModelName.SCIKIT_LEARN.value}",
+        print_conf_matrix=True
+    )
+    print('Stampa metriche con addestramento totale e stampa matrice confusione')
+    stampa_metriche_ordinate(
+        final_scores,
+        sk_final_scores,
+        save_to_file=True,
+        file_name='metriche_modelli_finali',
+    )
 
     # Plotting
     if plotting:
-        plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, ModelName, remaining_feature_names)
-        plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores["auc"],
-                     sk_scores["auc"], ModelName)
-
+        plot_learning_curve_with_kfold(
+            model=LogisticRegressionGD(n_iterations=1000),
+            X=X_normalized,
+            y=y_encoded,
+            cv=k,
+            model_name=ModelName.LOGISTIC_REGRESSION_GD.value
+        )
+        plot_learning_curve_with_kfold(
+            model=LogisticRegression(max_iter=1000),
+            X=X_normalized,
+            y=y_encoded,
+            cv=k,
+            model_name=ModelName.SCIKIT_LEARN.value
+        )
+        plot_graphs(X_train, y_train, y_encoded, predictions, sk_predictions, ModelName, remaining_feature_names)
+        plot_results(X_normalized, y_encoded, model, sk_model, predictions, sk_predictions, final_scores["auc"],
+                     sk_final_scores["auc"], ModelName)
 
     end_time = time.time()
     print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")

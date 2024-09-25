@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.base import BaseEstimator, ClassifierMixin
 
 
@@ -20,7 +21,7 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
            losses (list): Valori della perdita per ogni iterazione.
        """
 
-    def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='none', lambda_=0.01):
+    def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='none', lambda_=0.0):
         """Inizializza il classificatore LogisticRegressionGD.
 
                 Args:
@@ -104,6 +105,7 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
 
             if i > 0 and abs(self.losses[-2] - loss) < self.tolerance:
                 print(f"Convergence reached at iteration {i}")
+                print(f'Params: lr={self.learning_rate}, lambda={self.lambda_}, reg={self.regularization}, iter={self.n_iterations}')
                 break
 
     def predict(self, X):
@@ -154,3 +156,13 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
         for key, value in params.items():
             setattr(self, key, value)
         return self
+
+    def plot_losses(self):
+        """Traccia la curva della funzione di perdita in base alle iterazioni."""
+        plt.plot(self.losses)
+        plt.title('Loss Function over Iterations')
+        plt.xlabel('Iteration')
+        plt.ylabel('Loss')
+        plt.ylim(0, 0.02)
+        plt.grid(True)
+        plt.show()

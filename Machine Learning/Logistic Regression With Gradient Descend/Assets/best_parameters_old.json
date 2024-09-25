@@ -19,5 +19,48 @@
     "n_iterations": 5622,
     "regularization": "none",
     "ne_log_loss": -0.07231317107356905
+  },
+  {
+    "lambda_": 0.011233621690895234,
+    "learning_rate": 0.02853983686604182,
+    "n_iterations": 4731,
+    "regularization": "ridge",
+    "recall": 0.976415
+  },
+  {
+    "lambda_": 10.0,
+    "learning_rate": 0.06221680841534653,
+    "n_iterations": 2150,
+    "regularization": "lasso"
+  },
+  {
+    "lambda_": 0.016755699440936588,
+    "learning_rate": 0.06877728743793542,
+    "n_iterations": 1419,
+    "regularization": "ridge"
+  },
+  {
+    "lambda_": 0.0001,
+    "learning_rate": 0.1,
+    "n_iterations": 4915,
+    "regularization": "ridge"
+  },
+  {
+    "lambda_": 0.016755699440936588,
+    "learning_rate": 0.06877728743793542,
+    "n_iterations": 1419,
+    "regularization": "ridge"
+  },
+  {
+    "lambda_": 0.0001,
+    "learning_rate": 10,
+    "n_iterations": 4915,
+    "regularization": "ridge"
+  },
+  {
+    "lambda_": 0.0001,
+    "learning_rate": 10,
+    "n_iterations": 10000,
+    "regularization": "ridge"
   }
 ]
