@@ -31,7 +31,7 @@ def carica_dati():
     return X, y
 
 
-def preprocessa_dati(X, y, class_balancer="", corr=0.95, save_dataset=False, file_path='Assets/'):
+def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_dataset=False, file_path='Assets/'):
     # Elimina le feature altamente correlate
     X_df = X
     X, features_eliminate = elimina_feature_correlate(X, soglia=corr)
@@ -44,8 +44,8 @@ def preprocessa_dati(X, y, class_balancer="", corr=0.95, save_dataset=False, fil
 
     # Imputazione dei NaN e normalizzazione
     imputer = SimpleImputer(strategy='mean')
-    X_imputed = imputer.fit_transform(X)
-    X_normalized = (X_imputed - X_imputed.mean(axis=0)) / X_imputed.std(axis=0)
+    X = imputer.fit_transform(X)
+    X = (X - X.mean(axis=0)) / X.std(axis=0) if normalize else X
 
     # Encoding delle classi
     label_encoder = LabelEncoder()
@@ -57,22 +57,22 @@ def preprocessa_dati(X, y, class_balancer="", corr=0.95, save_dataset=False, fil
     # Gestione del bilanciamento delle classi
     if class_balancer:
         resampler = SMOTE(random_state=42) if class_balancer == "SMOTE" else RandomUnderSampler(random_state=42)
-        X_normalized, y_encoded = resampler.fit_resample(X_normalized, y_encoded)
+        X, y_encoded = resampler.fit_resample(X, y_encoded)
         plot_class_distribution(y_encoded, file_name=f'class_distribution_pie_breast_cancer_{class_balancer}')
     # Mescola i dati dopo il resampling
-    X_normalized, y_encoded = shuffle(X_normalized, y_encoded, random_state=42)
+    X, y_encoded = shuffle(X, y_encoded, random_state=42)
 
     if save_dataset:
         file_name = 'breast_cancer_wisconsin'
         # Crea un DataFrame unendo X_normalized e y_encoded
-        df = pd.DataFrame(X_normalized, columns=remaining_feature_names)
+        df = pd.DataFrame(X, columns=remaining_feature_names)
         df['target'] = y_encoded
         # Salva in CSV
         csv_file = os.path.join(file_path, f'{file_name}.csv')
         df.to_csv(csv_file, index=False)
         print(f"Dataset salvato in {csv_file}")
 
-    return X_normalized, features_eliminate, y_encoded
+    return X, features_eliminate, y_encoded
 
 
 def elimina_feature_correlate(X, soglia=0.95):

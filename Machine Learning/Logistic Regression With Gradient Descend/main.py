@@ -19,7 +19,7 @@ if __name__ == "__main__":
     print(remaining_feature_names)
 
     # Suddivisione in train (80%), test (20%)
-    X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.8, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_normalized, y_encoded, test_size=0.2, random_state=42)
 
     # Caricamento iperparametri
     best_params, best_score = load_best_params()
@@ -79,37 +79,6 @@ if __name__ == "__main__":
         save_best_params(best_params, file_path)
         print("Ottimizzazione bayesiana eseguita")
 
-    print('Addestramento finale con tutto il dataset...')
-    # Addestramento modelli finali
-    final_model, sk_final_model = addestra_modelli(X_normalized, y_encoded, **best_params)
-    # Predizioni con modelli finali
-    predictions = final_model.predict(X_normalized)
-    sk_predictions = sk_final_model.predict(X_normalized)
-
-    final_scores = evaluate_model(
-        predictions=predictions,
-        X_val=X_normalized,
-        y_val=y_encoded,
-        model=final_model,
-        model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}",
-        print_conf_matrix=True
-    )
-    sk_final_scores = evaluate_model(
-        predictions=sk_predictions,
-        X_val=X_normalized,
-        y_val=y_encoded,
-        model=sk_final_model,
-        model_name=f"Modello {ModelName.SCIKIT_LEARN.value}",
-        print_conf_matrix=True
-    )
-    print('Stampa metriche con addestramento totale e stampa matrice confusione')
-    stampa_metriche_ordinate(
-        final_scores,
-        sk_final_scores,
-        save_to_file=True,
-        file_name='metriche_modelli_finali',
-    )
-
     # Plotting
     if plotting:
         plot_learning_curve_with_kfold(
@@ -126,9 +95,9 @@ if __name__ == "__main__":
             cv=k,
             model_name=ModelName.SCIKIT_LEARN.value
         )
-        plot_graphs(X_train, y_train, y_encoded, predictions, sk_predictions, ModelName, remaining_feature_names)
-        plot_results(X_normalized, y_encoded, model, sk_model, predictions, sk_predictions, final_scores["auc"],
-                     sk_final_scores["auc"], ModelName)
+        plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, ModelName, remaining_feature_names)
+        plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores["auc"],
+                     sk_scores["auc"], ModelName)
 
     end_time = time.time()
     print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")

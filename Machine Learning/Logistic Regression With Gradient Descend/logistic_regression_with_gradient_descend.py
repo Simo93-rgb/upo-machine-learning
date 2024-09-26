@@ -40,6 +40,7 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
         self.bias = None
         self.losses = []
         self.classes_ = None
+        self.theta_history = []  # Aggiunto per tracciare i valori di theta
 
     def sigmoid(self, z):
         """Calcola la funzione sigmoide.
@@ -50,6 +51,7 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
         Returns:
             np.ndarray: Output dopo l'applicazione della funzione sigmoide.
         """
+        z = np.clip(z, -500, 500)  # Limita z per evitare overflow in exp
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, y, print_iteration=False):
@@ -66,9 +68,11 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
         self.classes_ = np.unique(y)  # Memorizza le classi uniche del target
         y = np.array(y).ravel()
         n_samples, n_features = X.shape
-        self.theta = np.zeros(n_features)
+        # self.theta = np.zeros(n_features)
+        self.theta = np.random.uniform(-4, 5, size=n_features)
         self.bias = 0
         self.losses = []
+        self.theta_history = []
 
         for i in range(self.n_iterations):
             linear_model = np.dot(X, self.theta) + self.bias
@@ -90,6 +94,8 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
             if print_iteration and i % (self.n_iterations // 10) == 0:
                 print(f'Iteration {i}, Loss: {loss}')
 
+            # Memorizza il valore corrente di theta[0] (primo parametro)
+            self.theta_history.append(np.copy(self.theta))
             # Discesa del gradiente
             dw = (1 / n_samples) * np.dot(X.T, (h - y))
             db = (1 / n_samples) * np.sum(h - y)
@@ -100,12 +106,14 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
             elif self.regularization == 'lasso':
                 dw += (self.lambda_ / n_samples) * np.sign(self.theta)
 
+            # # Stampa il gradiente per monitorare l'andamento
+            # print(f"Iteration {i}, Gradient dw: {dw}, db: {db}")
             self.theta -= self.learning_rate * dw
             self.bias -= self.learning_rate * db
-
             if i > 0 and abs(self.losses[-2] - loss) < self.tolerance:
                 print(f"Convergence reached at iteration {i}")
-                print(f'Params: lr={self.learning_rate}, lambda={self.lambda_}, reg={self.regularization}, iter={self.n_iterations}')
+                print(
+                    f'Params: lr={self.learning_rate}, lambda={self.lambda_}, reg={self.regularization}, iter={self.n_iterations}')
                 break
 
     def predict(self, X):
@@ -163,6 +171,9 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
         plt.title('Loss Function over Iterations')
         plt.xlabel('Iteration')
         plt.ylabel('Loss')
-        plt.ylim(0, 0.02)
+        plt.ylim(0, 0.15)
         plt.grid(True)
         plt.show()
+
+
+

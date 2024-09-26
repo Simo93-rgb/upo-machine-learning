@@ -7,6 +7,7 @@ from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from ModelName import ModelName
 import pandas as pd
 
+
 def k_fold_cross_validation(X, y, model_enum, k=5) -> tuple[dict, dict]:
     model = LogisticRegressionGD(n_iterations=1000)
     sk_model = LogisticRegression(max_iter=1000)
@@ -36,22 +37,19 @@ def k_fold_cross_validation(X, y, model_enum, k=5) -> tuple[dict, dict]:
     metrics_df = pd.DataFrame(metrics_list)
     sk_metrics_df = pd.DataFrame(sk_metrics_list)
 
-    # Separa le metriche numeriche da quelle non numeriche
-    numeric_metrics = ['precision', 'recall', 'fp_rate', 'f1_score', 'mcc', 'auc', 'prc_auc']
-    # non_numeric_metrics = ['conf_matrix', 'model_name']
-    non_numeric_metrics = ['model_name']
+    # Identifica metriche numeriche e non numeriche dinamicamente
+    numeric_metrics = metrics_df.select_dtypes(include=[np.number]).columns
+    non_numeric_metrics = metrics_df.select_dtypes(exclude=[np.number]).columns
 
     # Calcola la media delle metriche numeriche con alta precisione
     mean_metrics = metrics_df[numeric_metrics].mean().apply(lambda x: round(x, 6)).to_dict()
     sk_mean_metrics = sk_metrics_df[numeric_metrics].mean().apply(lambda x: round(x, 6)).to_dict()
 
     # Ripristina i dizionari originali, mantenendo i campi non numerici invariati
-    final_metrics_dict = {**mean_metrics, 'model_name': model_enum.LOGISTIC_REGRESSION_GD.value}
-    final_sk_metrics_dict = {**sk_mean_metrics, 'model_name': model_enum.SCIKIT_LEARN.value}
+    final_metrics_dict = {**mean_metrics, **metrics_df[non_numeric_metrics].iloc[0].to_dict()}
+    final_sk_metrics_dict = {**sk_mean_metrics, **sk_metrics_df[non_numeric_metrics].iloc[0].to_dict()}
 
     return final_metrics_dict, final_sk_metrics_dict
-
-
 
 
 def leave_one_out_cross_validation(X, y):
