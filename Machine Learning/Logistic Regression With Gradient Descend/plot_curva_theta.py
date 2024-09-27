@@ -7,7 +7,7 @@ from logistic_regression_with_gradient_descend import LogisticRegressionGD
 
 def plot_gradient_descent(X, y, model, i=0, num_points=6, save_file=False, feature=""):
     # Definire i limiti della curva della funzione di costo
-    theta_values = np.linspace(-4, 5, 100)
+    theta_values = np.linspace(-9, 9, 100)
     cost_values = []
 
     # Calcolo della funzione di costo per vari theta
@@ -116,8 +116,8 @@ remaining_feature_names = [all_feature_names[i] for i in range(len(all_feature_n
 
 # Utilizzo del metodo per plottare la curva di discesa del gradiente
 model = LogisticRegressionGD(
-    learning_rate=0.1,
-    n_iterations=1500,
+    learning_rate=20,
+    n_iterations=15000,
     regularization='none',
     lambda_=0.1)
 model.fit(X_normalized, y_encoded)
