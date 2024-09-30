@@ -69,7 +69,7 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
         y = np.array(y).ravel()
         n_samples, n_features = X.shape
         # self.theta = np.zeros(n_features)
-        self.theta = np.random.uniform(-4, 5, size=n_features)
+        self.theta = np.random.uniform(-0.1, 0.1, size=n_features)
         self.bias = 0
         self.losses = []
         self.theta_history = []

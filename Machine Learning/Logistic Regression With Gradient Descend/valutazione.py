@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_auc_score, \
     matthews_corrcoef
-
 
 
 # Funzione per valutare precision, recall e F1
@@ -23,6 +22,7 @@ def evaluate_model(model, X_val, predictions, y_val, model_name="", print_conf_m
     fn_rate = conf_matrix[1][0] / (conf_matrix[1][0] + conf_matrix[1][1])
     # Matthews Correlation Coefficient (MCC)
     mcc = matthews_corrcoef(y_val, predictions)
+    cohen_kappa_score = cohen_kappa(y_val, predictions)
 
     # AUC (Area under ROC curve)
     auc = calculate_auc(model, X_val, y_val)
@@ -44,6 +44,7 @@ def evaluate_model(model, X_val, predictions, y_val, model_name="", print_conf_m
         'fn_rate':fn_rate,
         'f1_score': f1,
         'mcc': mcc,
+        'cohen_kappa': cohen_kappa_score,
         'auc': auc,
         'prc_auc': precision_recall_curve_auc,
         'model_name': model_name
@@ -71,13 +72,6 @@ def cohen_kappa(y_val, y_pred):
     kappa = (p0 - pe) / (1 - pe) if (1 - pe) != 0 else 1.0
 
     return kappa
-
-
-# # Funzione per calcolare l'AUC (modello personalizzato)
-# def calculate_auc(model, X_val, y_val):
-#     y_probs = model.sigmoid(np.dot(X_val, model.theta) + model.bias)
-#     auc = roc_auc_score(y_val, y_probs)
-#     return auc
 
 
 # Funzione per calcolare l'AUC (modello scikit-learn)

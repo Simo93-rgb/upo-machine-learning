@@ -144,9 +144,11 @@ def plot_roc_curve_sklearn(model, X_val, y_val, model_name=""):
     plt.show()
 
 
-def plot_metrics_comparison(metrics_dict, model_names):
-    x_dim, y_dim = [16, 12]
-    metrics = ['Precision', 'Recall', 'F1-Score', 'AUC']
+def plot_metrics_comparison(metrics_dict: dict, model_names):
+    x_dim, y_dim = 16, 9
+
+    # Ottieni le chiavi (metriche) dal primo modello
+    metrics = [metric for metric in metrics_dict[model_names[0]].keys() if metric != 'model_name']  # Escludiamo 'model_name'
 
     fig, ax = plt.subplots(figsize=(x_dim, y_dim))
 
@@ -164,20 +166,23 @@ def plot_metrics_comparison(metrics_dict, model_names):
     y_max = max_metric + zoom_factor * (max_metric - min_metric)
 
     for i, model_name in enumerate(model_names):
+        # Ottieni i valori delle metriche per ciascun modello
         results = [metrics_dict[model_name][metric] for metric in metrics]
         ax.bar(index + i * bar_width, results, bar_width, label=model_name)
 
     ax.set_xlabel('Metriche', fontsize=18)
     ax.set_title('Confronto delle Metriche tra i Modelli', fontsize=24)
     ax.set_xticks(index + bar_width / 2)
-    ax.set_xticklabels(metrics, fontsize=16)
+    ax.set_xticklabels(metrics, fontsize=16, rotation=45)  # Ruota leggermente le etichette se sono tante
     ax.legend(fontsize=16)
 
     # Imposta i limiti dell'asse y per il "zoom"
     ax.set_ylim([y_min, y_max])
 
+    plt.tight_layout()
     plt.savefig('Assets/metrics_comparison.png', format='png', dpi=600, bbox_inches='tight')  # Risoluzione migliorata
     plt.show()
+
 
 
 def plot_regularization_effect(X_train, y_train, feature_names, lambdas, regularization_type='ridge'):
@@ -340,7 +345,9 @@ def plot_learning_curve_with_loss(estimator, X_train, y_train, cv=10, train_size
     plt.show()
 
 
-def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, auc, sk_auc, model_enum):
+def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores, sk_scores, model_enum):
+    auc = scores['auc']
+    sk_auc = sk_scores['auc']
     # Curve ROC
     y_probs = model.sigmoid(np.dot(X_test, model.theta) + model.bias)
     plot_roc_curve(y_test, y_probs, f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
@@ -350,23 +357,15 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
 
     plot_precision_recall(y_test, test_predictions, model_name=f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
     plot_precision_recall(y_test, test_sk_predictions, model_name=f"Modello {model_enum.SCIKIT_LEARN.value}")
-
+    logistic = scores.pop('model_name')
+    sk_logistic = sk_scores.pop('model_name')
     # Confronto delle metriche
     metrics_dict = {
-        f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}": {
-            "Precision": precision_score(y_test, test_predictions),
-            "Recall": recall_score(y_test, test_predictions),
-            "F1-Score": f1_score(y_test, test_predictions),
-            "AUC": auc
-        },
-        f"Modello {model_enum.SCIKIT_LEARN.value}": {
-            "Precision": precision_score(y_test, test_sk_predictions),
-            "Recall": recall_score(y_test, test_sk_predictions),
-            "F1-Score": f1_score(y_test, test_sk_predictions),
-            "AUC": sk_auc
-        }
+        logistic: scores,
+        sk_logistic: sk_scores
     }
-
+    scores['model_name'] = logistic
+    sk_scores['model_name'] = sk_logistic
     plot_metrics_comparison(metrics_dict, [f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}",
                                            f"Modello {model_enum.SCIKIT_LEARN.value}"])
 

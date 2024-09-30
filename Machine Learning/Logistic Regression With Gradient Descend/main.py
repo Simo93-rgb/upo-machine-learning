@@ -6,11 +6,11 @@ from ModelName import ModelName
 
 if __name__ == "__main__":
     start_time = time.time()
-    plotting = False
+    plotting = True
     file_path = 'Assets/best_parameters.json'
     # Carica e pre-processa i dati
     X, y = carica_dati()
-    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.9)
+    X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.95)
 
     # Ottieni i nomi delle feature
     all_feature_names = X.columns
@@ -95,9 +95,9 @@ if __name__ == "__main__":
             cv=k,
             model_name=ModelName.SCIKIT_LEARN.value
         )
-        plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, ModelName, remaining_feature_names)
-        plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores["auc"],
-                     sk_scores["auc"], ModelName)
+        # plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, ModelName, remaining_feature_names)
+        plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores,
+                     sk_scores, ModelName)
 
     end_time = time.time()
     print(f"\nTempo di esecuzione totale: {end_time - start_time:.4f} secondi")
