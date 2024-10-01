@@ -1,8 +1,11 @@
+import copy
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from funzioni import *
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
+import concurrent.futures
 
 
 def plot_gradient_descent(X, y, model, i=0, num_points=6, save_file=False, feature=""):
@@ -48,12 +51,10 @@ def plot_gradient_descent(X, y, model, i=0, num_points=6, save_file=False, featu
     # Parametrizzazione per lo spazio di visualizzazione (usa range più ampio per un zoom più generale)
     min_cost = min(cost_history) - 0.1  # Margine più ampio per la visualizzazione del costo
     max_cost = max(cost_history) + 0.1
-    min_theta = -4  # Usa un range più ampio per theta
-    max_theta = 5
+    min_theta = -10  # Usa un range più ampio per theta
+    max_theta = 10
     plt.xlim(min_theta, max_theta)
     plt.ylim(min_cost, max_cost)
-
-
 
     # Creare una mappa di colori e ridurre la dimensione dei punti
     colors = cm.rainbow(np.linspace(0, 1, num_points))
@@ -74,18 +75,51 @@ def plot_gradient_descent(X, y, model, i=0, num_points=6, save_file=False, featu
     plt.grid(True)
 
     if save_file:
-        plt.savefig(f'Assets/theta_{feature}.png', format='png', dpi=600, bbox_inches='tight')
+        plt.savefig(f'Assets/thetas/theta_{feature}.png', format='png', dpi=600, bbox_inches='tight')
 
     plt.show()
+    # plt.close()
 
 
+# def plot_all_thetas(X, y, model, remaining_feature_names, num_points=6):
+#     num_thetas = len(model.theta)  # Numero di theta corrispondente al numero di feature
+#     for i in range(num_thetas):
+#         # Passare il nome della feature al posto dell'indice
+#         plot_gradient_descent(X,
+#                               y,
+#                               model,
+#                               i,
+#                               num_points,
+#                               feature=remaining_feature_names[i],
+#                               save_file=True
+#                               )
+#         print(f'theta della feature {remaining_feature_names[i]}: {model.theta_history} ')
 
 def plot_all_thetas(X, y, model, remaining_feature_names, num_points=6):
     num_thetas = len(model.theta)  # Numero di theta corrispondente al numero di feature
-    for i in range(num_thetas):
-        # Passare il nome della feature al posto dell'indice
-        plot_gradient_descent(X, y, model, i, num_points, feature=remaining_feature_names[i])
-        # print(f'theta della feature {remaining_feature_names[i]}: {model.theta_history} ')
+
+    # Usa ThreadPoolExecutor per parallelizzare i plot
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for i in range(num_thetas):
+            # Crea copie profonde (deepcopy) per ogni parametro che potrebbe essere modificato
+            X_copy = copy.deepcopy(X)
+            y_copy = copy.deepcopy(y)
+            model_copy = copy.deepcopy(model)  # Crea una copia del modello
+            feature_name_copy = remaining_feature_names[i]  # Copia il nome della feature
+
+            # Invia ogni task al thread pool passando le copie
+            futures.append(executor.submit(
+                plot_gradient_descent,
+                X_copy, y_copy, model_copy, i, num_points, True, feature_name_copy
+            ))
+
+        # Opzionale: aspetta che tutti i thread completino il lavoro
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                future.result()  # Gestisce eventuali eccezioni nei thread
+            except Exception as e:
+                print(f"Error in plotting theta: {e}")
 
 
 # Visualizza il cambiamento di theta per una feature (es. 'radius1')
@@ -96,7 +130,6 @@ def plot_theta_history(theta_history, feature_name):
     plt.ylabel(f'Theta [{feature_name}]')
     plt.grid(True)
     plt.show()
-
 
 
 # Esegui il codice come prima, passando anche la lista dei nomi delle feature
@@ -116,12 +149,13 @@ remaining_feature_names = [all_feature_names[i] for i in range(len(all_feature_n
 
 # Utilizzo del metodo per plottare la curva di discesa del gradiente
 model = LogisticRegressionGD(
-    learning_rate=20,
-    n_iterations=15000,
+    learning_rate=0.001,
+    n_iterations=150000,
     regularization='none',
     lambda_=0.1)
 model.fit(X_normalized, y_encoded)
 # Esempio di utilizzo con una delle feature
 # plot_theta_history([th[0] for th in model.theta_history], 'radius1')
 
+print('Start plotting')
 plot_all_thetas(X_normalized, y_encoded, model, remaining_feature_names)

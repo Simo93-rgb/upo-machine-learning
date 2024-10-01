@@ -1,13 +1,11 @@
+import time
 from funzioni import *
-from enum import Enum
-import pandas as pd
-from valutazione import *
-from ModelName import ModelName
+from validazione import *
 
 if __name__ == "__main__":
     start_time = time.time()
     plotting = True
-    file_path = 'Assets/best_parameters.json'
+    param_file_path = 'Assets/best_parameters.json'
     # Carica e pre-processa i dati
     X, y = carica_dati()
     X_normalized, features_eliminate, y_encoded = preprocessa_dati(X, y, class_balancer="", corr=0.95)
@@ -68,7 +66,7 @@ if __name__ == "__main__":
     print('Stampa metriche dopo addestramento con X_test')
     stampa_metriche_ordinate(scores, sk_scores, save_to_file=True, file_name='metriche_modelli_test')
 
-    if not os.path.exists(file_path):
+    if not os.path.exists(param_file_path):
         # Eseguire l'ottimizzazione bayesiana se il file non esiste
         print("Eseguendo l'ottimizzazione bayesiana...")
         best_params, best_score = bayesian_optimization(
@@ -76,7 +74,7 @@ if __name__ == "__main__":
             y_encoded,
             scorer=make_scorer(false_negative_rate, greater_is_better=False)
         )
-        save_best_params(best_params, file_path)
+        save_best_params(best_params, param_file_path)
         print("Ottimizzazione bayesiana eseguita")
 
     # Plotting

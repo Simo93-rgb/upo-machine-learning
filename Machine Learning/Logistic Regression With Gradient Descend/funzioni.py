@@ -1,13 +1,8 @@
-import time
-from enum import Enum
 from sklearn.utils import shuffle
-
-import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
-from pandas.core.common import random_state
-from sklearn.metrics import precision_score, recall_score, f1_score, make_scorer, accuracy_score
+from sklearn.metrics import make_scorer
 from validazione import k_fold_cross_validation, leave_one_out_cross_validation, stratified_k_fold_cross_validation
 from logistic_regression_with_gradient_descend import LogisticRegressionGD
 from sklearn.linear_model import LogisticRegression
@@ -21,17 +16,29 @@ import os
 import json
 
 
-def carica_dati():
-    dataset = fetch_ucirepo(id=17)
-    X = dataset.data.features
-    y = dataset.data.targets
-    # Se esiste una colonna chiamata 'ID', la eliminiamo
-    if 'ID' in X.columns:
-        X = X.drop(columns=['ID'])
+def carica_dati(file_path='Assets/dataset', file_name='breast_cancer_wisconsin'):
+    if not os.path.exists(f'{file_path}/{file_name}.csv'):
+        dataset = fetch_ucirepo(id=17)
+        X = dataset.data.features
+        y = dataset.data.targets
+        # Se esiste una colonna chiamata 'ID', la eliminiamo
+        if 'ID' in X.columns:
+            X = X.drop(columns=['ID'])
+        # Crea un DataFrame unendo X_normalized e y_encoded
+        df = pd.DataFrame(X, columns=X.columns)
+        df['target'] = y
+        # Salva in CSV
+        csv_file = os.path.join(file_path, f'{file_name}.csv')
+        df.to_csv(csv_file, index=False)
+        print(f"Dataset salvato in {csv_file}")
+    else:
+        df = pd.read_csv(f'{file_path}/{file_name}.csv')
+        X = df.drop(columns='target')
+        y = df['target']
     return X, y
 
 
-def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_dataset=False, file_path='Assets/'):
+def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_dataset=False, file_path='Assets/dataset'):
     # Elimina le feature altamente correlate
     X_df = X
     X, features_eliminate = elimina_feature_correlate(X, soglia=corr)
@@ -63,7 +70,7 @@ def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_da
     X, y_encoded = shuffle(X, y_encoded, random_state=42)
 
     if save_dataset:
-        file_name = 'breast_cancer_wisconsin'
+        file_name = 'breast_cancer_wisconsin_edited'
         # Crea un DataFrame unendo X_normalized e y_encoded
         df = pd.DataFrame(X, columns=remaining_feature_names)
         df['target'] = y_encoded

@@ -9,5 +9,5 @@ per il caso non supervisionato l'implementazione di un algoritmo PCA.
 
 ### Logistic Regression
 Il dataset scelto è Breast Cancer Winsconsin che verrà importato e manipolato direttamente da codice python.
-L'implementazione sarà divisa in sorgenti e la regressione logistica di per se sarà una classe, resa anche 
-compatibile con le API di scikit-learn così da poterla interscambiare con quella della libreria.
+L'implementazione della regressione logistica è resa compatibile con le API di scikit-learn così da poterla 
+interscambiare con quella della libreria.
