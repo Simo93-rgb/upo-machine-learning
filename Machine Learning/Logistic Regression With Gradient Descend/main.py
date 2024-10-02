@@ -21,7 +21,16 @@ if __name__ == "__main__":
 
     # Caricamento iperparametri
     best_params, best_score = load_best_params()
-
+    if not os.path.exists(param_file_path):
+        # Eseguire l'ottimizzazione bayesiana se il file non esiste
+        print("Eseguendo l'ottimizzazione bayesiana...")
+        best_params, best_score = bayesian_optimization(
+            X_normalized,
+            y_encoded,
+            scorer=make_scorer(false_negative_rate, greater_is_better=False)
+        )
+        save_best_params(best_params, param_file_path)
+        print("Ottimizzazione bayesiana eseguita")
     print(f"Iperparametri caricati: {best_params}")
 
     # Cross-validation
@@ -66,16 +75,7 @@ if __name__ == "__main__":
     print('Stampa metriche dopo addestramento con X_test')
     stampa_metriche_ordinate(scores, sk_scores, save_to_file=True, file_name='metriche_modelli_test')
 
-    if not os.path.exists(param_file_path):
-        # Eseguire l'ottimizzazione bayesiana se il file non esiste
-        print("Eseguendo l'ottimizzazione bayesiana...")
-        best_params, best_score = bayesian_optimization(
-            X_normalized,
-            y_encoded,
-            scorer=make_scorer(false_negative_rate, greater_is_better=False)
-        )
-        save_best_params(best_params, param_file_path)
-        print("Ottimizzazione bayesiana eseguita")
+
 
     # Plotting
     if plotting:
