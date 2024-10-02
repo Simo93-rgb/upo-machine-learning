@@ -4,7 +4,7 @@ from validazione import *
 
 if __name__ == "__main__":
     start_time = time.time()
-    plotting = True
+    plotting = False
     param_file_path = 'Assets/best_parameters.json'
     # Carica e pre-processa i dati
     X, y = carica_dati()
@@ -42,8 +42,8 @@ if __name__ == "__main__":
     test_predictions = model.predict(X_test)
     scores = evaluate_model(
         predictions=test_predictions,
-        X_val=X_test,
-        y_val=y_test,
+        X=X_test,
+        y=y_test,
         model=model,
         model_name=f"Modello {ModelName.LOGISTIC_REGRESSION_GD.value}",
         print_conf_matrix=True
@@ -52,8 +52,8 @@ if __name__ == "__main__":
     test_sk_predictions = sk_model.predict(X_test)
     sk_scores = evaluate_model(
         predictions=test_sk_predictions,
-        X_val=X_test,
-        y_val=y_test,
+        X=X_test,
+        y=y_test,
         model=sk_model,
         model_name=f"Modello {ModelName.SCIKIT_LEARN.value}",
         print_conf_matrix=True

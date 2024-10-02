@@ -355,8 +355,20 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
     y_sk_probs = sk_model.predict_proba(X_test)[:, 1]
     plot_roc_curve(y_test, y_sk_probs, f"Modello {model_enum.SCIKIT_LEARN.value}")
 
-    plot_precision_recall(y_test, test_predictions, model_name=f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
-    plot_precision_recall(y_test, test_sk_predictions, model_name=f"Modello {model_enum.SCIKIT_LEARN.value}")
+    plot_prc_auc(
+        model,
+        X_test,
+        y_test,
+        model_name=f"modello_{model_enum.LOGISTIC_REGRESSION_GD.value}"
+    )
+    plot_prc_auc(
+        sk_model,
+        X_test,
+        y_test,
+        model_name=f"modello_{model_enum.SCIKIT_LEARN.value}"
+    )
+    # plot_precision_recall(y_test, test_predictions, model_name=f"Modello {model_enum.LOGISTIC_REGRESSION_GD.value}")
+    # plot_precision_recall(y_test, test_sk_predictions, model_name=f"Modello {model_enum.SCIKIT_LEARN.value}")
     logistic = scores.pop('model_name')
     sk_logistic = sk_scores.pop('model_name')
     # Confronto delle metriche
@@ -370,7 +382,9 @@ def plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_pred
                                            f"Modello {model_enum.SCIKIT_LEARN.value}"])
 
 
-def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_file=True):
+
+
+def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_file=True, num_thresholds=10):
     """
     Plotta la curva Precision-Recall e calcola l'AUC per un modello scikit-learn.
 
@@ -380,6 +394,8 @@ def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_fi
     - y_test: Vettore target di test.
     - model_name: Nome del modello per il titolo del grafico (default="").
     - fig_size: Dimensioni del grafico (default=(10, 8)).
+    - save_file: Se True, salva il grafico come file PNG.
+    - num_thresholds: Numero di soglie da rappresentare sul grafico.
 
     Returns:
     - None. Mostra il grafico della curva Precision-Recall.
@@ -388,7 +404,7 @@ def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_fi
     y_prob = model.predict_proba(X_test)[:, 1]
 
     # Calcola precisione, recall e soglie
-    precision, recall, _ = precision_recall_curve(y_test, y_prob)
+    precision, recall, thresholds = precision_recall_curve(y_test, y_prob)
 
     # Calcola l'AUC della curva PRC
     prc_auc = auc(recall, precision)
@@ -404,10 +420,21 @@ def plot_prc_auc(model, X_test, y_test, model_name="", fig_size=(10, 8), save_fi
     plt.legend(loc='best', fontsize=12)
     plt.grid(True)
 
+    # Seleziona soglie rappresentative per evidenziare alcuni punti
+    # Selezioniamo num_thresholds punti uniformemente distribuiti
+    thresholds_to_plot = np.linspace(0, len(thresholds) - 1, num=num_thresholds, dtype=int)
+
+    # Plotta punti rappresentativi con soglie
+    for idx in thresholds_to_plot:
+        plt.scatter(recall[idx], precision[idx], marker='o', color='red')
+        plt.text(recall[idx], precision[idx], f'{thresholds[idx]:.2f}', fontsize=10, ha='right')
+
     if save_file:
         plt.savefig(f'Assets/prc_auc_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+
     # Mostra il grafico
     plt.show()
+
 
 
 def plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, model_enum, remaining_feature_names):
