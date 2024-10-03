@@ -1,6 +1,0 @@
-{
-  "lambda_": 0.01,
-  "learning_rate": 0.01,
-  "n_iterations": 10000,
-  "regularization": "none"
-}

@@ -138,19 +138,19 @@ def addestra_modelli(X_train, y_train, **best_params):
 
 def bayesian_optimization(X_train, y_train, scorer=None):
     if not scorer:
-        scorer = make_scorer(false_negative_penalty, greater_is_better=False)
+        scorer = make_scorer(false_negative_rate, greater_is_better=False)
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
-        'learning_rate': (1, 50, 'log-uniform'),
+        'learning_rate': (0.001, 1, 'log-uniform'),
         'lambda_': (1e-4, 1e1, 'log-uniform'),
-        'n_iterations': (1000, 10000),
-        'regularization': ['none']
+        'n_iterations': (1000, 100000),
+        'regularization': ['none', 'ridge', 'lasso']
     }
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
         search_spaces=param_space,
-        n_iter=50,
+        n_iter=5000,
         cv=10,
         scoring=scorer,
         n_jobs=-1,
