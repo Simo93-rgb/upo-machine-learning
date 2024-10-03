@@ -10,3 +10,4 @@ upo-machine-learning/Machine Learning/Logistic Regression With Gradient Descend/
 # Ignora ambienti virtuali Python
 venv/
 .env/
+Zone.Identifier
