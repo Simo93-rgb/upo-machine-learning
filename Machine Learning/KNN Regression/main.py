@@ -1,55 +1,54 @@
-from ucimlrepo import fetch_ucirepo
-
+from sklearn.discriminant_analysis import StandardScaler
 from knn import KNN
 from valutazione import *
 from validazione import KFoldValidation
-from plot import plot_predictions, plot_residuals, plot_corr_matrix
+from plot import plot_predictions, plot_residuals, plot_learning_curve
+from data import fetch_data, edit_dataset
+import os
 
-# Caricamento del dataset
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+# Percorso del file main.py
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Percorso alla cartella "Assets" nella directory "KNN Regression"
+assets_dir = os.path.join(current_dir, 'Assets')
+
 
 if __name__ == "__main__":
 
     # Fetch del dataset Combined Cycle Power Plant
-    combined_cycle_power_plant = fetch_ucirepo(id=294)
+    X, y = fetch_data(assets_dir)
 
-    # data (as pandas dataframes)
-    X = combined_cycle_power_plant.data.features
-    y = combined_cycle_power_plant.data.targets
-
-    # Standardizzazione delle feature con z-score normalization
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
-    # Normalizzazione del target y
-    y_scaled = scaler.fit_transform(y.values.reshape(-1, 1)).ravel()
-
-    # Suddivisione in train (60%), validation (20%) e test (20%)
-    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.4, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.5, random_state=42)
+    # Manipolazione dataset con opzioni di standardizzazione per X e y
+    X_train, X_test, y_train, y_test, x_scaler, y_scaler = edit_dataset(X, y, X_standardization=True, y_standardization=True)
 
     # Creazione del modello KNN
-    knn = KNN(k=5)
+    knn = KNN(k=50)
 
-    # Validazione incrociata (k-fold) sul set di training/validation
-    k_fold_validator = KFoldValidation(model=knn, k_folds=5)
+    # Plot della curva di apprendimento
+    plot_learning_curve(X_train=X_train, y_train=y_train, X_val=X_test, y_val=y_test, model=knn, assets_dir=assets_dir)
+
+    # Validazione incrociata (k-fold) sul set di trai∟ning/validation
+    k_fold_validator = KFoldValidation(model=knn, k_folds=10)
     metrix = k_fold_validator.validate(X_train, y_train)
     [print(f"{chiave} su cross validation (k-fold): {valore}\n") for chiave, valore in metrix.items()]
 
     # Addestramento finale sul training set completo
     knn.fit(X_train, y_train)
 
-    # Predizioni su validation set (per confermare la bontà del modello)
-    y_val_pred = knn.predict(X_val)
-    y_val_pred_rescaled = scaler.inverse_transform(y_val_pred.reshape(-1, 1)).ravel()  # Riportare alla scala originale
-    evaluate_model(y_true=scaler.inverse_transform(y_val.reshape(-1, 1)).ravel(), y_pred=y_val_pred_rescaled, message="Validation Set")
-
     # Predizioni su test set
     y_test_pred = knn.predict(X_test)
-    y_test_pred_rescaled = scaler.inverse_transform(y_test_pred.reshape(-1, 1)).ravel()  # Riportare alla scala originale
-    evaluate_model(y_true=scaler.inverse_transform(y_test.reshape(-1, 1)).ravel(), y_pred=y_test_pred_rescaled, message="Test Set")
+
+    # Se è stata applicata la standardizzazione su y, esegui l'inverso della trasformazione
+    if y_scaler:
+        y_test_pred_rescaled = y_scaler.inverse_transform(y_test_pred.reshape(-1, 1)).ravel()  # Riportare alla scala originale
+        y_test_rescaled = y_scaler.inverse_transform(y_test.reshape(-1, 1)).ravel()
+    else:
+        y_test_pred_rescaled = y_test_pred
+        y_test_rescaled = y_test
+
+    # Valutazione del modello
+    evaluate_model(y_true=y_test_rescaled, y_pred=y_test_pred_rescaled, message="Test Set")
 
     # Visualizzazioni
-    plot_predictions(scaler.inverse_transform(y_test.reshape(-1, 1)).ravel(), y_test_pred_rescaled, model_name="KNN")
-    plot_residuals(scaler.inverse_transform(y_test.reshape(-1, 1)).ravel(), y_test_pred_rescaled, model_name="KNN")
+    plot_predictions(y_test_rescaled, y_test_pred_rescaled, model_name="KNN", assets_dir=assets_dir)
+    plot_residuals(y_test_rescaled, y_test_pred_rescaled, model_name="KNN", assets_dir=assets_dir)
