@@ -6,6 +6,7 @@ import seaborn as sns
 from data import fetch_data, edit_dataset
 from knn import KNN
 import os
+import argparse
 
 # Percorso del file main.py
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -52,7 +53,7 @@ def plot_corr_matrix(X, assets_dir=""):
     plt.close()
 
 
-def plot_learning_curve(model, X_train, y_train, X_val, y_val, assets_dir=""):
+def plot_learning_curve(model, X_train, y_train, X_val, y_val, assets_dir="", file_name='learning_curve'):
     """ Plotta la curva di apprendimento per un dato modello KNN. """
 
     train_errors = []
@@ -89,13 +90,54 @@ def plot_learning_curve(model, X_train, y_train, X_val, y_val, assets_dir=""):
     plt.title('Curva di Apprendimento - KNN')
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'{assets_dir}/learning_curve.png', format='png', dpi=600, bbox_inches='tight')
+    plt.savefig(f'{assets_dir}/{file_name}.png', format='png', dpi=600, bbox_inches='tight')
 
     # plt.show()
 
-if __name__=='__main__':
-    X, y = fetch_data(assets_dir)
-    X_train, X_test, y_train, y_test, _, _ = edit_dataset(X, y, X_standardization=False ,y_standardization=False)
 
-    knn = KNN(k=150)
-    plot_learning_curve(knn, X_train, y_train, X_test, y_test, assets_dir)
+
+if __name__ == '__main__':
+    # Funzione per convertire stringhe in booleani
+    def str2bool(v):
+        if isinstance(v, bool):
+            return v
+        if v.lower() in ('yes', 'true', 't', 'y', '1'):
+            return True
+        elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+            return False
+        else:
+            raise argparse.ArgumentTypeError('Boolean value expected.')
+    
+    # Parser degli argomenti posizionali
+    parser = argparse.ArgumentParser(description="KNN with optional standardization and k value.")
+    parser.add_argument('X_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
+    parser.add_argument('y_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of y (default: True)')
+    parser.add_argument('k', type=int, nargs='?', default=50, help='Value of k for KNN (default: 50)')
+    parser.add_argument('test_size', type=float, nargs='?', default=0.2, help='Value of k for KNN (default: 0.2)')
+
+    args = parser.parse_args()
+
+    # Utilizzo degli argomenti passati
+    X_standardization = args.X_standardization
+    y_standardization = args.y_standardization
+    k = args.k
+    test_size=args.test_size
+
+    # Carica i dati e prepara il dataset
+    X, y = fetch_data(assets_dir)
+    X_train, X_test, y_train, y_test, _, _ = edit_dataset(X, y, X_standardization=X_standardization, y_standardization=y_standardization, test_size=test_size)
+
+    # Crea il modello KNN
+    knn = KNN(k=k)
+    print(f'Plotting:\nX_standardization = {X_standardization}\ny_standardization = {y_standardization}\nKNN(k={k})\ntest_size = {test_size}')
+
+    # Plot della learning curve
+    plot_learning_curve(
+        knn, 
+        X_train, 
+        y_train, 
+        X_test, 
+        y_test, 
+        assets_dir, 
+        file_name=f'learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}'
+    )

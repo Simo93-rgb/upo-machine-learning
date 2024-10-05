@@ -41,7 +41,13 @@ def fetch_data(assets_dir: str = "") -> Tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
-def edit_dataset(X: pd.DataFrame, y: pd.Series, X_standardization: bool = True, y_standardization: bool = True) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
+def edit_dataset(
+        X: pd.DataFrame, 
+        y: pd.Series, 
+        X_standardization: bool = True, 
+        y_standardization: bool = True,
+        test_size=0.2
+        ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
     """
     Standardizza il dataset e lo suddivide in training e test.
 
@@ -68,6 +74,6 @@ def edit_dataset(X: pd.DataFrame, y: pd.Series, X_standardization: bool = True, 
         y = y_scaler.fit_transform(y.values.reshape(-1, 1)).ravel()
 
     # Suddivisione in train (80%) e test (20%)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     
     return X_train, X_test, y_train, y_test, x_scaler, y_scaler
