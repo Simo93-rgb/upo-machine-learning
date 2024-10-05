@@ -62,5 +62,11 @@
     "learning_rate": 10,
     "n_iterations": 10000,
     "regularization": "ridge"
+  },
+  {
+    "lambda_": 0.06276718872380332,
+    "learning_rate": 0.23530060684826912,
+    "n_iterations": 1360,
+    "regularization": "none"
   }
 ]
