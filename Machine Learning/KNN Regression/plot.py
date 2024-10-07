@@ -5,6 +5,7 @@ from valutazione import validate_predictions
 import seaborn as sns
 from data import fetch_data, edit_dataset
 from knn import KNN
+from knn_parallel import  KNN_Parallel
 import os
 import argparse
 
@@ -16,7 +17,7 @@ assets_dir = os.path.join(current_dir, 'Assets')
 
 def plot_predictions(y_true, y_pred, model_name="", assets_dir=""):
     y_true, y_pred = validate_predictions(y_true, y_pred)
-    x_dim, y_dim = [16, 12]
+    x_dim, y_dim = [16, 9]
     plt.figure(figsize=(x_dim, y_dim))
     plt.scatter(y_true, y_pred, alpha=0.5, color='blue')
     plt.plot([min(y_true), max(y_true)], [min(y_true), max(y_true)], color='red', lw=2)
@@ -30,7 +31,7 @@ def plot_predictions(y_true, y_pred, model_name="", assets_dir=""):
 
 def plot_residuals(y_true, y_pred, model_name="", assets_dir=""):
     y_true, y_pred = validate_predictions(y_true, y_pred)
-    x_dim, y_dim = [16, 12]
+    x_dim, y_dim = [16, 9]
     residuals = y_true - y_pred
     plt.figure(figsize=(x_dim, y_dim))
     plt.hist(residuals, bins=60, color='orange')
@@ -43,7 +44,7 @@ def plot_residuals(y_true, y_pred, model_name="", assets_dir=""):
 
 
 def plot_corr_matrix(X, assets_dir=""):
-    x_dim, y_dim = [20, 16]
+    x_dim, y_dim = [20, 14]
     corr_matrix = np.corrcoef(X, rowvar=False)
     plt.figure(figsize=(x_dim, y_dim))
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f')
@@ -53,7 +54,8 @@ def plot_corr_matrix(X, assets_dir=""):
     plt.close()
 
 
-def plot_learning_curve(model, X_train, y_train, X_val, y_val, assets_dir="", file_name='learning_curve'):
+def plot_learning_curve(model, X_train, y_train, X_test, y_test, assets_dir="", file_name='learning_curve'):
+    print('Plotting Learning Curve')
     """ Plotta la curva di apprendimento per un dato modello KNN. """
 
     train_errors = []
@@ -63,8 +65,10 @@ def plot_learning_curve(model, X_train, y_train, X_val, y_val, assets_dir="", fi
     training_sizes = np.linspace(0.1, 1.0, 10)  # dal 10% al 100% del training set
 
     for size in training_sizes:
+        print(f'Training on {round(size*100, None)}% of dataset')
         # Determina il numero di campioni da utilizzare
         current_size = int(size * len(X_train))
+
 
         # Prendi un sottoinsieme di X_train e y_train
         X_train_subset = X_train[:current_size]
@@ -78,11 +82,11 @@ def plot_learning_curve(model, X_train, y_train, X_val, y_val, assets_dir="", fi
         train_errors.append(root_mean_squared_error(y_train_subset, y_train_pred))  # RMSE
 
         # Calcola l'errore sul validation set
-        y_val_pred = model.predict(X_val)
-        val_errors.append(root_mean_squared_error(y_val, y_val_pred))  # RMSE
+        y_val_pred = model.predict(X_test)
+        val_errors.append(root_mean_squared_error(y_test, y_val_pred))  # RMSE
 
     # Plot della learning curve
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(16, 9))
     plt.plot(training_sizes * len(X_train), train_errors, label='Errore Training Set', marker='o')
     plt.plot(training_sizes * len(X_train), val_errors, label='Errore Validation Set', marker='o')
     plt.xlabel('Dimensione Training Set')
@@ -128,8 +132,8 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test, _, _ = edit_dataset(X, y, X_standardization=X_standardization, y_standardization=y_standardization, test_size=test_size)
 
     # Crea il modello KNN
-    knn = KNN(k=k)
-    print(f'Plotting:\nX_standardization = {X_standardization}\ny_standardization = {y_standardization}\nKNN(k={k})\ntest_size = {test_size}')
+    knn = KNN_Parallel(k=k)
+    print(f'Parallel Plotting:\nX_standardization = {X_standardization}\ny_standardization = {y_standardization}\nKNN(k={k})\ntest_size = {test_size}')
 
     # Plot della learning curve
     plot_learning_curve(
@@ -139,5 +143,5 @@ if __name__ == '__main__':
         X_test, 
         y_test, 
         assets_dir, 
-        file_name=f'learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}'
+        file_name=f'learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
     )

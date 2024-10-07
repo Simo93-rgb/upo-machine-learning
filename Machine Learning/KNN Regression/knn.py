@@ -2,7 +2,6 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 
-
 class KNN:
     def __init__(self, k: int = 3) -> None:
         self.k = k
@@ -33,10 +32,9 @@ class KNN:
         """
         return np.sqrt(np.sum((X_train - x1) ** 2, axis=1))
 
-
     def predict(self, X_test: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """
-        Predice i valori per i nuovi dati basandosi sul KNN.
+        Predice i valori per i nuovi dati basandosi sul KNN con pesatura delle distanze.
 
         Parameters:
         - X_test (np.ndarray | pd.DataFrame): I dati di test.
@@ -50,7 +48,8 @@ class KNN:
 
         predictions = np.zeros(X_test.shape[0])
 
-        # Converte self.y_train in un array numpy per accedere correttamente agli indici posizionali
+        # Assicurati che X_train e y_train siano array NumPy
+        X_train_array = np.array(self.X_train)
         y_train_array = np.array(self.y_train)
 
         for i, x in enumerate(X_test):
@@ -59,7 +58,10 @@ class KNN:
                 x = x.astype(float)
 
             # Calcolo delle distanze dal punto x a tutti i punti di training
-            distances = self._euclidean_distance(x, self.X_train)
+            distances = self._euclidean_distance(x, X_train_array)
+
+            # Assicurati che distances sia un array numpy (anche se la tua funzione già restituisce numpy)
+            distances = np.array(distances)
 
             # Identifica gli indici dei k vicini più vicini
             k_indices = np.argsort(distances)[:self.k]
@@ -67,7 +69,16 @@ class KNN:
             # Raccoglie i target dei k vicini (da y_train_array, che è ora un array numpy)
             k_nearest_targets = y_train_array[k_indices]
 
-            # Predizione: la media dei target per la regressione
-            predictions[i] = np.mean(k_nearest_targets)
+            # Calcolo dei pesi usando l'inverso del quadrato della distanza (aggiungo epsilon per evitare divisioni per zero)
+            epsilon = 1e-8
+            k_nearest_distances = distances[k_indices]
+            weights = np.where(k_nearest_distances < 1, 1 / (k_nearest_distances ** 2 + 1 + epsilon),
+                               1 / (k_nearest_distances ** 2 + epsilon))
+
+            # Normalizzazione dei pesi
+            weights_normalized = weights / np.sum(weights)
+
+            # Calcolo della predizione come media pesata
+            predictions[i] = np.sum(k_nearest_targets * weights_normalized)
 
         return predictions

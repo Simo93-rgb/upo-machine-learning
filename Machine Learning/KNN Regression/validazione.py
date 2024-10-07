@@ -29,7 +29,8 @@ class KFoldValidation:
         self.model = model
         self.k_folds = k_folds
 
-    def validate(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series]) -> Dict[str, float]:
+    def validate(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series], y_scaler=None) -> Dict[
+        str, float]:
         """
         Esegue la k-fold cross-validation e restituisce la media delle metriche.
 
@@ -42,7 +43,7 @@ class KFoldValidation:
         """
         # Converti y in un array numpy se è una Serie Pandas
         y = np.array(y)
-        
+
         # Inizializzazione delle liste per memorizzare le metriche
         rmse_scores = []
         mae_scores = []
@@ -66,6 +67,11 @@ class KFoldValidation:
 
             # Predizione sui dati di test
             y_pred = self.model.predict(X_test)
+
+            # Ripristina alla scala originale se lo scaler è presente
+            if y_scaler is not None:
+                y_test = y_scaler.inverse_transform(y_test.reshape(-1, 1)).ravel()
+                y_pred = y_scaler.inverse_transform(y_pred.reshape(-1, 1)).ravel()
 
             # Calcolo delle metriche
             rmse_scores.append(root_mean_squared_error(y_test, y_pred))
