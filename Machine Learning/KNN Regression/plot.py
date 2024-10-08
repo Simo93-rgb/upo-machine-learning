@@ -143,5 +143,5 @@ if __name__ == '__main__':
         X_test, 
         y_test, 
         assets_dir, 
-        file_name=f'learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
+        file_name=f'/std/learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
     )

@@ -51,7 +51,7 @@ if __name__ == "__main__":
         X,
         y,
         X_standardization=X_standardization,
-        y_standardization=X_standardization,
+        y_standardization=y_standardization,
         test_size=test_size
     )
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # Se è stata applicata la standardizzazione su y, esegui l'inverso della trasformazione
     if y_scaler:
         y_test_pred_rescaled = y_scaler.inverse_transform(
-            y_test_pred.reshape(-1, 1)).ravel()  # Riportare alla scala originale
+        y_test_pred.reshape(-1, 1)).ravel()  # Riportare alla scala originale
         y_test_rescaled = y_scaler.inverse_transform(y_test.reshape(-1, 1)).ravel()
         y_train_rescaled = y_scaler.inverse_transform(y_train.reshape(-1, 1)).ravel()
     else:
@@ -104,7 +104,7 @@ if __name__ == "__main__":
         y_test=y_test_rescaled,  # Uso di y_test riscalato
         model=knn,
         assets_dir=assets_dir,
-        file_name=f'learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
+        file_name=f'/not_std/learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
     )
 
     plot_predictions(y_test_rescaled, y_test_pred_rescaled, model_name="KNN", assets_dir=assets_dir)
