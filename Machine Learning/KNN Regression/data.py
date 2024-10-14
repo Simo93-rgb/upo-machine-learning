@@ -46,7 +46,8 @@ def edit_dataset(
         y: pd.Series, 
         X_standardization: bool = True, 
         y_standardization: bool = True,
-        test_size=0.2
+        test_size=0.2,
+        assets_dir=""
         ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
     """
     Standardizza il dataset e lo suddivide in training e test.
@@ -65,15 +66,49 @@ def edit_dataset(
 
     if X_standardization:
         # Standardizzazione delle feature con z-score normalization
-        x_scaler = StandardScaler()
-        X = x_scaler.fit_transform(X)
+        # x_scaler = StandardScaler()
+        # X = x_scaler.fit_transform(X)
+        # # Z-Score Normalization
+        X = (X - X.mean(axis=0)) / X.std(axis=0)
 
     if y_standardization:
         # Normalizzazione del target y
-        y_scaler = StandardScaler()
-        y = y_scaler.fit_transform(y.values.reshape(-1, 1)).ravel()
+        # y_scaler = StandardScaler()
+        # y = y_scaler.fit_transform(y.values.reshape(-1, 1)).ravel()
+        y = (y - y.mean()) / y.std()
 
+    X, y = remove_outliers_quantile(X, y)
     # Suddivisione in train (80%) e test (20%)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-    
+    if not os.path.exists(f'{assets_dir}/CCPP.csv'):
+        # Crea un DataFrame unendo X e y
+        df = pd.DataFrame(X, columns=X.columns)
+        df['target'] = y
+        # Salva in CSV
+        csv_file = os.path.join(assets_dir, f'CCPP_standardized.csv')
+        df.to_csv(csv_file, index=False)
+        print(f"Dataset salvato in {csv_file}")
+
     return X_train, X_test, y_train, y_test, x_scaler, y_scaler
+
+
+def remove_outliers_quantile(X: pd.DataFrame, y: pd.Series, lower_quantile: float = 0.01, upper_quantile: float = 0.99) -> Tuple[pd.DataFrame, pd.Series]:
+    """
+    Rimuove outliers dai dati in base ai quantili.
+    
+    Parameters:
+    - X (pd.DataFrame): Le features.
+    - y (pd.Series): Il target.
+    - lower_quantile (float): Il quantile inferiore per tagliare outliers.
+    - upper_quantile (float): Il quantile superiore per tagliare outliers.
+    
+    Returns:
+    - Tuple[pd.DataFrame, pd.Series]: I dati senza outliers.
+    """
+    quantiles = X.quantile([lower_quantile, upper_quantile])
+    
+    # Filtro le righe che sono all'interno dei quantili
+    filtered_entries = (X >= quantiles.loc[lower_quantile]) & (X <= quantiles.loc[upper_quantile])
+    filtered_entries = filtered_entries.all(axis=1)  # Ottieni righe dove tutte le colonne rispettano il filtro
+    
+    return X[filtered_entries], y[filtered_entries]

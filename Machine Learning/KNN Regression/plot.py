@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import root_mean_squared_error
+from sklearn.metrics import root_mean_squared_error 
 from valutazione import validate_predictions
 import seaborn as sns
 from data import fetch_data, edit_dataset
@@ -65,25 +65,28 @@ def plot_learning_curve(model, X_train, y_train, X_test, y_test, assets_dir="", 
     training_sizes = np.linspace(0.1, 1.0, 10)  # dal 10% al 100% del training set
 
     for size in training_sizes:
-        print(f'Training on {round(size*100, None)}% of dataset')
         # Determina il numero di campioni da utilizzare
         current_size = int(size * len(X_train))
-
-
+        print(f'Training on {current_size} samples')  # Aggiungi questa riga per verificare le dimensioni
+        
         # Prendi un sottoinsieme di X_train e y_train
         X_train_subset = X_train[:current_size]
         y_train_subset = y_train[:current_size]
 
-        # Allena il modello sul sottoinsieme
+        # Riaddestra il modello sul sottoinsieme corrente
         model.fit(X_train_subset, y_train_subset)
 
-        # Calcola l'errore sul training set
+        # Calcola l'errore sul training set (sottoinsieme corrente)
         y_train_pred = model.predict(X_train_subset)
-        train_errors.append(root_mean_squared_error(y_train_subset, y_train_pred))  # RMSE
+        train_rmse = root_mean_squared_error(y_train_subset, y_train_pred)  # RMSE per il subset corrente
+        train_errors.append(train_rmse)
 
-        # Calcola l'errore sul validation set
+        # Calcola l'errore sul validation set (intero test set)
         y_val_pred = model.predict(X_test)
-        val_errors.append(root_mean_squared_error(y_test, y_val_pred))  # RMSE
+        val_rmse = root_mean_squared_error(y_test, y_val_pred)
+        val_errors.append(val_rmse)
+
+        print(f'Training RMSE: {train_rmse}, Validation RMSE: {val_rmse}')  # Aggiungi per debug
 
     # Plot della learning curve
     plt.figure(figsize=(16, 9))

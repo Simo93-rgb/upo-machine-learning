@@ -41,6 +41,14 @@ def carica_dati(file_path='Assets/dataset', file_name='breast_cancer_wisconsin')
 def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_dataset=False, file_path='Assets/dataset'):
     # Elimina le feature altamente correlate
     X_df = X
+
+    # Imputazione dei NaN e normalizzazione
+    imputer = SimpleImputer(strategy='mean')
+    X = imputer.fit_transform(X)
+
+    # Z-Score Normalization
+    X = (X - X.mean(axis=0)) / X.std(axis=0) if normalize else X
+
     X, features_eliminate = elimina_feature_correlate(X, soglia=corr)
     print(f"Features eliminate: {features_eliminate}")
     # Ottieni i nomi delle feature
@@ -49,11 +57,7 @@ def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_da
                                i not in features_eliminate]
     # print(remaining_feature_names)
 
-    # Imputazione dei NaN e normalizzazione
-    imputer = SimpleImputer(strategy='mean')
-    X = imputer.fit_transform(X)
-    X = (X - X.mean(axis=0)) / X.std(axis=0) if normalize else X
-
+    
     # Encoding delle classi
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y).ravel()

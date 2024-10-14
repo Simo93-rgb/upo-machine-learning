@@ -1,21 +1,8 @@
 from sklearn.model_selection import KFold
-from sklearn.metrics import mean_squared_error, explained_variance_score, mean_absolute_percentage_error, r2_score, mean_absolute_error
+from sklearn.metrics import explained_variance_score, mean_absolute_percentage_error, r2_score, mean_absolute_error, root_mean_squared_error
 import numpy as np
 import pandas as pd
 from typing import Dict, Union
-
-def root_mean_squared_error(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Calcola la root mean squared error (RMSE) tra i valori reali e predetti.
-
-    Parameters:
-    - y_true (np.ndarray): Valori reali.
-    - y_pred (np.ndarray): Valori predetti.
-
-    Returns:
-    - float: RMSE.
-    """
-    return np.sqrt(mean_squared_error(y_true, y_pred))
 
 class KFoldValidation:
     def __init__(self, model, k_folds: int = 5) -> None:
