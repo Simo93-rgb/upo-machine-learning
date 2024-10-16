@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import root_mean_squared_error 
+from sklearn.metrics import root_mean_squared_error, explained_variance_score, mean_absolute_error
 from valutazione import validate_predictions
 import seaborn as sns
 from data import fetch_data, edit_dataset
-from knn import KNN
 from knn_parallel import  KNN_Parallel
 import os
 import argparse
+from valutazione import explained_variance, mean_squared_error
 
 # Percorso del file main.py
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -54,10 +54,11 @@ def plot_corr_matrix(X, assets_dir=""):
     plt.close()
 
 
-def plot_learning_curve(model, X_train, y_train, X_test, y_test, assets_dir="", file_name='learning_curve'):
+def plot_learning_curve(model, X_train, y_train, X_test, y_test, assets_dir="", file_name='learning_curve', x_scaler=None):
     print('Plotting Learning Curve')
     """ Plotta la curva di apprendimento per un dato modello KNN. """
-
+    y_train = y_train.values
+    y_test = y_test.values
     train_errors = []
     val_errors = []
 
@@ -78,15 +79,18 @@ def plot_learning_curve(model, X_train, y_train, X_test, y_test, assets_dir="", 
 
         # Calcola l'errore sul training set (sottoinsieme corrente)
         y_train_pred = model.predict(X_train_subset)
-        train_rmse = root_mean_squared_error(y_train_subset, y_train_pred)  # RMSE per il subset corrente
-        train_errors.append(train_rmse)
+        train_mse = root_mean_squared_error(y_train_subset, y_train_pred)  # RMSE per il subset corrente
+        train_errors.append(train_mse)
 
         # Calcola l'errore sul validation set (intero test set)
         y_val_pred = model.predict(X_test)
-        val_rmse = root_mean_squared_error(y_test, y_val_pred)
-        val_errors.append(val_rmse)
+        val_mse = root_mean_squared_error(y_test, y_val_pred)
+        val_errors.append(val_mse)
 
-        print(f'Training RMSE: {train_rmse}, Validation RMSE: {val_rmse}')  # Aggiungi per debug
+        print(f'Training RMSE: {train_mse}, Validation RMSE: {val_mse}')  # Aggiungi per debug
+
+        # Se è stata applicata la standardizzazione su X, esegui l'inverso della trasformazione
+
 
     # Plot della learning curve
     plt.figure(figsize=(16, 9))
@@ -101,7 +105,56 @@ def plot_learning_curve(model, X_train, y_train, X_test, y_test, assets_dir="", 
 
     # plt.show()
 
+def plot_rmse_vs_n_neighbors(
+        X_train: np.ndarray, 
+        y_train: np.ndarray, 
+        X_test: np.ndarray, 
+        y_test: np.ndarray, 
+        n_neighbors_range: range = range(1, 51)
+    ) -> None:
+    """
+    Plotta l'RMSE al variare del numero di vicini più vicini (n_neighbors) nel KNN, 
+    sia per il train che per il test.
 
+    Parameters:
+    - X_train (np.ndarray): Le feature del set di addestramento.
+    - y_train (np.ndarray): I target del set di addestramento.
+    - X_test (np.ndarray): Le feature del set di test.
+    - y_test (np.ndarray): I target del set di test.
+    - n_neighbors_range (range): Un range di valori di n_neighbors da testare (default: range(1, 51)).
+
+    Returns:
+    - None: La funzione plotta il grafico ma non ritorna alcun valore.
+    """
+    # Liste per memorizzare i valori di RMSE
+    rmse_train_list = []
+    rmse_test_list = []
+
+    # Loop attraverso i valori di n_neighbors
+    for k in n_neighbors_range:
+        knn = KNN_Parallel(n_neighbors=k)
+        knn.fit(X_train, y_train)
+        
+        # Predizione sul train
+        y_train_pred = knn.predict(X_train)
+        rmse_train = np.sqrt(mean_squared_error(y_train, y_train_pred))
+        rmse_train_list.append(rmse_train)
+        
+        # Predizione sul test
+        y_test_pred = knn.predict(X_test)
+        rmse_test = np.sqrt(mean_squared_error(y_test, y_test_pred))
+        rmse_test_list.append(rmse_test)
+
+    # Plot dei risultati
+    plt.figure(figsize=(10, 6))
+    plt.plot(n_neighbors_range, rmse_train_list, label='Train RMSE', marker='o')
+    plt.plot(n_neighbors_range, rmse_test_list, label='Test RMSE', marker='o')
+    plt.xlabel('Number of Neighbors (k)')
+    plt.ylabel('RMSE')
+    plt.title('RMSE vs Number of Neighbors in KNN')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == '__main__':
     # Funzione per convertire stringhe in booleani
@@ -120,7 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('X_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
     parser.add_argument('y_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of y (default: True)')
     parser.add_argument('k', type=int, nargs='?', default=50, help='Value of k for KNN (default: 50)')
-    parser.add_argument('test_size', type=float, nargs='?', default=0.2, help='Value of k for KNN (default: 0.2)')
+    parser.add_argument('test_size', type=float, nargs='?', default=0.02, help='Value of k for KNN (default: 0.2)')
 
     args = parser.parse_args()
 
@@ -132,7 +185,7 @@ if __name__ == '__main__':
 
     # Carica i dati e prepara il dataset
     X, y = fetch_data(assets_dir)
-    X_train, X_test, y_train, y_test, _, _ = edit_dataset(X, y, X_standardization=X_standardization, y_standardization=y_standardization, test_size=test_size)
+    X_train, X_test, y_train, y_test, x_scaler = edit_dataset(X, y, X_standardization=X_standardization, test_size=test_size)
 
     # Crea il modello KNN
     knn = KNN_Parallel(k=k)
@@ -146,5 +199,6 @@ if __name__ == '__main__':
         X_test, 
         y_test, 
         assets_dir, 
-        file_name=f'/std/learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
+        file_name=f'/plot/learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}',
+        x_scaler=x_scaler
     )

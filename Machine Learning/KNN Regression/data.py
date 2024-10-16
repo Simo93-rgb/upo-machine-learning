@@ -45,7 +45,6 @@ def edit_dataset(
         X: pd.DataFrame, 
         y: pd.Series, 
         X_standardization: bool = True, 
-        y_standardization: bool = True,
         test_size=0.2,
         assets_dir=""
         ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
@@ -56,26 +55,22 @@ def edit_dataset(
     - X (pd.DataFrame): Le features.
     - y (pd.Series): Il target.
     - X_standardization (bool): Se standardizzare o meno X.
-    - y_standardization (bool): Se standardizzare o meno y.
 
     Returns:
     - Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
       X_train, X_test, y_train, y_test, e gli scaler (se usati).
     """
-    x_scaler, y_scaler = None, None  # Inizializzo gli scaler a None
+    x_scaler = None  # Inizializzo gli scaler a None
 
     if X_standardization:
         # Standardizzazione delle feature con z-score normalization
-        # x_scaler = StandardScaler()
-        # X = x_scaler.fit_transform(X)
+        x_scaler = StandardScaler()
+        columns = X.columns
+        X = x_scaler.fit_transform(X)
+        X = pd.DataFrame(X, columns=columns)
         # # Z-Score Normalization
-        X = (X - X.mean(axis=0)) / X.std(axis=0)
+        # X = (X - X.mean(axis=0)) / X.std(axis=0)
 
-    if y_standardization:
-        # Normalizzazione del target y
-        # y_scaler = StandardScaler()
-        # y = y_scaler.fit_transform(y.values.reshape(-1, 1)).ravel()
-        y = (y - y.mean()) / y.std()
 
     X, y = remove_outliers_quantile(X, y)
     # Suddivisione in train (80%) e test (20%)
@@ -89,7 +84,7 @@ def edit_dataset(
         df.to_csv(csv_file, index=False)
         print(f"Dataset salvato in {csv_file}")
 
-    return X_train, X_test, y_train, y_test, x_scaler, y_scaler
+    return X_train, X_test, y_train, y_test, x_scaler
 
 
 def remove_outliers_quantile(X: pd.DataFrame, y: pd.Series, lower_quantile: float = 0.01, upper_quantile: float = 0.99) -> Tuple[pd.DataFrame, pd.Series]:

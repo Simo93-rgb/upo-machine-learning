@@ -32,7 +32,6 @@ if __name__ == "__main__":
     # Parser degli argomenti posizionali
     parser = argparse.ArgumentParser(description="KNN with optional standardization and k value.")
     parser.add_argument('X_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
-    parser.add_argument('y_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of y (default: True)')
     parser.add_argument('k', type=int, nargs='?', default=50, help='Value of k for KNN (default: 50)')
     parser.add_argument('test_size', type=float, nargs='?', default=0.2, help='Value of k for KNN (default: 0.2)')
 
@@ -40,18 +39,16 @@ if __name__ == "__main__":
 
     # Utilizzo degli argomenti passati
     X_standardization = args.X_standardization
-    y_standardization = args.y_standardization
     k = args.k
     test_size=args.test_size
     # Fetch del dataset Combined Cycle Power Plant
     X, y = fetch_data(assets_dir)
 
     # Manipolazione dataset con opzioni di standardizzazione per X e y
-    X_train, X_test, y_train, y_test, x_scaler, y_scaler = edit_dataset(
+    X_train, X_test, y_train, y_test, x_scaler = edit_dataset(
         X,
         y,
         X_standardization=X_standardization,
-        y_standardization=y_standardization,
         test_size=test_size
     )
 
@@ -62,7 +59,7 @@ if __name__ == "__main__":
 
     # Validazione incrociata (k-fold) sul set di trai∟ning/validation
     k_fold_validator = KFoldValidation(model=knn, k_folds=10)
-    metrix = k_fold_validator.validate(X_train, y_train, y_scaler)
+    metrix = k_fold_validator.validate_and_find_n_neighbors(X_train, y_train)
     print('######## K-FOLD ########')
     [print(f"{chiave} su cross validation (k-fold): {valore}") for chiave, valore in metrix.items()]
 
@@ -72,16 +69,6 @@ if __name__ == "__main__":
     # Predizioni su test set
     y_test_pred = knn.predict(X_test)
 
-    # Se è stata applicata la standardizzazione su y, esegui l'inverso della trasformazione
-    if y_scaler:
-        y_test_pred_rescaled = y_scaler.inverse_transform(
-        y_test_pred.reshape(-1, 1)).ravel()  # Riportare alla scala originale
-        y_test_rescaled = y_scaler.inverse_transform(y_test.reshape(-1, 1)).ravel()
-        y_train_rescaled = y_scaler.inverse_transform(y_train.reshape(-1, 1)).ravel()
-    else:
-        y_test_pred_rescaled = y_test_pred
-        y_test_rescaled = y_test
-        y_train_rescaled = y_train
 
     # Se è stata applicata la standardizzazione su X, esegui l'inverso della trasformazione
     if x_scaler:
@@ -93,19 +80,11 @@ if __name__ == "__main__":
 
     # Valutazione del modello
     print('######## Evaluating my model ########')
-    evaluate_model(y_true=y_test_rescaled, y_pred=y_test_pred_rescaled, message="Test Set")
+    evaluate_model(y_true=y_test, y_pred=y_test_pred, message="Test Set")
 
     # Visualizzazioni
     # Plot della curva di apprendimento
-    plot_learning_curve(
-        X_train=X_train_rescaled,
-        y_train=y_train_rescaled,  # Uso di y_train riscalato
-        X_test=X_test_rescaled,  # Uso di X_test riscalato
-        y_test=y_test_rescaled,  # Uso di y_test riscalato
-        model=knn,
-        assets_dir=assets_dir,
-        file_name=f'/not_std/learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}'
-    )
 
-    plot_predictions(y_test_rescaled, y_test_pred_rescaled, model_name="KNN", assets_dir=assets_dir)
-    plot_residuals(y_test_rescaled, y_test_pred_rescaled, model_name="KNN", assets_dir=assets_dir)
+
+    plot_predictions(y_test, y_test_pred, model_name="KNN", assets_dir=assets_dir)
+    plot_residuals(y_test, y_test_pred, model_name="KNN", assets_dir=assets_dir)

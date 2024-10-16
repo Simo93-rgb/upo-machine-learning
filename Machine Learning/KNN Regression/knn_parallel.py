@@ -9,10 +9,10 @@ class KNN_Parallel:
         Inizializza il modello KNN.
 
         Parameters:
-        - k (int): Numero di vicini da considerare.
+        - n_neighbors(int): Numero di vicini da considerare.
         - n_jobs (int): Numero di lavori paralleli da eseguire. -1 per usare tutti i core.
         """
-        self.k = k
+        self.n_neighbors = k
         self.n_jobs = n_jobs
         self.X_train: Optional[np.ndarray] = None
         self.y_train: Optional[np.ndarray] = None
@@ -57,17 +57,17 @@ class KNN_Parallel:
         # Calcolo delle distanze dal punto x a tutti i punti di training
         distances = self._euclidean_distance(x, X_train_array)
 
-        # Identifica gli indici dei k vicini più vicini
-        k_indices = np.argsort(distances)[:self.k]
+        # Identifica gli indici dei n_neighborsvicini più vicini
+        k_indices = np.argsort(distances)[:self.n_neighbors]
 
-        # Raccoglie i target dei k vicini (da y_train_array, che è ora un array numpy)
+        # Raccoglie i target dei n_neighborsvicini (da y_train_array, che è ora un array numpy)
         k_nearest_targets = y_train_array[k_indices]
 
         # Calcolo dei pesi usando l'inverso del quadrato della distanza (aggiungo epsilon per evitare divisioni per zero)
-        epsilon = 1e-8
+        epsilon = 1e-10
         k_nearest_distances = distances[k_indices]
-        weights = np.where(k_nearest_distances < 1, 1 / (k_nearest_distances ** 2 + 1 + epsilon),
-                           1 / (k_nearest_distances ** 2 + epsilon))
+        weights = np.where(k_nearest_distances < 1, 1 / (k_nearest_distances ** 2 + epsilon),
+                           1 - (k_nearest_distances ** 2 + epsilon))
 
         # Normalizzazione dei pesi
         weights_normalized = weights / np.sum(weights)
@@ -95,3 +95,17 @@ class KNN_Parallel:
         )
 
         return np.array(predictions)
+
+    def set_params(self, n_neighbors: Optional[int] = None, n_jobs: Optional[int] = None) -> None:
+        """
+        Imposta i parametri del modello KNN.
+
+        Parameters:
+        - n_neighbors(Optional[int]): Il nuovo valore di n_neighbors(numero di vicini). Se None, mantiene il valore attuale.
+        - n_jobs (Optional[int]): Il nuovo valore di n_jobs (numero di lavori paralleli). Se None, mantiene il valore attuale.
+        """
+        if n_neighbors is not None:
+            self.n_neighbors = n_neighbors
+        if n_jobs is not None:
+            self.n_jobs = n_jobs
+
