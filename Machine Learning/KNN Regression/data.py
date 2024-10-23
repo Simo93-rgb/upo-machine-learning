@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
+from sklearn.utils import shuffle
 
 
 def fetch_data(assets_dir: str = "") -> Tuple[pd.DataFrame, pd.Series]:
@@ -73,6 +74,10 @@ def edit_dataset(
 
 
     X, y = remove_outliers_quantile(X, y)
+    X, y = shuffle(X, y, random_state=42)
+    X, y = shuffle(X, y, random_state=42)
+    X, y = shuffle(X, y, random_state=42)
+    X, y = shuffle(X, y, random_state=42)
     # Suddivisione in train (80%) e test (20%)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     if not os.path.exists(f'{assets_dir}/CCPP.csv'):
@@ -83,6 +88,8 @@ def edit_dataset(
         csv_file = os.path.join(assets_dir, f'CCPP_standardized.csv')
         df.to_csv(csv_file, index=False)
         print(f"Dataset salvato in {csv_file}")
+    
+
 
     return X_train, X_test, y_train, y_test, x_scaler
 

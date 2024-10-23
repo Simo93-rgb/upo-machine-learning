@@ -31,16 +31,19 @@ def str2bool(v):
 if __name__ == "__main__":
     # Parser degli argomenti posizionali
     parser = argparse.ArgumentParser(description="KNN with optional standardization and k value.")
-    parser.add_argument('X_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
-    parser.add_argument('k', type=int, nargs='?', default=50, help='Value of k for KNN (default: 50)')
-    parser.add_argument('test_size', type=float, nargs='?', default=0.2, help='Value of k for KNN (default: 0.2)')
+    parser.add_argument('--X_standardization', '-X', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
+    parser.add_argument('--n_neighboors', '-n', type=int, nargs='?', default=22, help='Value of k for KNN (default: 22)')
+    parser.add_argument('--test_size', '-t', type=float, nargs='?', default=0.02, help='Value of k for KNN (default: 0.2)')
 
     args = parser.parse_args()
 
     # Utilizzo degli argomenti passati
     X_standardization = args.X_standardization
-    k = args.k
+    n = args.n_neighboors
     test_size=args.test_size
+
+    print(f'Args:\nX_standardization = {X_standardization}\nKNN(k={n})\ntest_size = {test_size}')
+
     # Fetch del dataset Combined Cycle Power Plant
     X, y = fetch_data(assets_dir)
 
@@ -53,13 +56,14 @@ if __name__ == "__main__":
     )
 
     # Creazione del modello KNN
-    knn = KNN_Parallel(k=k)
+    knn = KNN_Parallel(k=n)
 
 
 
     # Validazione incrociata (k-fold) sul set di trai∟ning/validation
     k_fold_validator = KFoldValidation(model=knn, k_folds=10)
-    metrix = k_fold_validator.validate_and_find_n_neighbors(X_train, y_train)
+    # metrix = k_fold_validator.validate_and_find_n_neighbors(X_train, y_train)
+    metrix = k_fold_validator.validate(X_train, y_train)
     print('######## K-FOLD ########')
     [print(f"{chiave} su cross validation (k-fold): {valore}") for chiave, valore in metrix.items()]
 

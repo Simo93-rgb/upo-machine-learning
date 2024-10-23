@@ -51,7 +51,7 @@ class KFoldValidation:
             y_train, y_test = y[train_index], y[test_index]
 
             # Itera sui valori di k (n_neighbors) con un range fisso (es. da 5 a 200 con step di 15)
-            for k in range(5, 200, 15):
+            for k in range(2, 100):
 
                 # Aggiorna il valore di k nel modello
                 self.model.set_params(n_neighbors=k)

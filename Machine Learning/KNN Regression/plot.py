@@ -170,10 +170,10 @@ if __name__ == '__main__':
     
     # Parser degli argomenti posizionali
     parser = argparse.ArgumentParser(description="KNN with optional standardization and k value.")
-    parser.add_argument('X_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
-    parser.add_argument('y_standardization', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of y (default: True)')
-    parser.add_argument('k', type=int, nargs='?', default=50, help='Value of k for KNN (default: 50)')
-    parser.add_argument('test_size', type=float, nargs='?', default=0.02, help='Value of k for KNN (default: 0.2)')
+    parser.add_argument('--X_standardization', '-X', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
+    parser.add_argument('--y_standardization', '-y', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of y (default: True)')
+    parser.add_argument('--n_neighboors', '-n', type=int, nargs='?', default=50, help='Value of k for KNN (default: 50)')
+    parser.add_argument('--test_size', '-t', type=float, nargs='?', default=0.02, help='Value of k for KNN (default: 0.2)')
 
     args = parser.parse_args()
 
