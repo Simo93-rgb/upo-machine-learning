@@ -40,6 +40,21 @@ class KNN_Parallel:
         - np.ndarray: Un array di distanze.
         """
         return np.sqrt(np.sum((X_train - x1) ** 2, axis=1))
+    
+    def _minkowski(self, x1: np.ndarray, X_train: np.ndarray, p: int=2) -> np.ndarray:
+        """
+        Calcola la distanza di Minkowski tra un punto x1 e tutti i punti di X_train.
+
+        Parameters:
+        - x1 (np.ndarray): Un singolo punto dati.
+        - X_train (np.ndarray): Il set di dati di training.
+        - p (int): Il parametro 'p' per la distanza di Minkowski (p=2 per Euclidea, p=1 per Manhattan).
+
+        Returns:
+        - np.ndarray: Un array di distanze di Minkowski.
+        """
+        return np.sum(np.abs(X_train - x1) ** p, axis=1) ** (1 / p)
+
 
     def _predict_single(self, x: np.ndarray) -> float:
         """
@@ -55,7 +70,8 @@ class KNN_Parallel:
         y_train_array = np.array(self.y_train)
 
         # Calcolo delle distanze dal punto x a tutti i punti di training
-        distances = self._euclidean_distance(x, X_train_array)
+        # distances = self._euclidean_distance(x, X_train_array)
+        distances = self._minkowski(x, X_train_array, 2)
 
         # Identifica gli indici dei n_neighborsvicini più vicini
         k_indices = np.argsort(distances)[:self.n_neighbors]
