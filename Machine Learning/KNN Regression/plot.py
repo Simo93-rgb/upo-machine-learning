@@ -19,7 +19,7 @@ def plot_predictions(y_true, y_pred, model_name="", assets_dir=""):
     y_true, y_pred = validate_predictions(y_true, y_pred)
     x_dim, y_dim = [16, 9]
     plt.figure(figsize=(x_dim, y_dim))
-    plt.scatter(y_true, y_pred, alpha=0.5, color='blue')
+    plt.scatter(y_true, y_pred, alpha=0.5, color='green')
     plt.plot([min(y_true), max(y_true)], [min(y_true), max(y_true)], color='red', lw=2)
     plt.title(f'Confronto Valori Predetti e Reali - {model_name}', fontsize=24)
     plt.xlabel('Valori Reali', fontsize=18)
@@ -34,7 +34,7 @@ def plot_residuals(y_true, y_pred, model_name="", assets_dir=""):
     x_dim, y_dim = [16, 9]
     residuals = y_true - y_pred
     plt.figure(figsize=(x_dim, y_dim))
-    plt.hist(residuals, bins=60, color='orange')
+    plt.hist(residuals, bins=60, color='green')
     plt.title(f'Distribuzione dei Residui - {model_name}', fontsize=24)
     plt.xlabel('Errore di Predizione', fontsize=18)
     plt.ylabel('Frequenza', fontsize=18)

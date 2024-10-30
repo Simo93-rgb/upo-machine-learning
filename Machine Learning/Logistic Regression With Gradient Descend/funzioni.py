@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.utils import shuffle
 import pandas as pd
 from imblearn.over_sampling import SMOTE
@@ -86,7 +87,7 @@ def preprocessa_dati(X, y, normalize=True, class_balancer="", corr=0.95, save_da
     return X, features_eliminate, y_encoded
 
 
-def elimina_feature_correlate(X, soglia=0.95):
+def elimina_feature_correlate(X:np.ndarray, soglia=0.95):
     """
     Elimina feature altamente correlate da un array numpy X basandosi sulla soglia fornita.
 

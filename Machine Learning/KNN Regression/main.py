@@ -2,6 +2,7 @@ import argparse
 
 from scipy.special.cython_special import eval_sh_legendre
 from sklearn.discriminant_analysis import StandardScaler
+from sklearn.neighbors import KNeighborsRegressor
 from knn_parallel import KNN_Parallel
 from valutazione import *
 from validazione import KFoldValidation
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="KNN with optional standardization and k value.")
     parser.add_argument('--X_standardization', '-X', type=str2bool, nargs='?', default=True, help='Enable/Disable standardization of X (default: True)')
     parser.add_argument('--n_neighboors', '-n', type=int, nargs='?', default=22, help='Value of k for KNN (default: 22)')
-    parser.add_argument('--test_size', '-t', type=float, nargs='?', default=0.02, help='Value of k for KNN (default: 0.2)')
+    parser.add_argument('--test_size', '-t', type=float, nargs='?', default=0.2, help='Value of k for KNN (default: 0.2)')
 
     args = parser.parse_args()
 
@@ -57,6 +58,7 @@ if __name__ == "__main__":
 
     # Creazione del modello KNN
     knn = KNN_Parallel(k=n)
+    knn_regressor = KNeighborsRegressor(n_neighbors=n)
 
 
 
@@ -64,14 +66,22 @@ if __name__ == "__main__":
     k_fold_validator = KFoldValidation(model=knn, k_folds=10)
     # metrix = k_fold_validator.validate_and_find_n_neighbors(X_train, y_train)
     metrix = k_fold_validator.validate(X_train, y_train)
-    print('######## K-FOLD ########')
+    sk_metrix = KFoldValidation(model=knn_regressor, k_folds=10).validate(X_train, y_train)
+    
+    print('######## K-FOLD k-NN Parallel ########')
     [print(f"{chiave} su cross validation (k-fold): {valore}") for chiave, valore in metrix.items()]
+    
+    print('######## K-FOLD k-NN sklearn ########')
+    [print(f"{chiave} su cross validation (k-fold): {valore}") for chiave, valore in sk_metrix.items()]
 
     # Addestramento finale sul training set completo
     knn.fit(X_train, y_train)
+    knn_regressor.fit(X_train, y_train)
 
     # Predizioni su test set
     y_test_pred = knn.predict(X_test)
+    y_test_pred_sk = knn_regressor.predict(X_test)
+    
 
 
     # Se è stata applicata la standardizzazione su X, esegui l'inverso della trasformazione
@@ -85,10 +95,15 @@ if __name__ == "__main__":
     # Valutazione del modello
     print('######## Evaluating my model ########')
     evaluate_model(y_true=y_test, y_pred=y_test_pred, message="Test Set")
+    
+    print('######## Evaluating sklearn ########')
+    evaluate_model(y_true=y_test, y_pred=y_test_pred_sk, message="Test Set")
 
     # Visualizzazioni
     # Plot della curva di apprendimento
 
 
-    plot_predictions(y_test, y_test_pred, model_name="KNN", assets_dir=assets_dir)
-    plot_residuals(y_test, y_test_pred, model_name="KNN", assets_dir=assets_dir)
+    plot_predictions(y_test, y_test_pred, model_name="KNN Parallel", assets_dir=assets_dir)
+    plot_predictions(y_test, y_test_pred_sk, model_name="KNN sklearn", assets_dir=assets_dir)
+    plot_residuals(y_test, y_test_pred, model_name="KNN Parallel", assets_dir=assets_dir)
+    plot_residuals(y_test, y_test_pred_sk, model_name="KNN sklearn", assets_dir=assets_dir)

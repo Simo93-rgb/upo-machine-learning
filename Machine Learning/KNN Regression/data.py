@@ -59,7 +59,7 @@ def edit_dataset(
 
     Returns:
     - Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
-      X_train, X_test, y_train, y_test, e gli scaler (se usati).
+    X_train, X_test, y_train, y_test, e gli scaler (se usati).
     """
     x_scaler = None  # Inizializzo gli scaler a None
 

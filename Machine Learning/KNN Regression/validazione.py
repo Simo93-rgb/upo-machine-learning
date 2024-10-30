@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from typing import Dict, Union
 from knn_parallel import KNN_Parallel
-
+import valutazione
 class KFoldValidation:
     def __init__(self, model, k_folds: int = 5) -> None:
         """
@@ -16,6 +16,7 @@ class KFoldValidation:
         """
         self.model: KNN_Parallel = model
         self.k_folds = k_folds
+        self.evaluate = valutazione.evaluate_model
         
 
     def validate_and_find_n_neighbors(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series], 
@@ -36,87 +37,52 @@ class KFoldValidation:
 
         # Inizializzazione dei risultati
         best_k = None
+        best_minkowski = None
         best_rmse = float('inf')
         best_metrics = {}
 
         # Utilizzo di KFold di scikit-learn
         kf = KFold(n_splits=self.k_folds, shuffle=True, random_state=42)
 
-        for train_index, test_index in kf.split(X):
-            # Selezione dei dati di training e test
-            if isinstance(X, pd.DataFrame):
-                X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-            else:
-                X_train, X_test = X[train_index], X[test_index]
-            y_train, y_test = y[train_index], y[test_index]
-
+        
+        for minkowski in range(1,3):
+            print(f'Sto eseguendo minkowski={minkowski}')
+            self.model.set_params(minkowski=minkowski)
             # Itera sui valori di k (n_neighbors) con un range fisso (es. da 5 a 200 con step di 15)
-            for k in range(2, 100):
-
+            for k in range(2, 30):
+                print(f'Sto eseguendo n_neighbourhood={k}')
                 # Aggiorna il valore di k nel modello
                 self.model.set_params(n_neighbors=k)
+                for train_index, test_index in kf.split(X):
+                    # Selezione dei dati di training e test
+                    if isinstance(X, pd.DataFrame):
+                        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+                    else:
+                        X_train, X_test = X[train_index], X[test_index]
+                    y_train, y_test = y[train_index], y[test_index]
+                    # Addestra il modello
+                    self.model.fit(X_train, y_train)
 
-                # Addestra il modello
-                self.model.fit(X_train, y_train)
+                    # Predice sui dati di test
+                    y_pred = self.model.predict(X_test)
 
-                # Predice sui dati di test
-                y_pred = self.model.predict(X_test)
+                    # Calcola la RMSE per questo k
+                    rmse = root_mean_squared_error(y_test, y_pred)
 
-                # Calcola la RMSE per questo k
-                rmse = root_mean_squared_error(y_test, y_pred)
-
-                # Aggiorna il miglior k se la RMSE corrente è migliore (minima)
-                if rmse < best_rmse:
-                    best_rmse = rmse
-                    best_k = k
+                    # Aggiorna il miglior k se la RMSE corrente è migliore (minima)
+                    if rmse < best_rmse:
+                        best_rmse = rmse
+                        best_k = k
+                        best_minkowski = minkowski
             print(f'Fine giro k-fold')
 
-        # Dopo aver trovato il miglior k, ricalcola le metriche per quel valore di k
-        self.model.set_params(n_neighbors=best_k)
+        # Dopo aver trovato il miglior k e miglior p di minkowski, ricalcola le metriche per quel valore di k e p
+        self.model.set_params(n_neighbors=best_k, minkowski=best_minkowski)
 
-        # Inizializza le liste per memorizzare le metriche finali per il miglior k
-        rmse_scores = []
-        mae_scores = []
-        r2_scores = []
-        mape_scores = []
-        evs_scores = []
-
-        # Secondo ciclo per la cross-validation usando il miglior k trovato
-        for train_index, test_index in kf.split(X):
-            if isinstance(X, pd.DataFrame):
-                X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-            else:
-                X_train, X_test = X[train_index], X[test_index]
-            y_train, y_test = y[train_index], y[test_index]
-
-            # Addestra il modello con il miglior k
-            self.model.fit(X_train, y_train)
-
-            # Predice sui dati di test
-            y_pred = self.model.predict(X_test)
-
-            # Calcolo delle metriche
-            rmse_scores.append(root_mean_squared_error(y_test, y_pred))
-            mae_scores.append(mean_absolute_error(y_test, y_pred))
-            r2_scores.append(r2_score(y_test, y_pred))
-            mape_scores.append(mean_absolute_percentage_error(y_test, y_pred))
-            evs_scores.append(explained_variance_score(y_test, y_pred))
-
-        # Restituisce le metriche medie per il miglior k
-        best_metrics = {
-            'RMSE': np.mean(rmse_scores),
-            'MAE': np.mean(mae_scores),
-            'R2': np.mean(r2_scores),
-            'MAPE': np.mean(mape_scores),
-            'EVS': np.mean(evs_scores),
-            'Best_n_neighbors': best_k
-        }
-
-        return best_metrics
+        return self.validate(X, y)
 
     
-    def validate(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series]) -> Dict[
-        str, float]:
+    def validate(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series]) -> Dict[str, float]:
         """
         Esegue la k-fold cross-validation e restituisce la media delle metriche.
 
@@ -128,14 +94,11 @@ class KFoldValidation:
         - Dict[str, float]: Un dizionario contenente le metriche medie calcolate.
         """
         # Converti y in un array numpy se è una Serie Pandas
+        
         y = np.array(y)
 
-        # Inizializzazione delle liste per memorizzare le metriche
-        rmse_scores = []
-        mae_scores = []
-        r2_scores = []
-        mape_scores = []
-        evs_scores = []
+        # Inizializzazione delle somme delle metriche
+        metric_sums = {}
 
         # Utilizzo di KFold di scikit-learn
         kf = KFold(n_splits=self.k_folds, shuffle=True, random_state=42)
@@ -154,20 +117,18 @@ class KFoldValidation:
             # Predizione sui dati di test
             y_pred = self.model.predict(X_test)
 
-            # Calcolo delle metriche
-            rmse_scores.append(root_mean_squared_error(y_test, y_pred))
-            mae_scores.append(mean_absolute_error(y_test, y_pred))
-            r2_scores.append(r2_score(y_test, y_pred))
-            mape_scores.append(mean_absolute_percentage_error(y_test, y_pred))
-            evs_scores.append(explained_variance_score(y_test, y_pred))
+            # Calcolo delle metriche con evaluate
+            metrics = valutazione.evaluate_model(y_test, y_pred)
 
-        # Restituzione delle metriche medie
-        metrix = {
-            'RMSE': np.mean(rmse_scores),
-            'MAE': np.mean(mae_scores),
-            'R2': np.mean(r2_scores),
-            'MAPE': np.mean(mape_scores),
-            'EVS': np.mean(evs_scores)
-        }
-        return metrix
+            # Aggiunta cumulativa delle metriche
+            for metric_name, metric_value in metrics.items():
+                if metric_name not in metric_sums:
+                    metric_sums[metric_name] = 0
+                metric_sums[metric_name] += metric_value
+
+        # Calcolo delle metriche medie
+        metric_averages = {metric_name: metric_value / self.k_folds for metric_name, metric_value in metric_sums.items()}
+        
+        return metric_averages
+
 

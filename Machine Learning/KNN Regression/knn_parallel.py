@@ -4,7 +4,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 
 class KNN_Parallel:
-    def __init__(self, k: int = 3, n_jobs: int = -1) -> None:
+    def __init__(self, k: int = 3, n_jobs: int = -1, minkowski:int = 2) -> None:
         """
         Inizializza il modello KNN.
 
@@ -13,6 +13,7 @@ class KNN_Parallel:
         - n_jobs (int): Numero di lavori paralleli da eseguire. -1 per usare tutti i core.
         """
         self.n_neighbors = k
+        self.minkowski = minkowski
         self.n_jobs = n_jobs
         self.X_train: Optional[np.ndarray] = None
         self.y_train: Optional[np.ndarray] = None
@@ -41,19 +42,18 @@ class KNN_Parallel:
         """
         return np.sqrt(np.sum((X_train - x1) ** 2, axis=1))
     
-    def _minkowski(self, x1: np.ndarray, X_train: np.ndarray, p: int=2) -> np.ndarray:
+    def _minkowski(self, x1: np.ndarray, X_train: np.ndarray) -> np.ndarray:
         """
         Calcola la distanza di Minkowski tra un punto x1 e tutti i punti di X_train.
 
         Parameters:
         - x1 (np.ndarray): Un singolo punto dati.
         - X_train (np.ndarray): Il set di dati di training.
-        - p (int): Il parametro 'p' per la distanza di Minkowski (p=2 per Euclidea, p=1 per Manhattan).
 
         Returns:
         - np.ndarray: Un array di distanze di Minkowski.
         """
-        return np.sum(np.abs(X_train - x1) ** p, axis=1) ** (1 / p)
+        return np.sum(np.abs(X_train - x1) ** self.minkowski, axis=1) ** (1 / self.minkowski)
 
 
     def _predict_single(self, x: np.ndarray) -> float:
@@ -71,7 +71,7 @@ class KNN_Parallel:
 
         # Calcolo delle distanze dal punto x a tutti i punti di training
         # distances = self._euclidean_distance(x, X_train_array)
-        distances = self._minkowski(x, X_train_array, 2)
+        distances = self._minkowski(x, X_train_array)
 
         # Identifica gli indici dei n_neighborsvicini più vicini
         k_indices = np.argsort(distances)[:self.n_neighbors]
@@ -112,7 +112,7 @@ class KNN_Parallel:
 
         return np.array(predictions)
 
-    def set_params(self, n_neighbors: Optional[int] = None, n_jobs: Optional[int] = None) -> None:
+    def set_params(self, n_neighbors: Optional[int] = None, n_jobs: Optional[int] = None, minkowski:Optional[int] = None) -> None:
         """
         Imposta i parametri del modello KNN.
 
@@ -124,4 +124,6 @@ class KNN_Parallel:
             self.n_neighbors = n_neighbors
         if n_jobs is not None:
             self.n_jobs = n_jobs
+        if minkowski is not None:
+            self.minkowski = minkowski
 
