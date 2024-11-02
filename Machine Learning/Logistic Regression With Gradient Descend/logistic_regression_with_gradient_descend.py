@@ -21,7 +21,7 @@ class LogisticRegressionGD(BaseEstimator, ClassifierMixin):
            losses (list): Valori della perdita per ogni iterazione.
        """
 
-    def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-10, regularization='none', lambda_=0.0):
+    def __init__(self, learning_rate=0.1, n_iterations=1000, tolerance=1e-6, regularization='none', lambda_=0.0):
         """Inizializza il classificatore LogisticRegressionGD.
 
                 Args:

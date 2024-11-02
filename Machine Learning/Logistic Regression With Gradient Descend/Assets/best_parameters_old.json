@@ -70,9 +70,27 @@
     "regularization": "none"
   },
   {
-    "lambda_": 0.06276718872380332,
-    "learning_rate": 0.023530060684826912,
-    "n_iterations": 10360,
+    "comment": "Ottimizzazione false postive rate"
+  },
+  {
+    "lambda_": 0.0021602177830877733,
+    "learning_rate": 0.06877728743793542,
+    "n_iterations": 1944,
+    "regularization": "ridge"
+  },
+  {
+    "lambda_": 0.0021602177830877733,
+    "learning_rate": 0.06877728743793542,
+    "n_iterations": 1944,
+    "regularization": "ridge"
+  },
+  {
+    "mcc": "mcc"
+  },
+  {
+    "lambda_": 0.1,
+    "learning_rate": 0.1,
+    "n_iterations": 5002,
     "regularization": "ridge"
   }
 ]

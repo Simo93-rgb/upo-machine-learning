@@ -153,16 +153,16 @@ def bayesian_optimization(X_train, y_train, scorer=None):
         scorer = make_scorer(false_negative_rate, greater_is_better=False)
     # Definisci lo spazio degli iperparametri da ottimizzare
     param_space = {
-        'learning_rate': (0.001, 1, 'log-uniform'),
-        'lambda_': (1e-4, 1e1, 'log-uniform'),
-        'n_iterations': (1000, 20000),
+        'learning_rate': (0.001, 0.1, 'log-uniform'),
+        'lambda_': (1e-4, 0.1, 'log-uniform'),
+        'n_iterations': (1000, 10000),
         'regularization': ['none', 'ridge', 'lasso']
     }
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
         search_spaces=param_space,
-        n_iter=1000,
+        n_iter=25,
         cv=10,
         scoring=scorer,
         n_jobs=-1,
