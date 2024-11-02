@@ -35,7 +35,7 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return np.mean(np.abs((y_true - y_pred) / (y_true + epsilon))) * 100
 
 
-def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarray, pd.Series], message: str = "") -> Dict[str, float]:
+def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarray, pd.Series], message: str = "", print_metrix:bool=True) -> Dict[str, float]:
     """
     Calcola varie metriche di errore e accuratezza per il modello, utilizzando i valori predetti e quelli reali.
     Stampa i risultati delle metriche e li restituisce come un dizionario.
@@ -44,6 +44,7 @@ def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarra
     - y_true (np.ndarray | pd.Series): I valori target effettivi.
     - y_pred (np.ndarray | pd.Series): I valori target predetti dal modello.
     - message (str): Messaggio opzionale da aggiungere alla descrizione stampata delle metriche.
+    - print_metrix (bool): Se True stampa i valori, altrimenti no.
 
     Returns:
     - Dict[str, float]: Un dizionario contenente le metriche calcolate, con le seguenti chiavi:
@@ -57,26 +58,22 @@ def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarra
     # Convalida le predizioni e i valori target
     y_true, y_pred = validate_predictions(y_true, y_pred)
     
-    # Configura il messaggio aggiuntivo
-    if message:
-        message = "su " + message
-    
     # Calcola le metriche
-    metrix = {}
-    metrix["MSE"] = mean_squared_error(y_true, y_pred)
-    metrix["RMSE"] = root_mean_squared_error(y_true, y_pred)
-    metrix["MAE"] = mean_absolute_error(y_true, y_pred)
-    metrix["R2"] = r2_score_metric(y_true, y_pred)
-    metrix["ExVar"] = explained_variance(y_true, y_pred)
-    metrix["MAPE"] = mean_absolute_percentage_error(y_true, y_pred)
-    
-    # Stampa le metriche calcolate
-    print(f"Mean Squared Error (MSE) {message}:", metrix['MSE'])
-    print(f"Root Mean Squared Error (RMSE) {message}:", metrix['RMSE'])
-    print(f"Mean Absolute Error (MAE) {message}:", metrix['MAE'])
-    print(f"R² Score {message}:", metrix['R2'])
-    print(f"Explained Variance Score {message}:", metrix['ExVar'])
-    print(f"Mean Absolute Percentage Error (MAPE) {message}:", metrix['MAPE'])
+    metrix = {"MSE": mean_squared_error(y_true, y_pred), "RMSE": root_mean_squared_error(y_true, y_pred),
+              "MAE": mean_absolute_error(y_true, y_pred), "R2": r2_score_metric(y_true, y_pred),
+              "ExVar": explained_variance(y_true, y_pred), "MAPE": mean_absolute_percentage_error(y_true, y_pred)}
+
+    if print_metrix:
+        # Configura il messaggio aggiuntivo
+        if message:
+            message = "su " + message
+        # Stampa le metriche calcolate
+        print(f"Mean Squared Error (MSE) {message}:", metrix['MSE'])
+        print(f"Root Mean Squared Error (RMSE) {message}:", metrix['RMSE'])
+        print(f"Mean Absolute Error (MAE) {message}:", metrix['MAE'])
+        print(f"R² Score {message}:", metrix['R2'])
+        print(f"Explained Variance Score {message}:", metrix['ExVar'])
+        print(f"Mean Absolute Percentage Error (MAPE) {message}:", metrix['MAPE'])
 
     return metrix
 

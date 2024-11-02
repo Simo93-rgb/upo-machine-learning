@@ -48,7 +48,7 @@ def edit_dataset(
         X_standardization: bool = True, 
         test_size=0.2,
         assets_dir=""
-        ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], Optional[StandardScaler]]:
+        ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler]]:
     """
     Standardizza il dataset e lo suddivide in training e test.
 

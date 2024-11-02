@@ -1,10 +1,11 @@
 from sklearn.model_selection import KFold
-from sklearn.metrics import explained_variance_score, mean_absolute_percentage_error, r2_score, mean_absolute_error, root_mean_squared_error
 import numpy as np
 import pandas as pd
 from typing import Dict, Union
 from knn_parallel import KNN_Parallel
 import valutazione
+
+
 class KFoldValidation:
     def __init__(self, model, k_folds: int = 5) -> None:
         """
@@ -67,7 +68,7 @@ class KFoldValidation:
                     y_pred = self.model.predict(X_test)
 
                     # Calcola la RMSE per questo k
-                    rmse = root_mean_squared_error(y_test, y_pred)
+                    rmse = valutazione.root_mean_squared_error(y_test, y_pred)
 
                     # Aggiorna il miglior k se la RMSE corrente è migliore (minima)
                     if rmse < best_rmse:
@@ -118,7 +119,7 @@ class KFoldValidation:
             y_pred = self.model.predict(X_test)
 
             # Calcolo delle metriche con evaluate
-            metrics = valutazione.evaluate_model(y_test, y_pred)
+            metrics = self.evaluate(y_test, y_pred, print_metrix=False)
 
             # Aggiunta cumulativa delle metriche
             for metric_name, metric_value in metrics.items():

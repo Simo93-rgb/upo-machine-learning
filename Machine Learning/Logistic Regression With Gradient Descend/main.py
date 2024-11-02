@@ -3,8 +3,8 @@ from funzioni import *
 from validazione import *
 
 if __name__ == "__main__":
-    start_time = time.time()
     plotting = True
+    k = 10
     param_file_path = 'Assets/best_parameters.json'
     # Carica e pre-processa i dati
     X, y = carica_dati()
@@ -34,17 +34,14 @@ if __name__ == "__main__":
     print(f"Iperparametri caricati: {best_params}")
 
     # Cross-validation
-    k = 10
+
     k_fold_metrics, k_fold_sk_metrics = k_fold_cross_validation(X_train, y_train, ModelName, k=k)
     print('Stampa delle metriche in fase di cross validazione')
     stampa_metriche_ordinate(k_fold_metrics, k_fold_sk_metrics, file_name="k_fold_metriche_modelli_parametri_base")
 
     # Addestramento del modello
-    start_model_time = time.time()
     model, sk_model = addestra_modelli(X_train, y_train, **best_params)
-    end_model_time = time.time()
-    print(
-        f"\nTempo di esecuzione del modello {ModelName.LOGISTIC_REGRESSION_GD.value}: {end_model_time - start_model_time:.4f} secondi")
+
     model.plot_losses()
     # Valutazione finale
     print("\nValutazione finale sul Test Set:")
@@ -66,10 +63,6 @@ if __name__ == "__main__":
         model=sk_model,
         model_name=f"Modello {ModelName.SCIKIT_LEARN.value}",
         print_conf_matrix=True
-    )
-
-    print(
-        f"\nTempo di esecuzione del modello {ModelName.SCIKIT_LEARN.value}: {end_model_time - start_model_time:.4f} secondi"
     )
 
     print('Stampa metriche dopo addestramento con X_test')

@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from sklearn.utils import shuffle
 import pandas as pd
@@ -129,14 +131,19 @@ def elimina_feature_correlate(X:np.ndarray, soglia=0.95):
 
 
 def addestra_modelli(X_train, y_train, **best_params):
+    start = time.time()
     # Modello Logistic Regression implementato
     model = LogisticRegressionGD()
     model.set_params(**best_params)
     model.fit(X_train, y_train)
-
+    end = time.time()
+    print(f'#################################\nTempo addestramento mio modello: {end-start}\n#################################')
     # Modello di scikit-learn Logistic Regression
+    start = time.time()
     sk_model = LogisticRegression(max_iter=best_params.get('n_iterations', 1000))
     sk_model.fit(X_train, y_train)
+    end = time.time()
+    print(f'#################################\nTempo addestramento modello sklearn: {end-start}\n#################################')
 
     return model, sk_model
 
@@ -148,14 +155,14 @@ def bayesian_optimization(X_train, y_train, scorer=None):
     param_space = {
         'learning_rate': (0.001, 1, 'log-uniform'),
         'lambda_': (1e-4, 1e1, 'log-uniform'),
-        'n_iterations': (1000, 100000),
+        'n_iterations': (1000, 20000),
         'regularization': ['none', 'ridge', 'lasso']
     }
 
     bayes_search = BayesSearchCV(
         estimator=LogisticRegressionGD(),
         search_spaces=param_space,
-        n_iter=200,
+        n_iter=1000,
         cv=10,
         scoring=scorer,
         n_jobs=-1,
