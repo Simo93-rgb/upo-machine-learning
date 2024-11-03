@@ -70,7 +70,7 @@
     "regularization": "none"
   },
   {
-    "comment": "Ottimizzazione false postive rate"
+    "comment": "Ottimizzazione false positive rate"
   },
   {
     "lambda_": 0.0021602177830877733,

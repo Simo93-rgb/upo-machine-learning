@@ -7,7 +7,7 @@ from validazione import *
 
 if __name__ == "__main__":
     start_time = time.time()
-    plotting = False
+    plotting = True
     k = 10
     param_file_path = 'Assets/best_parameters.json'
     # Carica e pre-processa i dati
@@ -80,20 +80,20 @@ if __name__ == "__main__":
 
     # Plotting
     if plotting:
-        plot_learning_curve_with_kfold(
-            model=LogisticRegressionGD(**best_params),
-            X=X_normalized,
-            y=y_encoded,
-            cv=k,
-            model_name=ModelName.LOGISTIC_REGRESSION_GD.value
-        )
-        plot_learning_curve_with_kfold(
-            model=LogisticRegression(max_iter=best_params.get('n_iterations', 1000)),
-            X=X_normalized,
-            y=y_encoded,
-            cv=k,
-            model_name=ModelName.SCIKIT_LEARN.value
-        )
+        # plot_learning_curve_with_kfold(
+        #     model=LogisticRegressionGD(**best_params),
+        #     X=X_normalized,
+        #     y=y_encoded,
+        #     cv=k,
+        #     model_name=ModelName.LOGISTIC_REGRESSION_GD.value
+        # )
+        # plot_learning_curve_with_kfold(
+        #     model=LogisticRegression(max_iter=best_params.get('n_iterations', 1000)),
+        #     X=X_normalized,
+        #     y=y_encoded,
+        #     cv=k,
+        #     model_name=ModelName.SCIKIT_LEARN.value
+        # )
         plot_graphs(X_train, y_train, y_test, test_predictions, test_sk_predictions, ModelName, remaining_feature_names)
         plot_results(X_test, y_test, model, sk_model, test_predictions, test_sk_predictions, scores,
                      sk_scores, ModelName)
