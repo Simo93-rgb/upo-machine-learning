@@ -34,12 +34,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="KNN with optional standardization and k value.")
     parser.add_argument('--X-standardization', '-X', type=str2bool, nargs='?', default=True,
                         help='Enable/Disable standardization of X (default: True)')
-    parser.add_argument('--n-neighbours', '-n', type=int, nargs='?', default=22,
-                        help='Value of neighbourhood for KNN (default: 22)')
+    parser.add_argument('--n-neighbours', '-n', type=int, nargs='?', default=6,
+                        help='Value of neighbourhood for KNN (default: 6)')
     parser.add_argument('--test-size', '-t', type=float, nargs='?', default=0.2,
                         help='Value of test-size for KNN (default: 0.2)')
     parser.add_argument('--k-fold', '-k', type=int, nargs='?', default=10,
                         help='Value of k for k-fold cross validation (default: 10)')
+    parser.add_argument('--minkowski', '-p', type=int, nargs='?', default=1,
+                        help='values of p in the minkowski equation (default: 1)')
 
     args = parser.parse_args()
 
@@ -48,7 +50,8 @@ if __name__ == "__main__":
     n = args.n_neighbours
     test_size = args.test_size
     k_fold = args.k_fold
-
+    minkowski = args.minkowski
+    chunk_size = 50
     print(f'Args:\nX_standardization = {X_standardization}\nKNN(k={n})\ntest_size = {test_size}\nk-fold = {k_fold}')
 
     # Fetch del dataset Combined Cycle Power Plant
@@ -66,8 +69,8 @@ if __name__ == "__main__":
 
 
     # Validazione incrociata (k-fold) sul set di trai∟ning/validation
-    metrix = KFoldValidation(model=KNN_Parallel(k=n, chunk_size=50), k_folds=10).validate_and_find_best_hyper_params(X_train, y_train)
-    sk_metrix = KFoldValidation(model=KNeighborsRegressor(n_neighbors=n), k_folds=10).validate(X_train, y_train)
+    metrix = KFoldValidation(model=KNN_Parallel(k=n, chunk_size=chunk_size, minkowski=minkowski), k_folds=k_fold).validate(X_train, y_train)
+    sk_metrix = KFoldValidation(model=KNeighborsRegressor(n_neighbors=n), k_folds=k_fold).validate(X_train, y_train)
 
     def save_results(metrix, filename=''):
         if os.path.exists(results_dir):
@@ -90,7 +93,7 @@ if __name__ == "__main__":
     [print(f"{chiave} su cross validation (k-fold): {valore}") for chiave, valore in sk_metrix.items()]
 
     # Creazione del modello KNN
-    knn = KNN_Parallel(k=n)
+    knn = KNN_Parallel(k=n, minkowski=minkowski, chunk_size=chunk_size)
     knn_regressor = KNeighborsRegressor(n_neighbors=n)
 
     # Addestramento finale sul training set completo

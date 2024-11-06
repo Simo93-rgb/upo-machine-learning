@@ -1,7 +1,7 @@
 from sklearn.model_selection import KFold
 import numpy as np
 import pandas as pd
-from typing import Dict, Union
+from typing import Dict, Union, Tuple
 from knn_parallel import KNN_Parallel
 import valutazione
 
@@ -34,62 +34,62 @@ class KFoldValidation:
         - Dict[str, float]: Un dizionario contenente le metriche medie calcolate per il k ottimale.
         """
         # Converti y in un array numpy se è una Serie Pandas
-        y = np.array(y)
+        y = self._convert_to_numpy(y)
+        kf = self._initialize_kfold()
+        best_params = self._find_best_params(X, y, kf)
 
-        # Inizializzazione dei risultati
+        print(f"Migliori iper parametri: k={best_params['best_k']}, minkowski={best_params['best_minkowski']}")
+        print(f"Con RMSE: {best_params['best_mse']}")
+
+        self.model.set_params(n_neighbors=int(best_params['best_k']), minkowski=int(best_params['best_minkowski']))
+        return self.validate(X, y)
+
+    def _convert_to_numpy(self, y: Union[np.ndarray, pd.Series]) -> np.ndarray:
+        """Converte y in un array numpy se è una Serie Pandas."""
+        return np.array(y)
+
+    def _initialize_kfold(self) -> KFold:
+        """Inizializza l'oggetto KFold con i parametri specificati."""
+        return KFold(n_splits=self.k_folds, shuffle=True, random_state=42)
+
+    def _find_best_params(self, X: Union[np.ndarray, pd.DataFrame], y: np.ndarray, kf: KFold) -> Dict[str, float]:
+        """Trova i migliori iperparametri k e minkowski in base alla RMSE usando k-fold cross-validation."""
         best_k = None
         best_minkowski = None
         best_mse = float('inf')
-        best_mape = float('inf')
-
-        best_metrics = {}
-
-        # Utilizzo di KFold di scikit-learn
-        kf = KFold(n_splits=self.k_folds, shuffle=True, random_state=42)
-
-        
-        for minkowski in range(1,3):
-            print(f'Sto eseguendo minkowski={minkowski}')
+        print(f'Inizio ricerca migliori iper parametri')
+        for minkowski in range(1, 4):
             self.model.set_params(minkowski=minkowski)
-            # Itera sui valori di k (n_neighbors) con un range fisso (es. da 5 a 200 con step di 15)
-            for k in range(2, 30):
-                print(f'Sto eseguendo n_neighbourhood={k}')
-                # Aggiorna il valore di k nel modello
+            for k in range(2, 31):
                 self.model.set_params(n_neighbors=k)
-                for train_index, test_index in kf.split(X):
-                    # Selezione dei dati di training e test
-                    if isinstance(X, pd.DataFrame):
-                        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-                    else:
-                        X_train, X_test = X[train_index], X[test_index]
-                    y_train, y_test = y[train_index], y[test_index]
-                    # Addestra il modello
-                    self.model.fit(X_train, y_train)
+                mse = self._cross_validate_model(X, y, kf)
+                if mse < best_mse:
+                    best_mse = mse
+                    best_k = k
+                    best_minkowski = minkowski
+        print(f'Trovati: neighbourhood={best_k}, minkowski={best_minkowski} con RMSE={best_mse}')
+        return {'best_k': best_k, 'best_minkowski': best_minkowski, 'best_mse': best_mse}
 
-                    # Predice sui dati di test
-                    y_pred = self.model.predict(X_test)
+    def _cross_validate_model(self, X: Union[np.ndarray, pd.DataFrame], y: np.ndarray, kf: KFold) -> float:
+        """Esegue la cross-validation e calcola la RMSE media per un determinato k e minkowski."""
+        rmse_array = []
+        for train_index, test_index in kf.split(X):
+            X_train, X_test = self._select_data(X, train_index, test_index)
+            y_train, y_test = y[train_index], y[test_index]
+            self.model.fit(X_train, y_train)
+            y_pred = self.model.predict(X_test)
+            mse = valutazione.root_mean_squared_error(y_test, y_pred)
+            rmse_array.append(mse)
 
-                    # Calcola la RMSE per questo k
-                    mse = valutazione.mean_squared_error(y_test, y_pred)
-                    mape = valutazione.mean_absolute_percentage_error(y_test, y_pred)
+        return np.mean(rmse_array)
 
-                    # Aggiorna il miglior k se la RMSE corrente è migliore (minima)
-                    # if mse < best_mse:
-                    #     best_mse = mse
-                    #     best_k = k
-                    #     best_minkowski = minkowski
-                    if mape < best_mape:
-                        best_mape = mape
-                        best_k = k
-                        best_minkowski = minkowski
-            print(f'Fine giro k-fold')
-
-        # Dopo aver trovato il miglior k e miglior p di minkowski, ricalcola le metriche per quel valore di k e p
-        print(f'Migliori iper parametri: k={best_k}, minkowski={best_minkowski}')
-        self.model.set_params(n_neighbors=best_k, minkowski=best_minkowski)
-
-        return self.validate(X, y)
-
+    def _select_data(self, X: Union[np.ndarray, pd.DataFrame], train_index: np.ndarray, test_index: np.ndarray) -> \
+    Tuple[Union[np.ndarray, pd.DataFrame], Union[np.ndarray, pd.DataFrame]]:
+        """Seleziona i dati di training e test in base agli indici."""
+        if isinstance(X, pd.DataFrame):
+            return X.iloc[train_index], X.iloc[test_index]
+        else:
+            return X[train_index], X[test_index]
     
     def validate(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series]) -> Dict[str, float]:
         """
