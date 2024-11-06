@@ -4,7 +4,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 
 class KNN_Parallel:
-    def __init__(self, k: int = 3, n_jobs: int = -1, minkowski:int = 2) -> None:
+    def __init__(self, k: int = 3, n_jobs: int = -1, minkowski:int = 2, chunk_size:int=1) -> None:
         """
         Inizializza il modello KNN.
 
@@ -15,6 +15,7 @@ class KNN_Parallel:
         self.n_neighbors = k
         self.minkowski = minkowski
         self.n_jobs = n_jobs
+        self.chunk_size = chunk_size
         self.X_train: Optional[np.ndarray] = None
         self.y_train: Optional[np.ndarray] = None
 
@@ -91,12 +92,28 @@ class KNN_Parallel:
         # Calcolo della predizione come media pesata
         return np.sum(k_nearest_targets * weights_normalized)
 
+    def divide_chunks(self, data: np.ndarray, n: int) -> list:
+        """
+        Divide l'array `data` in blocchi di dimensione `n`.
+
+        Parameters:
+        - data (np.ndarray): L'array da dividere.
+        - n (int): La dimensione di ciascun blocco.
+
+        Returns:
+        - list: Una lista di blocchi (ogni blocco è un sotto-array).
+        """
+        for i in range(0, len(data), n):
+            yield data[i:i + n]
+
     def predict(self, X_test: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """
         Predice i valori per i nuovi dati basandosi sul KNN con pesatura delle distanze.
+        Esegue due predizioni per job per migliorare l'efficienza.
 
         Parameters:
         - X_test (np.ndarray | pd.DataFrame): I dati di test.
+        - chunk_size (int): Definisce la dimensione del blocco di predizioni per ogni job.
 
         Returns:
         - np.ndarray: Le predizioni.
@@ -105,12 +122,37 @@ class KNN_Parallel:
         if isinstance(X_test, pd.DataFrame):
             X_test = X_test.values
 
-        # Utilizza joblib per parallelizzare la predizione
+        # Divide `X_test` in blocchi di dimensione `chunk_size`
+        blocks = list(self.divide_chunks(X_test, self.chunk_size))
+
+        # Parallelizza la predizione su ciascun blocco
         predictions = Parallel(n_jobs=self.n_jobs)(
-            delayed(self._predict_single)(x) for x in X_test
+            delayed(lambda block: [self._predict_single(x) for x in block])(block) for block in blocks
         )
 
-        return np.array(predictions)
+        # Converte i risultati in un array numpy appiattendo i risultati di ciascun blocco
+        return np.array([pred for block_preds in predictions for pred in block_preds])
+
+    # def predict(self, X_test: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
+    #     """
+    #     Predice i valori per i nuovi dati basandosi sul KNN con pesatura delle distanze.
+    #
+    #     Parameters:
+    #     - X_test (np.ndarray | pd.DataFrame): I dati di test.
+    #
+    #     Returns:
+    #     - np.ndarray: Le predizioni.
+    #     """
+    #     # Se X_test è un DataFrame, convertilo in un array numpy
+    #     if isinstance(X_test, pd.DataFrame):
+    #         X_test = X_test.values
+    #
+    #     # Utilizza joblib per parallelizzare la predizione
+    #     predictions = Parallel(n_jobs=self.n_jobs)(
+    #         delayed(self._predict_single)(x) for x in X_test
+    #     )
+    #
+    #     return np.array(predictions)
 
     def set_params(self, n_neighbors: Optional[int] = None, n_jobs: Optional[int] = None, minkowski:Optional[int] = None) -> None:
         """

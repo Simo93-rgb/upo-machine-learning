@@ -20,8 +20,8 @@ class KFoldValidation:
         self.evaluate = valutazione.evaluate_model
         
 
-    def validate_and_find_n_neighbors(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series], 
-                                    ) -> Dict[str, float]:
+    def validate_and_find_best_hyper_params(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.Series],
+                                            ) -> Dict[str, float]:
         """
         Esegue la k-fold cross-validation, trova il miglior valore di n_neighbors (k) in base alla RMSE,
         e restituisce le metriche per il k ottimale.
@@ -39,7 +39,9 @@ class KFoldValidation:
         # Inizializzazione dei risultati
         best_k = None
         best_minkowski = None
-        best_rmse = float('inf')
+        best_mse = float('inf')
+        best_mape = float('inf')
+
         best_metrics = {}
 
         # Utilizzo di KFold di scikit-learn
@@ -68,16 +70,22 @@ class KFoldValidation:
                     y_pred = self.model.predict(X_test)
 
                     # Calcola la RMSE per questo k
-                    rmse = valutazione.root_mean_squared_error(y_test, y_pred)
+                    mse = valutazione.mean_squared_error(y_test, y_pred)
+                    mape = valutazione.mean_absolute_percentage_error(y_test, y_pred)
 
                     # Aggiorna il miglior k se la RMSE corrente è migliore (minima)
-                    if rmse < best_rmse:
-                        best_rmse = rmse
+                    # if mse < best_mse:
+                    #     best_mse = mse
+                    #     best_k = k
+                    #     best_minkowski = minkowski
+                    if mape < best_mape:
+                        best_mape = mape
                         best_k = k
                         best_minkowski = minkowski
             print(f'Fine giro k-fold')
 
         # Dopo aver trovato il miglior k e miglior p di minkowski, ricalcola le metriche per quel valore di k e p
+        print(f'Migliori iper parametri: k={best_k}, minkowski={best_minkowski}')
         self.model.set_params(n_neighbors=best_k, minkowski=best_minkowski)
 
         return self.validate(X, y)
@@ -119,7 +127,7 @@ class KFoldValidation:
             y_pred = self.model.predict(X_test)
 
             # Calcolo delle metriche con evaluate
-            metrics = self.evaluate(y_test, y_pred, print_metrix=False)
+            metrics = self.evaluate(y_test, y_pred, print_metrix=False, savefile=False)
 
             # Aggiunta cumulativa delle metriche
             for metric_name, metric_value in metrics.items():

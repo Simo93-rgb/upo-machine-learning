@@ -2,6 +2,10 @@ from typing import Dict, Union
 import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score, explained_variance_score
+import csv
+import json
+import os
+
 
 
 def mean_squared_error(y_true, y_pred):
@@ -35,7 +39,14 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return np.mean(np.abs((y_true - y_pred) / (y_true + epsilon))) * 100
 
 
-def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarray, pd.Series], message: str = "", print_metrix:bool=True) -> Dict[str, float]:
+def evaluate_model(
+        y_true: Union[np.ndarray, pd.Series], 
+        y_pred: Union[np.ndarray, pd.Series],
+        message: str = "", 
+        print_metrix:bool=True, 
+        savefile:bool=False,
+        path:str=None,
+        ) -> Dict[str, float]:
     """
     Calcola varie metriche di errore e accuratezza per il modello, utilizzando i valori predetti e quelli reali.
     Stampa i risultati delle metriche e li restituisce come un dizionario.
@@ -55,11 +66,19 @@ def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarra
         - "ExVar": Explained Variance Score.
         - "MAPE": Mean Absolute Percentage Error.
     """
+    if path is None:
+        # Percorso del file main.py
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Percorso alla cartella "Assets" nella directory "KNN Regression"
+        assets_dir = os.path.join(current_dir, 'Assets')
+        path=os.path.join(assets_dir, 'results')
+
     # Convalida le predizioni e i valori target
     y_true, y_pred = validate_predictions(y_true, y_pred)
     
     # Calcola le metriche
-    metrix = {"MSE": mean_squared_error(y_true, y_pred), "RMSE": root_mean_squared_error(y_true, y_pred),
+    metrix = {"RMSE": root_mean_squared_error(y_true, y_pred),
               "MAE": mean_absolute_error(y_true, y_pred), "R2": r2_score_metric(y_true, y_pred),
               "ExVar": explained_variance(y_true, y_pred), "MAPE": mean_absolute_percentage_error(y_true, y_pred)}
 
@@ -68,12 +87,21 @@ def evaluate_model(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarra
         if message:
             message = "su " + message
         # Stampa le metriche calcolate
-        print(f"Mean Squared Error (MSE) {message}:", metrix['MSE'])
         print(f"Root Mean Squared Error (RMSE) {message}:", metrix['RMSE'])
         print(f"Mean Absolute Error (MAE) {message}:", metrix['MAE'])
         print(f"R² Score {message}:", metrix['R2'])
         print(f"Explained Variance Score {message}:", metrix['ExVar'])
         print(f"Mean Absolute Percentage Error (MAPE) {message}:", metrix['MAPE'])
+    if savefile:
+        if os.path.exists(path):
+            with open(f'{path}/{message}.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(metrix.keys())  # Scrive le intestazioni
+                writer.writerow(metrix.values())  # Scrive i valori
+        
+            # Salvataggio in un file JSON
+            with open(f'{path}/{message}.json', 'w') as file:
+                json.dump(metrix, file, indent=4)
 
     return metrix
 

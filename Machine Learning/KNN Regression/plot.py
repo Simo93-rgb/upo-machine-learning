@@ -15,6 +15,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Percorso alla cartella "Assets" nella directory "KNN Regression"
 assets_dir = os.path.join(current_dir, 'Assets')
 
+results_dir = os.path.join(assets_dir, 'results')
+
 def plot_predictions(y_true, y_pred, model_name="", assets_dir=""):
     y_true, y_pred = validate_predictions(y_true, y_pred)
     x_dim, y_dim = [16, 9]
@@ -202,3 +204,38 @@ if __name__ == '__main__':
         file_name=f'/plot/learning_curve_X_st_{X_standardization}_y_st_{y_standardization}_k_{k}_test_size_{test_size}',
         x_scaler=x_scaler
     )
+
+def plot_comparison(knn_metrics:dict, knn_sklearn_metrics:dict, title:str):
+    """
+    Plots a comparison histogram between KNN and KNN_Sklearn metrics.
+
+    Parameters:
+    knn_metrics (dict): Dictionary containing KNN metrics.
+    knn_sklearn_metrics (dict): Dictionary containing KNN_Sklearn metrics.
+    title (str): Title of the plot.
+    """
+    # Extract metric names and values
+    metrics = list(knn_metrics.keys())
+    knn_values = list(knn_metrics.values())
+    knn_sklearn_values = list(knn_sklearn_metrics.values())
+
+    # Set the position of the bars on the x-axis
+    x = range(len(metrics))
+
+    # Plotting the bars
+    fig, ax = plt.subplots()
+    bar_width = 0.35
+    ax.bar(x, knn_values, width=bar_width, label='KNN')
+    ax.bar([p + bar_width for p in x], knn_sklearn_values, width=bar_width, label='KNN_Sklearn')
+
+    # Adding labels and title
+    ax.set_xlabel('Metrics')
+    ax.set_ylabel('Values')
+    ax.set_title(title)
+    ax.set_xticks([p + bar_width / 2 for p in x])
+    ax.set_xticklabels(metrics)
+    ax.legend()
+
+    # Show the plot
+    plt.savefig(f'{results_dir}/{title}.png', format='png', dpi=600, bbox_inches='tight')
+    plt.show()

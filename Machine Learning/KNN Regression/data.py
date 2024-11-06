@@ -73,8 +73,14 @@ def edit_dataset(
         # X = (X - X.mean(axis=0)) / X.std(axis=0)
 
 
-    X, y = remove_outliers_quantile(X, y)
-
+    # X, y = remove_outliers_quantile(X, y)
+    # Crea un indice casuale per il shuffle
+    # indices = np.arange(X.shape[0])
+    # np.random.shuffle(indices)
+    #
+    # # Mescola gli array X e y in base all'indice casuale
+    # X = X[indices]
+    # y = y[indices]
     # Suddivisione in train (80%) e test (20%)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     if not os.path.exists(f'{assets_dir}/CCPP.csv'):

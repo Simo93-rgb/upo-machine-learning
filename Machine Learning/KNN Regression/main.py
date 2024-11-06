@@ -6,7 +6,7 @@ from sklearn.neighbors import KNeighborsRegressor
 
 from data import fetch_data, edit_dataset
 from knn_parallel import KNN_Parallel
-from plot import plot_predictions, plot_residuals
+from plot import plot_predictions, plot_residuals, plot_comparison
 from validazione import KFoldValidation
 from valutazione import *
 
@@ -15,7 +15,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Percorso alla cartella "Assets" nella directory "KNN Regression"
 assets_dir = os.path.join(current_dir, 'Assets')
-
+results_dir = os.path.join(assets_dir, 'results')
 
 # Funzione per convertire stringhe in booleani
 def str2bool(v):
@@ -53,6 +53,7 @@ if __name__ == "__main__":
 
     # Fetch del dataset Combined Cycle Power Plant
     X, y = fetch_data(assets_dir)
+    print(f'valore min: {y.min()}\nvalore max: {y.max()}')
 
     # Manipolazione dataset con opzioni di standardizzazione per X e y
     X_train, X_test, y_train, y_test, x_scaler = edit_dataset(
@@ -65,8 +66,22 @@ if __name__ == "__main__":
 
 
     # Validazione incrociata (k-fold) sul set di trai∟ning/validation
-    metrix = KFoldValidation(model=KNN_Parallel(k=n), k_folds=10).validate(X_train, y_train)
+    metrix = KFoldValidation(model=KNN_Parallel(k=n, chunk_size=50), k_folds=10).validate_and_find_best_hyper_params(X_train, y_train)
     sk_metrix = KFoldValidation(model=KNeighborsRegressor(n_neighbors=n), k_folds=10).validate(X_train, y_train)
+
+    def save_results(metrix, filename=''):
+        if os.path.exists(results_dir):
+            with open(f'{results_dir}/{filename}.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(metrix.keys())  # Scrive le intestazioni
+                writer.writerow(metrix.values())  # Scrive i valori
+        
+            # Salvataggio in un file JSON
+            with open(f'{results_dir}/{filename}.json', 'w') as file:
+                json.dump(metrix, file, indent=4)
+    
+    save_results(metrix, 'kfold_knn_parallel')
+    save_results(sk_metrix, 'kfold_knn_sklearn')
 
     print('######## K-FOLD k-NN Parallel ########')
     [print(f"{chiave} su cross validation (k-fold): {valore}") for chiave, valore in metrix.items()]
@@ -100,10 +115,13 @@ if __name__ == "__main__":
 
     # Valutazione del modello
     print('######## Evaluating my model ########')
-    evaluate_model(y_true=y_test, y_pred=y_test_pred, message="Test Set")
+    test_metrix = evaluate_model(y_true=y_test, y_pred=y_test_pred, message="Test Set", savefile=True)
 
     print('######## Evaluating sklearn ########')
-    evaluate_model(y_true=y_test, y_pred=y_test_pred_sk, message="Test Set")
+    test_metrix_sk = evaluate_model(y_true=y_test, y_pred=y_test_pred_sk, message="Test Set", savefile=True)
+
+    save_results(test_metrix, 'test_knn_parallel')
+    save_results(test_metrix_sk, 'test_knn_sklearn')
 
     # Visualizzazioni
     # Plot della curva di apprendimento
@@ -112,6 +130,8 @@ if __name__ == "__main__":
     plot_predictions(y_test, y_test_pred_sk, model_name="KNN sklearn", assets_dir=assets_dir)
     plot_residuals(y_test, y_test_pred, model_name="KNN Parallel", assets_dir=assets_dir)
     plot_residuals(y_test, y_test_pred_sk, model_name="KNN sklearn", assets_dir=assets_dir)
+    plot_comparison(metrix, sk_metrix, title='Cross Validation')
+    plot_comparison(test_metrix, test_metrix_sk, title='Test')
 
     # Stampa dei tempi di esecuzione
     print(f'Tempo esecuzione k-NN Parallel: {end_time - start_time}')
