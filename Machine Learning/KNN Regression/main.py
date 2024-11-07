@@ -69,7 +69,9 @@ if __name__ == "__main__":
 
 
     # Validazione incrociata (k-fold) sul set di trai∟ning/validation
-    metrix = KFoldValidation(model=KNN_Parallel(k=n, chunk_size=chunk_size, minkowski=minkowski), k_folds=k_fold).validate(X_train, y_train)
+    metrix = (
+        KFoldValidation(model=KNN_Parallel(k=n, chunk_size=chunk_size, minkowski=minkowski), k_folds=k_fold)
+        .validate(X_train, y_train))
     sk_metrix = KFoldValidation(model=KNeighborsRegressor(n_neighbors=n), k_folds=k_fold).validate(X_train, y_train)
 
     def save_results(metrix, filename=''):

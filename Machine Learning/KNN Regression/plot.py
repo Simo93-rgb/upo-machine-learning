@@ -26,7 +26,7 @@ def plot_predictions(y_true, y_pred, model_name="", assets_dir=""):
     plt.title(f'Confronto Valori Predetti e Reali - {model_name}', fontsize=24)
     plt.xlabel('Valori Reali', fontsize=18)
     plt.ylabel('Valori Predetti', fontsize=18)
-    plt.savefig(f'{assets_dir}/predictions_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+    plt.savefig(f'{results_dir}/predictions_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
     # plt.show()
     plt.close()
 
@@ -40,7 +40,7 @@ def plot_residuals(y_true, y_pred, model_name="", assets_dir=""):
     plt.title(f'Distribuzione dei Residui - {model_name}', fontsize=24)
     plt.xlabel('Errore di Predizione', fontsize=18)
     plt.ylabel('Frequenza', fontsize=18)
-    plt.savefig(f'{assets_dir}/residuals_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
+    plt.savefig(f'{results_dir}/residuals_{model_name}.png', format='png', dpi=600, bbox_inches='tight')
     # plt.show()
     plt.close()
 
@@ -237,5 +237,5 @@ def plot_comparison(knn_metrics:dict, knn_sklearn_metrics:dict, title:str):
     ax.legend()
 
     # Show the plot
-    plt.savefig(f'{results_dir}/{title}.png', format='png', dpi=600, bbox_inches='tight')
+    plt.savefig(f'{results_dir}/comparison_{title}.png', format='png', dpi=600, bbox_inches='tight')
     plt.show()

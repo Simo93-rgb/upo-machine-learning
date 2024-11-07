@@ -37,6 +37,7 @@ def fetch_data(assets_dir: str = "") -> Tuple[pd.DataFrame, pd.Series]:
 
         # Converti X e y in valori numerici se ci sono stringhe
         X = X.apply(pd.to_numeric, errors='coerce')
+        # X = X.drop(columns=['AP', 'RH'])
         y = pd.to_numeric(y, errors='coerce')
 
     return X, y

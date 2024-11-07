@@ -83,8 +83,7 @@ class KNN_Parallel:
         # Calcolo dei pesi usando l'inverso del quadrato della distanza (aggiungo epsilon per evitare divisioni per zero)
         epsilon = 1e-10
         k_nearest_distances = distances[k_indices]
-        weights = np.where(k_nearest_distances < 1, 1 / (k_nearest_distances ** 2 + epsilon),
-                           1 - (k_nearest_distances ** 2 + epsilon))
+        weights = np.where(k_nearest_distances < 1, 1 - k_nearest_distances, 1 / (k_nearest_distances ** 2 + epsilon))
 
         # Normalizzazione dei pesi
         weights_normalized = weights / np.sum(weights)
