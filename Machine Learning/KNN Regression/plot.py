@@ -12,9 +12,10 @@ from valutazione import explained_variance, mean_squared_error
 # Percorso del file main.py
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Percorso alla cartella "Assets" nella directory "KNN Regression"
+# Percorso alla cartella "Assets"
 assets_dir = os.path.join(current_dir, 'Assets')
 
+# Percorso alla cartella "results"
 results_dir = os.path.join(assets_dir, 'results')
 
 def plot_predictions(y_true, y_pred, model_name="", assets_dir=""):
