@@ -11,7 +11,6 @@ os.makedirs(plot_dir, exist_ok=True)  # Crea la cartella se non esiste
 def save_dendrogram(linkage_matrix, file_name="dendrogram.png"):
     # Percorso completo per il file
     file_path = os.path.join(plot_dir, file_name)
-
     # Plot del dendrogramma
     plt.figure(figsize=(10, 7))
     dendrogram(linkage_matrix)
