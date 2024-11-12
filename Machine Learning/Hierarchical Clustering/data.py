@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from pandas.core.frame import DataFrame
 from sklearn.model_selection import train_test_split
+from ucimlrepo import fetch_ucirepo
 
 
 class DataHandler:
@@ -17,8 +18,7 @@ class DataHandler:
         # Ad esempio: normalizzazione tra -1 e 1 per le caratteristiche MFCC
         self.data.iloc[:, :-1] = (self.data.iloc[:, :-1] - self.data.iloc[:, :-1].min()) / (
                     self.data.iloc[:, :-1].max() - self.data.iloc[:, :-1].min())
-        # Esegui lo split dei dati
-        self.data, X_test = train_test_split(self.data, test_size=0.8, random_state=42)
+
 
     def get_features(self):
         # Ritorna solo le colonne delle feature per il clustering
@@ -38,3 +38,17 @@ if __name__ == '__main__':
     # Inizializza il gestore dati e carica il dataset
     data_handler = DataHandler(f'{dataset_dir}/Frogs_MFCCs_reduced.csv')
     data_handler.data = data_handler.data.drop(columns=['Genus','Species','RecordID'])
+
+
+    # fetch dataset
+    hepatitis = fetch_ucirepo(id=46)
+
+    # data (as pandas dataframes)
+    X = hepatitis.data.features
+    y = hepatitis.data.targets
+
+    # Concatenare X e y in un unico DataFrame
+    data = pd.concat([X, y], axis=1)
+
+    # Salvare il DataFrame concatenato in un file CSV
+    data.to_csv(f'{dataset_dir}/hepatitis.csv', index=False)
