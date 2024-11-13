@@ -4,7 +4,7 @@ import numpy as np
 from pandas.core.interchange.dataframe_protocol import DataFrame
 
 from data import DataHandler
-from hierarchical_clustering_prove import HierarchicalClustering
+from hierarchical_clustering_cupy import HierarchicalClustering
 from evaluation import calculate_and_save_silhouette, purity_score
 from plot import save_dendrogram, save_silhouette_plot
 import gc
