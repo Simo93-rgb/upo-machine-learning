@@ -4,7 +4,7 @@ import numpy as np
 from pandas.core.interchange.dataframe_protocol import DataFrame
 
 from data import DataHandler
-from hierarchical_clustering_old_2 import HierarchicalClustering
+from hierarchical_clustering_prove import HierarchicalClustering
 from evaluation import calculate_and_save_silhouette, purity_score
 from plot import save_dendrogram, save_silhouette_plot
 import gc
@@ -24,8 +24,19 @@ data_handler.preprocess_data()
 X:DataFrame = data_handler.get_features()
 y = data_handler.get_labels().iloc[:, -1].values  # Usa la colonna delle specie per la valutazione
 print(f'Caricamento Dataset {dataset_name}')
+
+
+
+# Esempio di utilizzo
+def kmeans_pre_clustering(X, n_clusters=10):
+    from sklearn.cluster import KMeans
+    kmeans = KMeans(n_clusters=n_clusters)
+    labels = kmeans.fit_predict(X)
+    return kmeans.cluster_centers_, labels
+
+
 # Inizializza il modello di clustering gerarchico
-hc = HierarchicalClustering(linkage='single', X=X)
+hc = HierarchicalClustering(linkage='single', X=X, pre_clustering_func=kmeans_pre_clustering, n_clusters=10 )
 print(f'Inizio fit')
 hc.fit()
 print('Fine fit')
