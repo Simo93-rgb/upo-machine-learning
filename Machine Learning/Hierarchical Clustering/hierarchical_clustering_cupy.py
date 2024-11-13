@@ -1,9 +1,6 @@
+from typing import Tuple, List
 from sklearn.metrics import pairwise_distances
-from typing import Dict, Tuple, List, Union
-from sklearn.metrics import pairwise_distances
-import pandas as pd
 import time
-from joblib import Parallel, delayed
 import numpy as np
 import cupy as cp
 

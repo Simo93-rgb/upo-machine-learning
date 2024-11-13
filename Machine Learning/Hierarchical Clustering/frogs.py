@@ -4,7 +4,7 @@ import numpy as np
 from pandas.core.interchange.dataframe_protocol import DataFrame
 
 from data import DataHandler
-from hierarchical_clustering_cupy import HierarchicalClustering
+from hierarchical_clustering_prove import HierarchicalClustering
 from evaluation import calculate_and_save_silhouette, purity_score
 from plot import save_dendrogram, save_silhouette_plot
 import gc
@@ -16,7 +16,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 dataset_dir = os.path.join(current_dir, 'Assets', 'Dataset')
 output_dir = os.path.join(current_dir, 'Assets', 'Results')
 os.makedirs(output_dir, exist_ok=True)
-dataset_name = 'Frogs_MFCCs'
+dataset_name = 'Frogs_MFCCs_reduced'
 
 # Inizializza il gestore dati e carica il dataset
 data_handler = DataHandler(f'{dataset_dir}/{dataset_name}.csv')
@@ -27,7 +27,7 @@ print(f'Caricamento Dataset {dataset_name}')
 
 
 
-# Esempio di utilizzo
+# K-Means di scikitlearn
 def kmeans_pre_clustering(X, n_clusters=10):
     from sklearn.cluster import KMeans
     kmeans = KMeans(n_clusters=n_clusters)
@@ -64,18 +64,18 @@ for a, b, dist in hc.cluster_history:
 # Converti la lista in un array numpy
 linkage_matrix = np.array(linkage_matrix)
 save_dendrogram(linkage_matrix, file_name=dendrogram_path)
-#
-# # Previsione e valutazione
-# num_clusters = 2  # Numero di cluster desiderato
-# cluster_objects = hc.predict(num_clusters)
-#
-# # Ora cluster_objects è una lista di oggetti Cluster
-# # Per ottenere solo i nomi dei cluster, per esempio:
-# cluster_names = [cluster for cluster in cluster_objects]
-#
-# # Calcola e salva il punteggio di silhouette
-# silhouette_path = os.path.join(output_dir, "silhouette_score.csv")
-# calculate_and_save_silhouette(X, cluster_names, file_name=silhouette_path)
+
+# Previsione e valutazione
+num_clusters = 4  # Numero di cluster desiderato
+cluster_objects = hc.predict(num_clusters)
+
+# Ora cluster_objects è una lista di oggetti Cluster
+# Per ottenere solo i nomi dei cluster, per esempio:
+cluster_names = [cluster for cluster in cluster_objects]
+
+# Calcola e salva il punteggio di silhouette
+silhouette_path = os.path.join(output_dir, "silhouette_score.csv")
+calculate_and_save_silhouette(X, cluster_names, file_name=silhouette_path)
 #
 # # Calcola e salva la purezza dei cluster
 # purity_path = os.path.join(output_dir, "purity_score.csv")
@@ -86,5 +86,5 @@ save_dendrogram(linkage_matrix, file_name=dendrogram_path)
 # save_silhouette_plot(X, cluster_names, file_name=silhouette_plot_path)
 #
 # print("Progetto completato e risultati salvati.")
-# Disabilita il flag per ripristinare il comportamento predefinito del garbage collector
-# gc.set_debug(0)
+# #Disabilita il flag per ripristinare il comportamento predefinito del garbage collector
+# #gc.set_debug(0)
