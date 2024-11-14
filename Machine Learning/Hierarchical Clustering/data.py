@@ -10,7 +10,7 @@ from ucimlrepo import fetch_ucirepo
 class DataHandler:
     def __init__(self, file_path):
         self.data:DataFrame = pd.read_csv(file_path)
-        self.data = self.data.drop(columns=['Species', 'Genus', 'MFCCs_1', 'RecordID'])
+        self.data = self.data.drop(columns=['Species', 'Genus', 'RecordID'])
 
 
     def preprocess_data(self):

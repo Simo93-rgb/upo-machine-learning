@@ -1,39 +1,104 @@
+import numpy as np
+from scipy.cluster.hierarchy import dendrogram
 import os
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
-
+from typing import List
 # Determina il percorso della cartella "Assets/plot"
-current_dir = os.path.dirname(os.path.abspath(__file__))
-plot_dir = os.path.join(current_dir, 'Assets', 'plot')
-os.makedirs(plot_dir, exist_ok=True)  # Crea la cartella se non esiste
 
 
-def save_dendrogram(linkage_matrix, file_name="dendrogram.png"):
-    # Percorso completo per il file
+# def save_dendrogram(linkage_matrix, file_name="dendrogram.png"):
+#     # Percorso completo per il file
+#     file_path = os.path.join(plot_dir, file_name)
+#     # Plot del dendrogramma
+#     plt.figure(figsize=(10, 7))
+#     dendrogram(linkage_matrix)
+#     plt.title("Dendrogram")
+#     plt.xlabel("Samples")
+#     plt.ylabel("Distance")
+#     plt.savefig(file_path)  # Salva l'immagine
+#     plt.close()  # Chiude la figura per liberare memoria
+#     print(f"Dendrogramma salvato in {file_path}")
+#
+#
+# def save_silhouette_plot(X, labels, file_name="silhouette_plot.png"):
+#     from sklearn.metrics import silhouette_samples
+#     import numpy as np
+#
+#     file_path = os.path.join(plot_dir, file_name)
+#
+#     # Calcolo dei campioni della silhouette
+#     silhouette_vals = silhouette_samples(X, labels)
+#     y_ticks = []
+#     y_lower, y_upper = 0, 0
+#
+#     # Plot delle silhouette
+#     plt.figure(figsize=(10, 7))
+#     for i, cluster in enumerate(np.unique(labels)):
+#         cluster_silhouette_vals = silhouette_vals[labels == cluster]
+#         cluster_silhouette_vals.sort()
+#         y_upper += len(cluster_silhouette_vals)
+#         plt.barh(range(y_lower, y_upper), cluster_silhouette_vals, edgecolor='none', height=1)
+#         y_ticks.append((y_lower + y_upper) / 2)
+#         y_lower += len(cluster_silhouette_vals)
+#
+#     plt.axvline(x=np.mean(silhouette_vals), color="red", linestyle="--")  # Linea verticale per il valore medio
+#     plt.yticks(y_ticks, np.unique(labels))
+#     plt.xlabel("Silhouette Coefficient")
+#     plt.ylabel("Cluster")
+#     plt.title("Silhouette Plot")
+#     plt.savefig(file_path)  # Salva l'immagine
+#     plt.close()
+#     print(f"Plot della silhouette salvato in {file_path}")
+
+
+
+def save_plot(plot, file_name: str, plot_dir: str):
+    """
+    Salva il plot corrente nella directory specificata.
+
+    Args:
+        plot: Oggetto matplotlib.pyplot.
+        file_name (str): Nome del file di output.
+        plot_dir (str): Directory di output per i plot.
+    """
+    os.makedirs(plot_dir, exist_ok=True)
     file_path = os.path.join(plot_dir, file_name)
-    # Plot del dendrogramma
+    plot.savefig(file_path)
+    plot.close()
+    print(f"Plot salvato in {file_path}")
+
+def save_dendrogram(linkage_matrix: np.ndarray, plot_dir: str):
+    """
+    Crea e salva il dendrogramma.
+
+    Args:
+        linkage_matrix (List[List[float]]): Matrice di linkage per il dendrogramma.
+        k (int): Numero di cluster.
+        plot_dir (str): Directory di output per i plot.
+    """
     plt.figure(figsize=(10, 7))
     dendrogram(linkage_matrix)
-    plt.title("Dendrogram")
+    plt.title(f"Dendrogram")
     plt.xlabel("Samples")
     plt.ylabel("Distance")
-    plt.savefig(file_path)  # Salva l'immagine
-    plt.close()  # Chiude la figura per liberare memoria
-    print(f"Dendrogramma salvato in {file_path}")
+    save_plot(plt, f"dendrogram.png", plot_dir)
 
+def save_silhouette_plot(X: np.ndarray, labels: np.ndarray, k: int, plot_dir: str):
+    """
+    Crea e salva il plot della silhouette.
 
-def save_silhouette_plot(X, labels, file_name="silhouette_plot.png"):
+    Args:
+        X (np.ndarray): Dati di input.
+        labels (np.ndarray): Etichette dei cluster.
+        k (int): Numero di cluster.
+        plot_dir (str): Directory di output per i plot.
+    """
     from sklearn.metrics import silhouette_samples
-    import numpy as np
-
-    file_path = os.path.join(plot_dir, file_name)
-
-    # Calcolo dei campioni della silhouette
     silhouette_vals = silhouette_samples(X, labels)
     y_ticks = []
     y_lower, y_upper = 0, 0
 
-    # Plot delle silhouette
     plt.figure(figsize=(10, 7))
     for i, cluster in enumerate(np.unique(labels)):
         cluster_silhouette_vals = silhouette_vals[labels == cluster]
@@ -43,11 +108,9 @@ def save_silhouette_plot(X, labels, file_name="silhouette_plot.png"):
         y_ticks.append((y_lower + y_upper) / 2)
         y_lower += len(cluster_silhouette_vals)
 
-    plt.axvline(x=np.mean(silhouette_vals), color="red", linestyle="--")  # Linea verticale per il valore medio
+    plt.axvline(x=np.mean(silhouette_vals), color="red", linestyle="--")
     plt.yticks(y_ticks, np.unique(labels))
     plt.xlabel("Silhouette Coefficient")
     plt.ylabel("Cluster")
-    plt.title("Silhouette Plot")
-    plt.savefig(file_path)  # Salva l'immagine
-    plt.close()
-    print(f"Plot della silhouette salvato in {file_path}")
+    plt.title(f"Silhouette Plot (k={k})")
+    save_plot(plt, f"silhouette_plot_k={k}.png", plot_dir)
