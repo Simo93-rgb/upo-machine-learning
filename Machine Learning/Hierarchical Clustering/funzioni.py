@@ -38,7 +38,7 @@ def load_and_preprocess_data(dataset_path: str) -> Tuple[pd.DataFrame, np.ndarra
         Tuple[pd.DataFrame, np.ndarray]: Features e labels del dataset.
     """
     data_handler = DataHandler(dataset_path)
-    data_handler.preprocess_data()
+    data_handler.preprocess_data(0.9)
     X = data_handler.get_features()
     y = data_handler.get_labels().iloc[:, -1].values
     return X, y
@@ -101,7 +101,8 @@ def run_clustering(
         output_dir: str,
         plot_dir: str,
         max_clusters:int = 8,
-        k_means_reduction:int=10) -> None:
+        k_means_reduction:int=10,
+        optimal_k:int=-1) -> None:
     """
     Esegue il clustering gerarchico e salva i risultati.
 
@@ -114,6 +115,7 @@ def run_clustering(
         plot_dir (str): Directory per i plot.
         max_clusters (int)
         k_means_reduction (int)
+        optimal_k (int)
     """
     # Configurazione delle sottocartelle per i risultati
     sub_dir = f"{linkage}_{distance}"
@@ -133,8 +135,8 @@ def run_clustering(
     save_dendrogram(linkage_matrix, sub_plot_dir)
 
     # Trova il numero ottimale di cluster
-
-    optimal_k = find_optimal_clusters(X, max_clusters, hc.predict, sub_plot_dir)
+    if optimal_k <= 1:
+        optimal_k = find_optimal_clusters(X, max_clusters, hc.predict, sub_plot_dir)
     print(f"Numero ottimale di cluster: {optimal_k}")
     # Creazione del grafico del gomito
     save_elbow_plot(X, max_clusters, hc.predict, sub_plot_dir)
@@ -144,6 +146,7 @@ def run_clustering(
     # Calcola e salva le metriche di valutazione
     # Valuta il clustering
     evaluation_results = evaluate_clustering(y_true=y, y_pred=labels, X=X, model_name="Hierarchical Clustering")
+    evaluation_results['clusters'] = optimal_k
     save_evaluation_results(evaluation_results, "evaluation_results.csv", sub_output_dir)
 
     # Salvataggio del plot della silhouette

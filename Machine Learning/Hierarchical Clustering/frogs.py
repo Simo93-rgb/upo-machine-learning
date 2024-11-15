@@ -1,7 +1,34 @@
 from funzioni import *
 
 
-def main():
+def single_run(max_clusters: int = 8, k_means_reduction: int = 10, optimal_k=-1):
+    # Setup iniziale
+    dataset_dir, output_dir, plot_dir = setup_directories()
+    dataset_name = 'Frogs_MFCCs'
+    dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
+
+    # Caricamento e pre-processing dei dati
+    X, y = load_and_preprocess_data(dataset_path)
+    print(f'Dataset {dataset_name} caricato e pre-processato')
+
+    # Definizione dei metodi di linkage e delle metriche di distanza da utilizzare
+    linkage_methods = ['single', 'complete', 'average', 'centroid']
+    distance_metrics = ['euclidean', 'manhattan']
+
+    run_clustering(X,
+                   y,
+                   linkage_methods[1],
+                   distance_metrics[1],
+                   output_dir,
+                   plot_dir,
+                   max_clusters=max_clusters,
+                   k_means_reduction=k_means_reduction,
+                   optimal_k=optimal_k)
+
+    print("Progetto completato e tutti i risultati salvati.")
+
+
+def multi_run(max_clusters: int = 8, k_means_reduction: int = 10, optimal_k=-1):
     # Setup iniziale
     dataset_dir, output_dir, plot_dir = setup_directories()
     dataset_name = 'Frogs_MFCCs'
@@ -18,16 +45,21 @@ def main():
     # Esecuzione del clustering per ogni combinazione di linkage e distanza
     for linkage in linkage_methods:
         for distance in distance_metrics:
-            run_clustering(X, y, linkage, distance, output_dir, plot_dir)
+            run_clustering(X,
+                           y,
+                           linkage,
+                           distance,
+                           output_dir,
+                           plot_dir,
+                           max_clusters=max_clusters,
+                           k_means_reduction=k_means_reduction,
+                           optimal_k=optimal_k)
 
     print("Progetto completato e tutti i risultati salvati.")
 
+
 if __name__ == "__main__":
-    main()
-
-
-
-
+    single_run(8, 10, 4)
 
 #
 # # Imposta il flag per un comportamento più aggressivo del garbage collector
