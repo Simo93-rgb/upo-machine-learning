@@ -1,12 +1,12 @@
-import os
+from typing import Tuple, Union
+
 import numpy as np
 import pandas as pd
-from typing import Callable, List, Tuple, Union
 
 from data import DataHandler
-from hierarchical_clustering import HierarchicalClustering
 from evaluation import *
-from plot import save_dendrogram, save_silhouette_plot, save_elbow_plot
+from hierarchical_clustering import HierarchicalClustering
+from plot import save_dendrogram, save_silhouette_plot
 
 
 def setup_directories() -> Tuple[str, str, str]:
@@ -38,27 +38,54 @@ def load_and_preprocess_data(dataset_path: str) -> Tuple[pd.DataFrame, np.ndarra
         Tuple[pd.DataFrame, np.ndarray]: Features e labels del dataset.
     """
     data_handler = DataHandler(dataset_path)
-    data_handler.preprocess_data(0.9)
+    # data_handler.preprocess_data(0.9)
     X = data_handler.get_features()
     y = data_handler.get_labels().iloc[:, -1].values
     return X, y
 
 
-def kmeans_pre_clustering(X: pd.DataFrame, n_clusters: int = 15) -> Tuple[np.ndarray, np.ndarray]:
+def kmeans_pre_clustering(X: pd.DataFrame, max_clusters: int = 15) -> Tuple[np.ndarray, np.ndarray]:
     """
     Esegue un pre-clustering utilizzando K-Means.
 
     Args:
         X (pd.DataFrame): Dati di input.
-        n_clusters (int): Numero di cluster.
+        max_clusters (int): Numero di cluster.
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: Centroidi e etichette dei cluster.
     """
     from sklearn.cluster import KMeans
-    kmeans = KMeans(n_clusters=n_clusters)
+    kmeans = KMeans(n_clusters=max_clusters)
     labels = kmeans.fit_predict(X)
     return kmeans.cluster_centers_, labels
+
+
+# def kmeans_pre_clustering(X: pd.DataFrame, max_clusters: int = 30) -> Tuple[np.ndarray, np.ndarray]:
+#     """
+#     Esegue un pre-clustering utilizzando K-Means, determinando automaticamente il numero ottimale di cluster.
+#
+#     Args:
+#         X (pd.DataFrame): Dati di input.
+#         max_clusters (int): Numero massimo di cluster da provare.
+#
+#     Returns:
+#         Tuple[np.ndarray, np.ndarray]: Centroidi e etichette dei cluster ottimali.
+#     """
+#     silhouette_scores = []
+#     kmeans_models = []
+#
+#     for n_clusters in range(2, max_clusters + 1):
+#         kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+#         labels = kmeans.fit_predict(X)
+#         score = silhouette_score(X, labels)
+#         silhouette_scores.append(score)
+#         kmeans_models.append(kmeans)
+#
+#     optimal_n_clusters = silhouette_scores.index(max(silhouette_scores)) + 2
+#     optimal_kmeans = kmeans_models[optimal_n_clusters - 2]
+#
+#     return optimal_kmeans.cluster_centers_, optimal_kmeans.labels_
 
 
 def create_linkage_matrix(hc: HierarchicalClustering) -> np.ndarray:
@@ -96,20 +123,20 @@ def create_linkage_matrix(hc: HierarchicalClustering) -> np.ndarray:
 def run_clustering(
         X: Union[pd.DataFrame, np.ndarray],
         y: np.ndarray,
-        linkage: str,
+        linkage_method: str,
         distance: str,
         output_dir: str,
         plot_dir: str,
-        max_clusters:int = 8,
-        k_means_reduction:int=10,
-        optimal_k:int=-1) -> None:
+        max_clusters: int = 8,
+        k_means_reduction: int = 10,
+        optimal_k: int = -1) -> None:
     """
     Esegue il clustering gerarchico e salva i risultati.
 
     Args:
         X (pd.DataFrame): Dati di input.
         y (np.ndarray): Etichette vere.
-        linkage (str): Metodo di linkage.
+        linkage_method (str): Metodo di linkage.
         distance (str): Metrica di distanza.
         output_dir (str): Directory per i risultati.
         plot_dir (str): Directory per i plot.
@@ -118,28 +145,37 @@ def run_clustering(
         optimal_k (int)
     """
     # Configurazione delle sottocartelle per i risultati
-    sub_dir = f"{linkage}_{distance}"
+    sub_dir = f'k_means_reduction={k_means_reduction}'
+    sub_output_dir = os.path.join(output_dir, sub_dir)
+    sub_plot_dir = os.path.join(plot_dir, sub_dir)
+    os.makedirs(sub_output_dir, exist_ok=True)
+    os.makedirs(sub_plot_dir, exist_ok=True)
+    sub_dir = os.path.join(sub_dir, f"{linkage_method}_{distance}")
     sub_output_dir = os.path.join(output_dir, sub_dir)
     sub_plot_dir = os.path.join(plot_dir, sub_dir)
     os.makedirs(sub_output_dir, exist_ok=True)
     os.makedirs(sub_plot_dir, exist_ok=True)
 
     # Inizializzazione e fit del modello
-    hc = HierarchicalClustering(linkage=linkage, X=X, distance_metric=distance, pre_clustering_func=kmeans_pre_clustering,
-                                n_clusters=k_means_reduction)
-    print(f'Inizio fit per {linkage} linkage e distanza {distance}')
+    hc = HierarchicalClustering(linkage=linkage_method, X=X, distance_metric=distance,
+                                pre_clustering_func=kmeans_pre_clustering,
+                                max_clusters=k_means_reduction)
+    print(f'Inizio fit per {linkage_method} linkage e distanza {distance}')
     hc.fit()
     print('Fine fit')
     # Creazione del dendrogramma
     linkage_matrix = create_linkage_matrix(hc)
-    save_dendrogram(linkage_matrix, sub_plot_dir)
+    clusters: int = save_dendrogram(linkage_matrix, sub_plot_dir)
+    print(f'Dendogramma con {clusters} cluster')
 
     # Trova il numero ottimale di cluster
     if optimal_k <= 1:
-        optimal_k = find_optimal_clusters(X, max_clusters, hc.predict, sub_plot_dir)
+        if max_clusters < clusters:
+            max_clusters = clusters
+        optimal_k = find_optimal_clusters(X, max_clusters, hc.predict, sub_plot_dir, linkage_method, distance)
     print(f"Numero ottimale di cluster: {optimal_k}")
     # Creazione del grafico del gomito
-    save_elbow_plot(X, max_clusters, hc.predict, sub_plot_dir)
+    # save_elbow_plot(X, max_clusters, hc.predict, sub_plot_dir)
     # Previsione e valutazione
     labels = hc.predict(optimal_k)
 
@@ -150,6 +186,6 @@ def run_clustering(
     save_evaluation_results(evaluation_results, "evaluation_results.csv", sub_output_dir)
 
     # Salvataggio del plot della silhouette
-    save_silhouette_plot(X, labels, optimal_k, sub_plot_dir)
+    save_silhouette_plot(X, labels, clusters, sub_plot_dir)
 
-    print(f"Risultati per {linkage} linkage e distanza {distance} salvati.")
+    print(f"Risultati per {linkage_method} linkage e distanza {distance} salvati.")

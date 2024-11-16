@@ -171,11 +171,14 @@
 #         writer.writeheader()
 #         writer.writerow(results)
 #     print(f"Risultati della valutazione salvati in {file_path}")
-import numpy as np
-from sklearn.metrics import confusion_matrix, silhouette_score, silhouette_samples, adjusted_rand_score
-from typing import Tuple, Dict
-import os
 import csv
+import os
+from typing import Tuple, Dict
+
+import numpy as np
+from scipy.cluster.hierarchy import linkage
+from sklearn.metrics import confusion_matrix, silhouette_score, adjusted_rand_score, \
+    pairwise_distances, silhouette_samples
 
 
 def calculate_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
@@ -285,19 +288,22 @@ def calculate_silhouette(X: np.ndarray, labels: np.ndarray) -> Tuple[float, np.n
     return silhouette_avg, sample_silhouette_values
 
 
-def find_optimal_clusters(X: np.ndarray, max_clusters: int, clustering_func, plot_dir: str) -> int:
+def find_optimal_clusters(X: np.ndarray, max_clusters: int, clustering_func, plot_dir: str, method:str='single', metric:str='euclidean') -> int:
     """
-    Trova il numero ottimale di cluster usando il punteggio di silhouette.
+    Trova il numero ottimale di cluster usando il punteggio di silhouette e l'analisi del dendrogramma.
 
     Args:
         X (np.ndarray): Dati di input.
         max_clusters (int): Numero massimo di cluster da provare.
         clustering_func: Funzione che esegue il clustering e restituisce le etichette.
         plot_dir (str): Directory di salvataggio del plot
+        method
+        metric
 
     Returns:
         int: Numero ottimale di cluster.
     """
+    # Metodo della silhouette
     silhouette_scores = []
     for n_clusters in range(2, max_clusters + 1):
         labels = clustering_func(n_clusters)
@@ -306,7 +312,19 @@ def find_optimal_clusters(X: np.ndarray, max_clusters: int, clustering_func, plo
         from plot import save_silhouette_plot
         save_silhouette_plot(X, labels, n_clusters, plot_dir)
 
-    return silhouette_scores.index(max(silhouette_scores)) + 2
+    silhouette_optimal = silhouette_scores.index(max(silhouette_scores)) + 2
+
+    # Analisi del dendrogramma
+    linkage_matrix = linkage(X, method=method, metric=metric)
+    last = linkage_matrix[-10:, 2]
+    acceleration = np.diff(last, 2)
+    dendrogram_optimal = acceleration.argmax() + 2
+
+    # Confronta i risultati e scegli il migliore
+    if abs(silhouette_optimal - dendrogram_optimal) <= 2:
+        return (silhouette_optimal + dendrogram_optimal) // 2
+    else:
+        return silhouette_optimal  # In caso di grande discrepanza, preferisci il metodo della silhouette
 
 
 def save_evaluation_results(results: dict, file_name: str, output_dir: str):

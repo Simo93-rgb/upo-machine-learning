@@ -144,11 +144,12 @@ def save_dendrogram(linkage_matrix: np.ndarray, plot_dir: str):
     """
     from scipy.cluster.hierarchy import dendrogram
     plt.figure(figsize=(10, 7))
-    dendrogram(linkage_matrix)
+    dizionario = dendrogram(linkage_matrix)
     plt.title("Dendrogram")
     plt.xlabel("Sample Index")
     plt.ylabel("Distance")
     save_plot(plt, "dendrogram.png", plot_dir)
+    return len(set(dizionario['color_list']))
 
 
 def save_silhouette_plot(X: np.ndarray, labels: np.ndarray, k: int, plot_dir: str):
