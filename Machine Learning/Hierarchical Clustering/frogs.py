@@ -2,16 +2,23 @@ from funzioni import *
 
 
 def single_run(
-        X,
-        y,
-        output_dir:str,
-        plot_dir:str,
         linkage_method:str,
         distance_metric:str,
         max_clusters: int = 8,
         k_means_reduction: int = 10,
         optimal_k=-1,
+        drop=None
 ):
+    # Setup iniziale
+    dataset_dir, output_dir, plot_dir = setup_directories()
+    dataset_name = 'Frogs_MFCCs'
+    dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
+
+    if drop is None:
+        drop =['Species', 'Genus', 'RecordID']
+    # Caricamento e pre-processing dei dati
+    X, y = load_and_preprocess_data(dataset_path, drop=drop)
+    print(f'Dataset {dataset_name} caricato e pre-processato')
     run_clustering(X,
                    y,
                    linkage_method,
@@ -25,14 +32,14 @@ def single_run(
     print("Progetto completato e tutti i risultati salvati.")
 
 
-def multi_run(max_clusters: int = 8, k_means_reduction: int = 80, optimal_k=-1):
+def multi_run(max_clusters: int = 15, k_means_reduction: int = 80, optimal_k=-1):
     # Setup iniziale
     dataset_dir, output_dir, plot_dir = setup_directories()
     dataset_name = 'Frogs_MFCCs'
     dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
 
     # Caricamento e pre-processing dei dati
-    X, y = load_and_preprocess_data(dataset_path)
+    X, y = load_and_preprocess_data(dataset_path, drop=['Species', 'Genus', 'RecordID'])
     print(f'Dataset {dataset_name} caricato e pre-processato')
 
     # Definizione dei metodi di linkage e delle metriche di distanza da utilizzare
@@ -40,7 +47,7 @@ def multi_run(max_clusters: int = 8, k_means_reduction: int = 80, optimal_k=-1):
     distance_metrics = ['euclidean']
 
     # Esecuzione del clustering per ogni combinazione di linkage e distanza
-    for k in range(10, k_means_reduction, 10):
+    for k in range(5, k_means_reduction, 5):
         for linkage_method in linkage_methods:
             for distance in distance_metrics:
                 run_clustering(X,
@@ -57,7 +64,14 @@ def multi_run(max_clusters: int = 8, k_means_reduction: int = 80, optimal_k=-1):
 
 
 if __name__ == "__main__":
-    multi_run()
+    # multi_run(k_means_reduction=35)
+    single_run(
+        linkage_method='centroid',
+        distance_metric='euclidean',
+        k_means_reduction=60,
+        optimal_k=-1,
+        max_clusters=8
+    )
 
 #
 # # Imposta il flag per un comportamento più aggressivo del garbage collector

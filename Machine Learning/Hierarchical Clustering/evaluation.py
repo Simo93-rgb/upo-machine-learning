@@ -319,7 +319,7 @@ def find_optimal_clusters(X: np.ndarray, max_clusters: int, clustering_func, plo
     last = linkage_matrix[-10:, 2]
     acceleration = np.diff(last, 2)
     dendrogram_optimal = acceleration.argmax() + 2
-
+    print(f'Optimal dendogram: {dendrogram_optimal} | optimal silhouette: {silhouette_optimal}')
     # Confronta i risultati e scegli il migliore
     if abs(silhouette_optimal - dendrogram_optimal) <= 2:
         return (silhouette_optimal + dendrogram_optimal) // 2

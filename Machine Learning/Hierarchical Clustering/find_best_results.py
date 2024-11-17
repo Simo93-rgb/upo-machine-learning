@@ -26,13 +26,16 @@ for dirpath, dirnames, filenames in os.walk(base_dir):
 # Combiniamo tutti i risultati in un unico DataFrame
 if results:
     all_results = pd.concat(results, ignore_index=True)
-
+    top = 20
     # Ordiniamo per silhouette_score in ordine decrescente e prendiamo i primi 3
-    top_3 = all_results.sort_values('silhouette_score', ascending=False).head(8)
+    top_3 = all_results.sort_values('silhouette_score', ascending=False).head(top)
 
     # Selezioniamo solo le colonne rilevanti per la visualizzazione
-    columns_to_show = ['folder', 'model_name', 'silhouette_score', 'clusters']
-    print("\nI 3 migliori risultati:")
+    columns_to_show = ['folder', 'model_name', 'silhouette_score', 'silhouette_clusters', 'dendogram_clusters']
+    path = os.path.join(base_dir,'beast_results.json' )
+    #top_3.to_html(path, index=False, border=0)
+    top_3.to_json(path, orient='records', indent=4)
+    print(f"\nI {top} migliori risultati:")
     print(top_3[columns_to_show])
 else:
     print("Nessun risultato trovato")

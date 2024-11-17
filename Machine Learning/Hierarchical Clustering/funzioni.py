@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 import numpy as np
 import pandas as pd
@@ -27,18 +27,22 @@ def setup_directories() -> Tuple[str, str, str]:
     return dataset_dir, output_dir, plot_dir
 
 
-def load_and_preprocess_data(dataset_path: str) -> Tuple[pd.DataFrame, np.ndarray]:
+def load_and_preprocess_data(dataset_path: str, drop:List[str]=None, soglia:float=1.01) -> Tuple[pd.DataFrame, np.ndarray]:
     """
     Carica e pre-processa il dataset.
 
     Args:
         dataset_path (str): Percorso del file del dataset.
+        drop
+        soglia
 
     Returns:
         Tuple[pd.DataFrame, np.ndarray]: Features e labels del dataset.
     """
+    if drop is None:
+        drop = ['Species', 'Genus', 'Family']
     data_handler = DataHandler(dataset_path)
-    # data_handler.preprocess_data(0.9)
+    data_handler.preprocess_data(soglia, drop=drop)
     X = data_handler.get_features()
     y = data_handler.get_labels().iloc[:, -1].values
     return X, y
@@ -56,7 +60,7 @@ def kmeans_pre_clustering(X: pd.DataFrame, max_clusters: int = 15) -> Tuple[np.n
         Tuple[np.ndarray, np.ndarray]: Centroidi e etichette dei cluster.
     """
     from sklearn.cluster import KMeans
-    kmeans = KMeans(n_clusters=max_clusters)
+    kmeans = KMeans(n_clusters=max_clusters, random_state=42)
     labels = kmeans.fit_predict(X)
     return kmeans.cluster_centers_, labels
 
@@ -169,10 +173,14 @@ def run_clustering(
     print(f'Dendogramma con {clusters} cluster')
 
     # Trova il numero ottimale di cluster
-    if optimal_k <= 1:
+    opt = optimal_k < 1
+    if opt:
         if max_clusters < clusters:
             max_clusters = clusters
+        # if max_clusters < k_means_reduction:
+        #     max_clusters = k_means_reduction
         optimal_k = find_optimal_clusters(X, max_clusters, hc.predict, sub_plot_dir, linkage_method, distance)
+
     print(f"Numero ottimale di cluster: {optimal_k}")
     # Creazione del grafico del gomito
     # save_elbow_plot(X, max_clusters, hc.predict, sub_plot_dir)
@@ -182,10 +190,13 @@ def run_clustering(
     # Calcola e salva le metriche di valutazione
     # Valuta il clustering
     evaluation_results = evaluate_clustering(y_true=y, y_pred=labels, X=X, model_name="Hierarchical Clustering")
-    evaluation_results['clusters'] = optimal_k
+    evaluation_results['silhouette_clusters'] = optimal_k
+    evaluation_results['dendogram_clusters'] = clusters
+    evaluation_results['k_means_reduction'] = k_means_reduction
     save_evaluation_results(evaluation_results, "evaluation_results.csv", sub_output_dir)
-
-    # Salvataggio del plot della silhouette
-    save_silhouette_plot(X, labels, clusters, sub_plot_dir)
+    if not opt:
+        # Salvataggio del plot della silhouette
+        save_silhouette_plot(X, labels, clusters, sub_plot_dir)
+        save_silhouette_plot(X, labels, optimal_k, sub_plot_dir)
 
     print(f"Risultati per {linkage_method} linkage e distanza {distance} salvati.")

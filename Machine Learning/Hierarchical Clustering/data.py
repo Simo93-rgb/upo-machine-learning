@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -9,14 +10,19 @@ from ucimlrepo import fetch_ucirepo
 class DataHandler:
     def __init__(self, file_path):
         self.data: DataFrame = pd.read_csv(file_path)
-        self.data = self.data.drop(columns=['Species', 'Genus', 'RecordID'])
 
-    def preprocess_data(self, soglia: float = 0.95):
+
+    def preprocess_data(self, soglia: float = 0.95, drop=None):
         # Esegui operazioni di pulizia, normalizzazione o riduzione delle caratteristiche, se necessario
         # Ad esempio: normalizzazione tra -1 e 1 per le caratteristiche MFCC
+        if drop is None:
+            drop = ['Species', 'Genus', 'RecordID']
+        self.data = self.data.drop(columns=drop)
         self.data.iloc[:, :-1] = (self.data.iloc[:, :-1] - self.data.iloc[:, :-1].min()) / (
                 self.data.iloc[:, :-1].max() - self.data.iloc[:, :-1].min())
-        self.elimina_feature_correlate(soglia)
+        if soglia <=1:
+            self.elimina_feature_correlate(soglia)
+
 
     def get_features(self):
         # Ritorna solo le colonne delle feature per il clustering
