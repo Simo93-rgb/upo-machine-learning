@@ -1,2 +1,0 @@
-purity,precision,recall,f1_score,adjusted_rand_index,silhouette_score,fp_rate,fn_rate,model_name,clusters
-0.8772758860319666,0.3903303837332594,nan,nan,0.5400159753258705,0.37829730925036215,0.07947423644972336,0.38863800661298,Hierarchical Clustering,5

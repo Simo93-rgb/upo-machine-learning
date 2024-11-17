@@ -1,0 +1,2 @@
+purity,precision,recall,f1_score,adjusted_rand_index,silhouette_score,fp_rate,fn_rate,model_name,silhouette_clusters,dendogram_clusters,k_means_reduction
+0.8954829742876997,0.085,nan,nan,0.5346811232213434,0.38103055101521344,0.05073058031391897,0.424452100766157,Hierarchical Clustering,11,4,20
