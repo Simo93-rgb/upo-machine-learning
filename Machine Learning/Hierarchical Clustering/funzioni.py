@@ -40,7 +40,7 @@ def load_and_preprocess_data(dataset_path: str, drop:List[str]=None, soglia:floa
         Tuple[pd.DataFrame, np.ndarray]: Features e labels del dataset.
     """
     if drop is None:
-        drop = ['Species', 'Genus', 'Family']
+        drop = ['Species', 'Genus', 'RecordID']
     data_handler = DataHandler(dataset_path)
     data_handler.preprocess_data(soglia, drop=drop)
     X = data_handler.get_features()
@@ -60,7 +60,7 @@ def kmeans_pre_clustering(X: pd.DataFrame, max_clusters: int = 15) -> Tuple[np.n
         Tuple[np.ndarray, np.ndarray]: Centroidi e etichette dei cluster.
     """
     from sklearn.cluster import KMeans
-    kmeans = KMeans(n_clusters=max_clusters, random_state=42)
+    kmeans = KMeans(n_clusters=max_clusters, random_state=42, init='k-means++')
     labels = kmeans.fit_predict(X)
     return kmeans.cluster_centers_, labels
 

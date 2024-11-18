@@ -7,7 +7,8 @@ def single_run(
         max_clusters: int = 8,
         k_means_reduction: int = 10,
         optimal_k=-1,
-        drop=None
+        drop=None,
+        soglia:float=1.01
 ):
     # Setup iniziale
     dataset_dir, output_dir, plot_dir = setup_directories()
@@ -17,7 +18,7 @@ def single_run(
     if drop is None:
         drop =['Species', 'Genus', 'RecordID']
     # Caricamento e pre-processing dei dati
-    X, y = load_and_preprocess_data(dataset_path, drop=drop)
+    X, y = load_and_preprocess_data(dataset_path, drop=drop, soglia=soglia)
     print(f'Dataset {dataset_name} caricato e pre-processato')
     run_clustering(X,
                    y,
@@ -68,9 +69,10 @@ if __name__ == "__main__":
     single_run(
         linkage_method='centroid',
         distance_metric='euclidean',
-        k_means_reduction=60,
+        k_means_reduction=4,
         optimal_k=-1,
-        max_clusters=8
+        max_clusters=4,
+        soglia=0.9
     )
 
 #
