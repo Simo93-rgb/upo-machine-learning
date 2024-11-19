@@ -162,7 +162,7 @@ def run_clustering(
 
     # Inizializzazione e fit del modello
     hc = HierarchicalClustering(linkage=linkage_method, X=X, distance_metric=distance,
-                                pre_clustering_func=kmeans_pre_clustering,
+                                pre_clustering_func=None,
                                 max_clusters=k_means_reduction)
     print(f'Inizio fit per {linkage_method} linkage e distanza {distance}')
     hc.fit()

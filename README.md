@@ -1,7 +1,6 @@
 # upo-machine-learning
 
-Libreria di Machine learning e Deep Learning a scopo didattico, ci saranno sia algoritmi supervisionati che non e in
-ambo i casi per classificazione e regressione. 
+Repository contenente i progetti di Machine Learning e di Deep Learning 
 
 ## Machine Learning
 Ho scelto la logistic Regression per la classificazione, l'implementazione k-NN per la regressione e infine

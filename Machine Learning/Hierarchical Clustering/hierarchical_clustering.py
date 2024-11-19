@@ -113,11 +113,12 @@ class HierarchicalClustering:
                 dataset_indices=[i],
                 previous_index=(i, i)
             ) for i in range(self.dataset_dim)}
-
+        tempo = time.time()
         while len(self.clusters) > 1:
             # Trova la coppia di cluster più vicini e li unisce
             closest_pair, min_dist = self._find_closest_clusters()
             self._merge_clusters(*closest_pair, distance=min_dist)
+            print(f'Tempo una iterazione: {time.time() - tempo}')
 
     def _find_closest_clusters(self) -> Tuple[Tuple[str, str], float]:
         min_dist = float('inf')

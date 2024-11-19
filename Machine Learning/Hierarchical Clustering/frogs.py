@@ -69,7 +69,7 @@ if __name__ == "__main__":
     single_run(
         linkage_method='centroid',
         distance_metric='euclidean',
-        k_means_reduction=4,
+        k_means_reduction=7195,
         optimal_k=-1,
         max_clusters=4,
         soglia=0.9
