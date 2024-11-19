@@ -7,18 +7,19 @@ def single_run(
         max_clusters: int = 8,
         k_means_reduction: int = 10,
         optimal_k=-1,
-        drop=None,
-        soglia:float=1.01
+        categorical=None,
+        soglia:float=1.01,
+        dataset_name='Frogs_MFCCs',
+        pre_clustering:bool=True
 ):
     # Setup iniziale
     dataset_dir, output_dir, plot_dir = setup_directories()
-    dataset_name = 'Frogs_MFCCs'
     dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
+    if dataset_name is 'Frogs_MFCCs':
+        categorical = ['Species', 'Genus', 'RecordID']
 
-    if drop is None:
-        drop =['Species', 'Genus', 'RecordID']
     # Caricamento e pre-processing dei dati
-    X, y = load_and_preprocess_data(dataset_path, drop=drop, soglia=soglia)
+    X, y = load_and_preprocess_data(dataset_path, categorical=categorical, soglia=soglia)
     print(f'Dataset {dataset_name} caricato e pre-processato')
     run_clustering(X,
                    y,
@@ -28,7 +29,8 @@ def single_run(
                    plot_dir,
                    max_clusters=max_clusters,
                    k_means_reduction=k_means_reduction,
-                   optimal_k=optimal_k)
+                   optimal_k=optimal_k,
+                   pre_clustering=True)
 
     print("Progetto completato e tutti i risultati salvati.")
 
@@ -40,7 +42,7 @@ def multi_run(max_clusters: int = 15, k_means_reduction: int = 80, optimal_k=-1)
     dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
 
     # Caricamento e pre-processing dei dati
-    X, y = load_and_preprocess_data(dataset_path, drop=['Species', 'Genus', 'RecordID'])
+    X, y = load_and_preprocess_data(dataset_path, categorical=['Species', 'Genus', 'RecordID'])
     print(f'Dataset {dataset_name} caricato e pre-processato')
 
     # Definizione dei metodi di linkage e delle metriche di distanza da utilizzare
@@ -66,13 +68,16 @@ def multi_run(max_clusters: int = 15, k_means_reduction: int = 80, optimal_k=-1)
 
 if __name__ == "__main__":
     # multi_run(k_means_reduction=35)
+    dataset_name = ['Frogs_MFCCs', 'winequality-red', 'winequality-white', 'iris_dataset']
     single_run(
         linkage_method='centroid',
         distance_metric='euclidean',
-        k_means_reduction=7195,
-        optimal_k=-1,
-        max_clusters=4,
-        soglia=0.9
+        k_means_reduction=14,
+        optimal_k=3,
+        max_clusters=5,
+        soglia=1.01,
+        dataset_name=dataset_name[3],
+        pre_clustering=False
     )
 
 #

@@ -27,22 +27,21 @@ def setup_directories() -> Tuple[str, str, str]:
     return dataset_dir, output_dir, plot_dir
 
 
-def load_and_preprocess_data(dataset_path: str, drop:List[str]=None, soglia:float=1.01) -> Tuple[pd.DataFrame, np.ndarray]:
+def load_and_preprocess_data(dataset_path: str, categorical:List[str]=None, soglia:float=1.01) -> Tuple[pd.DataFrame, np.ndarray]:
     """
     Carica e pre-processa il dataset.
 
     Args:
         dataset_path (str): Percorso del file del dataset.
-        drop
+        categorical
         soglia
 
     Returns:
         Tuple[pd.DataFrame, np.ndarray]: Features e labels del dataset.
     """
-    if drop is None:
-        drop = ['Species', 'Genus', 'RecordID']
+
     data_handler = DataHandler(dataset_path)
-    data_handler.preprocess_data(soglia, drop=drop)
+    data_handler.preprocess_data(soglia, categorical=categorical)
     X = data_handler.get_features()
     y = data_handler.get_labels().iloc[:, -1].values
     return X, y
@@ -133,7 +132,8 @@ def run_clustering(
         plot_dir: str,
         max_clusters: int = 8,
         k_means_reduction: int = 10,
-        optimal_k: int = -1) -> None:
+        optimal_k: int = -1,
+        pre_clustering:bool=True) -> None:
     """
     Esegue il clustering gerarchico e salva i risultati.
 
@@ -161,9 +161,15 @@ def run_clustering(
     os.makedirs(sub_plot_dir, exist_ok=True)
 
     # Inizializzazione e fit del modello
-    hc = HierarchicalClustering(linkage=linkage_method, X=X, distance_metric=distance,
-                                pre_clustering_func=None,
-                                max_clusters=k_means_reduction)
+    if not pre_clustering:
+        hc = HierarchicalClustering(linkage=linkage_method, X=X, distance_metric=distance,
+                                    pre_clustering_func=None,
+                                    max_clusters=k_means_reduction)
+    else:
+        hc = HierarchicalClustering(linkage=linkage_method, X=X, distance_metric=distance,
+                                    pre_clustering_func=kmeans_pre_clustering,
+                                    max_clusters=k_means_reduction)
+
     print(f'Inizio fit per {linkage_method} linkage e distanza {distance}')
     hc.fit()
     print('Fine fit')

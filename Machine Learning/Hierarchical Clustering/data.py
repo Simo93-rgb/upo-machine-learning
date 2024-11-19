@@ -12,12 +12,12 @@ class DataHandler:
         self.data: DataFrame = pd.read_csv(file_path)
 
 
-    def preprocess_data(self, soglia: float = 0.95, drop=None):
+    def preprocess_data(self, soglia: float = 0.95, categorical=None):
         # Esegui operazioni di pulizia, normalizzazione o riduzione delle caratteristiche, se necessario
         # Ad esempio: normalizzazione tra -1 e 1 per le caratteristiche MFCC
-        if drop is None:
-            drop = ['Species', 'Genus', 'RecordID']
-        self.data = self.data.drop(columns=drop)
+
+        if categorical:
+            self.data.drop(columns=categorical)
         self.data.iloc[:, :-1] = (self.data.iloc[:, :-1] - self.data.iloc[:, :-1].min()) / (
                 self.data.iloc[:, :-1].max() - self.data.iloc[:, :-1].min())
         if soglia <=1:
