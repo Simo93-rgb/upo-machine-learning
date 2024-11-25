@@ -1,3 +1,4 @@
+import json
 from typing import Dict, Tuple, List, Union, Callable, Optional, Any
 
 from numpy.core.numeric import indices
@@ -40,7 +41,7 @@ class HierarchicalClustering:
         self.pre_clustering_kwargs = pre_clustering_kwargs
         self.distance_matrix = None
         self.clusters = None
-        self.cluster_history = []
+        self.clustering_history = []
         self.dataset_dim = X.shape[0]
         self.cluster_id = self.dataset_dim - 1
         self.distance_metric = distance_metric
@@ -140,7 +141,7 @@ class HierarchicalClustering:
         self.clusters[new_cluster.name] = new_cluster
 
         # Salvo gli oggetti cluster1 e cluster2
-        self.cluster_history.append((self.clusters[cluster1], self.clusters[cluster2], distance))
+        self.clustering_history.append((self.clusters[cluster1], self.clusters[cluster2], distance))
 
         self.distance_matrix[new_cluster.name] = {}
 
@@ -202,7 +203,7 @@ class HierarchicalClustering:
             raise ValueError("Metodo di linkage non supportato. Usa 'single', 'complete' o 'average'.")
 
     def get_cluster_history(self) -> List[Tuple[Cluster, Cluster, float]]:
-        return self.cluster_history
+        return self.clustering_history
 
     def _predict(self, num_clusters: int) -> np.ndarray:
         """
@@ -213,7 +214,7 @@ class HierarchicalClustering:
         # clusters_finali = {str(i): [i] for i in range(self.dataset_dim)}
 
         # Applica le fusioni dalla storia fino a ottenere il numero desiderato di cluster
-        for a, b, dist in self.cluster_history:
+        for a, b, dist in self.clustering_history:
             if len(clusters_finali) <= num_clusters:
                 break
 
@@ -239,7 +240,7 @@ class HierarchicalClustering:
         """
         clusters: List[Cluster] = []
         # Applica le fusioni dalla storia fino a ottenere il numero desiderato di cluster
-        for i, x in enumerate(self.cluster_history[-(num_clusters - 1):][::-1]):
+        for i, x in enumerate(self.clustering_history[-(num_clusters - 1):][::-1]):
             clusters.append(x[0])
             if i == num_clusters - 2:
                 clusters.append(x[1])
@@ -255,3 +256,25 @@ class HierarchicalClustering:
                 labels[index] = cluster.name
 
         return labels
+
+    def save_cluster_history_to_json(self, filename: str) -> None:
+        """
+        Salva la cronologia dei cluster in un file JSON utilizzando pandas.
+
+        :param filename: Il nome del file in cui salvare la cronologia.
+        """
+        history_data = []
+        for cluster1, cluster2, distance in self.clustering_history:
+            history_entry = {
+                "cluster1_name": cluster1.name,
+                "cluster1_indices": cluster1.indices,
+                "cluster1_dataset_indices": cluster1.dataset_indices,
+                "cluster2_name": cluster2.name,
+                "cluster2_indices": cluster2.indices,
+                "cluster2_dataset_indices": cluster2.dataset_indices,
+                "distance": distance
+            }
+            history_data.append(history_entry)
+
+        df = pd.DataFrame(history_data)
+        df.to_json(filename, orient='records', indent=2)

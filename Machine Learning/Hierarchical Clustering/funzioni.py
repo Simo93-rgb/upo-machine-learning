@@ -6,7 +6,7 @@ import pandas as pd
 from data import DataHandler
 from evaluation import *
 from hierarchical_clustering import HierarchicalClustering
-from plot import save_dendrogram, save_silhouette_plot
+from plot import save_dendrogram, save_silhouette_plot, plot_dendrogram
 
 
 def setup_directories() -> Tuple[str, str, str]:
@@ -172,10 +172,12 @@ def run_clustering(
 
     print(f'Inizio fit per {linkage_method} linkage e distanza {distance}')
     hc.fit()
+    hc.save_cluster_history_to_json(filename="history_for_dendogram.json")
     print('Fine fit')
     # Creazione del dendrogramma
     linkage_matrix = create_linkage_matrix(hc)
     clusters: int = save_dendrogram(linkage_matrix, sub_plot_dir)
+    clusters: int = plot_dendrogram(linkage_matrix, sub_plot_dir)
     print(f'Dendogramma con {clusters} cluster')
 
     # Trova il numero ottimale di cluster
@@ -195,9 +197,10 @@ def run_clustering(
 
     # Calcola e salva le metriche di valutazione
     # Valuta il clustering
-    evaluation_results = evaluate_clustering(y_true=y, y_pred=labels, X=X, model_name="Hierarchical Clustering")
-    evaluation_results['silhouette_clusters'] = optimal_k
-    evaluation_results['dendogram_clusters'] = clusters
+    # evaluation_results = evaluate_clustering(y_true=y, y_pred=labels, X=X, model_name="Hierarchical Clustering")
+    evaluation_results = evaluate_clustering(y_true=y, y_pred=labels)
+    print_contingency_matrix(y_true=y, y_pred=labels)
+    evaluation_results['clusters'] = optimal_k
     evaluation_results['k_means_reduction'] = k_means_reduction
     save_evaluation_results(evaluation_results, "evaluation_results.csv", sub_output_dir)
     if not opt:

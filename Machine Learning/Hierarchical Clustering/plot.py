@@ -116,6 +116,7 @@ import os
 #     save_plot(plt, f"silhouette_plot_k={k}.png", plot_dir)
 
 
+import networkx as nx
 
 
 def save_plot(plot, file_name: str, plot_dir: str):
@@ -151,6 +152,34 @@ def save_dendrogram(linkage_matrix: np.ndarray, plot_dir: str):
     save_plot(plt, "dendrogram.png", plot_dir)
     return len(set(dizionario['color_list']))
 
+
+def plot_dendrogram(linkage_matrix: np.ndarray, plot_dir: str, n_clusters: int = 3):
+    """
+    Crea e salva il dendrogramma con un numero specifico di cluster colorati.
+
+    Args:
+        linkage_matrix (np.ndarray): Matrice di linkage per il dendrogramma.
+        plot_dir (str): Directory di output per i plot.
+        n_clusters (int): Numero desiderato di cluster da visualizzare.
+    """
+    from scipy.cluster.hierarchy import dendrogram
+    plt.figure(figsize=(10, 7))
+
+    # Calcola la soglia di taglio per ottenere il numero desiderato di cluster
+    threshold = linkage_matrix[-(n_clusters - 1), 2]
+
+    dendrogram_dict = dendrogram(linkage_matrix, color_threshold=threshold)
+
+    plt.title(f"Dendrogram with {n_clusters} clusters")
+    plt.xlabel("Sample Index")
+    plt.ylabel("Distance")
+
+    # Aggiungi una linea orizzontale per indicare il taglio
+    plt.axhline(y=float(threshold), color='r', linestyle='--')
+
+    save_plot(plt, f"dendrogram_{n_clusters}_clusters.png", plot_dir)
+
+    return len(set(dendrogram_dict['color_list']))
 
 def save_silhouette_plot(X: np.ndarray, labels: np.ndarray, k: int, plot_dir: str):
     """

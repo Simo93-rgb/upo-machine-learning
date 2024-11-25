@@ -28,10 +28,10 @@ if results:
     all_results = pd.concat(results, ignore_index=True)
     top = 20
     # Ordiniamo per silhouette_score in ordine decrescente e prendiamo i primi 3
-    top_3 = all_results.sort_values('silhouette_score', ascending=False).head(top)
+    top_3 = all_results.sort_values('f1_score', ascending=False).head(top)
 
     # Selezioniamo solo le colonne rilevanti per la visualizzazione
-    columns_to_show = ['folder', 'model_name', 'silhouette_score', 'silhouette_clusters', 'dendogram_clusters']
+    columns_to_show = ['folder', 'k_means_reduction','tp','fp','tn','fn','rand_index','precision','recall','f1_score']
     path = os.path.join(base_dir,'beast_results.json' )
     #top_3.to_html(path, index=False, border=0)
     top_3.to_json(path, orient='records', indent=4)

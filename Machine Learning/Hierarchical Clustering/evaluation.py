@@ -181,95 +181,95 @@ from sklearn.metrics import confusion_matrix, silhouette_score, adjusted_rand_sc
     pairwise_distances, silhouette_samples
 
 
-def calculate_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
-    """
-    Calcola la matrice di confusione.
-
-    Args:
-        y_true (np.ndarray): Etichette vere.
-        y_pred (np.ndarray): Etichette predette.
-
-    Returns:
-        np.ndarray: Matrice di confusione.
-    """
-    return confusion_matrix(y_true, y_pred)
-
-
-def calculate_purity(confusion_matrix: np.ndarray) -> float:
-    """
-    Calcola la purezza dei cluster basata sulla matrice di confusione.
-
-    Args:
-        confusion_matrix (np.ndarray): Matrice di confusione.
-
-    Returns:
-        float: Punteggio di purezza.
-    """
-    return np.sum(np.amax(confusion_matrix, axis=0)) / np.sum(confusion_matrix)
-
-
-def calculate_rand_index(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Calcola l'indice di Rand.
-
-    Args:
-        y_true (np.ndarray): Etichette vere.
-        y_pred (np.ndarray): Etichette predette.
-
-    Returns:
-        float: Indice di Rand.
-    """
-    from sklearn.metrics import adjusted_rand_score
-    return adjusted_rand_score(y_true, y_pred)
-
-
-def calculate_precision_recall_f1(confusion_matrix: np.ndarray) -> Tuple[float, float, float]:
-    """
-    Calcola precisione, richiamo e F1-score.
-
-    Args:
-        confusion_matrix (np.ndarray): Matrice di confusione.
-
-    Returns:
-        Tuple[float, float, float]: Precisione, richiamo e F1-score.
-    """
-    with np.errstate(divide='ignore', invalid='ignore'):
-        precision = np.diag(confusion_matrix) / np.sum(confusion_matrix, axis=0)
-        recall = np.diag(confusion_matrix) / np.sum(confusion_matrix, axis=1)
-
-        precision = np.nan_to_num(precision, 0)
-        recall = np.nan_to_num(recall, 0)
-
-        f1 = 2 * (precision * recall) / (precision + recall)
-        f1 = np.nan_to_num(f1, 0)
-
-    return np.mean(precision), np.mean(recall), np.mean(f1)
-
-
-def calculate_tp_fp_tn_fn(y_true: np.ndarray, y_pred: np.ndarray) -> Tuple[int, int, int, int]:
-    """
-    Calcola TP, FP, TN, FN per clustering.
-
-    Args:
-        y_true (np.ndarray): Etichette vere.
-        y_pred (np.ndarray): Etichette predette.
-
-    Returns:
-        Tuple[int, int, int, int]: TP, FP, TN, FN
-    """
-    tp = fp = tn = fn = 0
-    n = len(y_true)
-    for i in range(n):
-        for j in range(i + 1, n):
-            if y_true[i] == y_true[j] and y_pred[i] == y_pred[j]:
-                tp += 1
-            elif y_true[i] != y_true[j] and y_pred[i] != y_pred[j]:
-                tn += 1
-            elif y_true[i] == y_true[j] and y_pred[i] != y_pred[j]:
-                fn += 1
-            else:
-                fp += 1
-    return tp, fp, tn, fn
+# def calculate_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+#     """
+#     Calcola la matrice di confusione.
+#
+#     Args:
+#         y_true (np.ndarray): Etichette vere.
+#         y_pred (np.ndarray): Etichette predette.
+#
+#     Returns:
+#         np.ndarray: Matrice di confusione.
+#     """
+#     return confusion_matrix(y_true, y_pred)
+#
+#
+# def calculate_purity(confusion_matrix: np.ndarray) -> float:
+#     """
+#     Calcola la purezza dei cluster basata sulla matrice di confusione.
+#
+#     Args:
+#         confusion_matrix (np.ndarray): Matrice di confusione.
+#
+#     Returns:
+#         float: Punteggio di purezza.
+#     """
+#     return np.sum(np.amax(confusion_matrix, axis=0)) / np.sum(confusion_matrix)
+#
+#
+# def calculate_rand_index(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+#     """
+#     Calcola l'indice di Rand.
+#
+#     Args:
+#         y_true (np.ndarray): Etichette vere.
+#         y_pred (np.ndarray): Etichette predette.
+#
+#     Returns:
+#         float: Indice di Rand.
+#     """
+#     from sklearn.metrics import adjusted_rand_score
+#     return adjusted_rand_score(y_true, y_pred)
+#
+#
+# def calculate_precision_recall_f1(confusion_matrix: np.ndarray) -> Tuple[float, float, float]:
+#     """
+#     Calcola precisione, richiamo e F1-score.
+#
+#     Args:
+#         confusion_matrix (np.ndarray): Matrice di confusione.
+#
+#     Returns:
+#         Tuple[float, float, float]: Precisione, richiamo e F1-score.
+#     """
+#     with np.errstate(divide='ignore', invalid='ignore'):
+#         precision = np.diag(confusion_matrix) / np.sum(confusion_matrix, axis=0)
+#         recall = np.diag(confusion_matrix) / np.sum(confusion_matrix, axis=1)
+#
+#         precision = np.nan_to_num(precision, 0)
+#         recall = np.nan_to_num(recall, 0)
+#
+#         f1 = 2 * (precision * recall) / (precision + recall)
+#         f1 = np.nan_to_num(f1, 0)
+#
+#     return np.mean(precision), np.mean(recall), np.mean(f1)
+#
+#
+# def calculate_tp_fp_tn_fn(y_true: np.ndarray, y_pred: np.ndarray) -> Tuple[int, int, int, int]:
+#     """
+#     Calcola TP, FP, TN, FN per clustering.
+#
+#     Args:
+#         y_true (np.ndarray): Etichette vere.
+#         y_pred (np.ndarray): Etichette predette.
+#
+#     Returns:
+#         Tuple[int, int, int, int]: TP, FP, TN, FN
+#     """
+#     tp = fp = tn = fn = 0
+#     n = len(y_true)
+#     for i in range(n):
+#         for j in range(i + 1, n):
+#             if y_true[i] == y_true[j] and y_pred[i] == y_pred[j]:
+#                 tp += 1
+#             elif y_true[i] != y_true[j] and y_pred[i] != y_pred[j]:
+#                 tn += 1
+#             elif y_true[i] == y_true[j] and y_pred[i] != y_pred[j]:
+#                 fn += 1
+#             else:
+#                 fp += 1
+#     return tp, fp, tn, fn
 
 
 def calculate_silhouette(X: np.ndarray, labels: np.ndarray) -> Tuple[float, np.ndarray]:
@@ -345,54 +345,175 @@ def save_evaluation_results(results: dict, file_name: str, output_dir: str):
     print(f"Risultati della valutazione salvati in {file_path}")
 
 
-def evaluate_clustering(y_true: np.ndarray, y_pred: np.ndarray, X: np.ndarray, model_name: str = "") -> Dict[
-    str, float]:
-    # Converti le etichette string in interi
-    unique_true = np.unique(y_true)
-    unique_pred = np.unique(y_pred)
-    true_to_int = {label: index for index, label in enumerate(unique_true)}
-    pred_to_int = {label: index for index, label in enumerate(unique_pred)}
+# def evaluate_clustering(y_true: np.ndarray, y_pred: np.ndarray, X: np.ndarray, model_name: str = "") -> Dict[
+#     str, float]:
+#     # Converti le etichette string in interi
+#     unique_true = np.unique(y_true)
+#     unique_pred = np.unique(y_pred)
+#     true_to_int = {label: index for index, label in enumerate(unique_true)}
+#     pred_to_int = {label: index for index, label in enumerate(unique_pred)}
+#
+#     y_true_int = np.array([true_to_int[label] for label in y_true])
+#     y_pred_int = np.array([pred_to_int[label] for label in y_pred])
+#
+#     # Calcola la matrice di confusione
+#     conf_matrix = confusion_matrix(y_true_int, y_pred_int)
+#
+#     # Calcola la purezza
+#     purity = np.sum(np.amax(conf_matrix, axis=0)) / np.sum(conf_matrix)
+#
+#     # Calcola precisione, richiamo e F1-score
+#     with np.errstate(divide='ignore', invalid='ignore'):
+#         precision = np.diag(conf_matrix) / np.sum(conf_matrix, axis=0)
+#         recall = np.diag(conf_matrix) / np.sum(conf_matrix, axis=1)
+#         f1 = 2 * (precision * recall) / (precision + recall)
+#
+#     # precision = np.nan_to_num(precision, 0)
+#     # recall = np.nan_to_num(recall, 0)
+#     # f1 = np.nan_to_num(f1, 0)
+#
+#     # Calcola l'indice di Rand aggiustato
+#     ari = adjusted_rand_score(y_true_int, y_pred_int)
+#
+#     # Calcola il coefficiente di silhouette
+#     silhouette_avg = silhouette_score(X, y_pred_int)
+#
+#     # Calcola TP, FP, TN, FN
+#     tp, fp, tn, fn = calculate_tp_fp_tn_fn(y_true, y_pred)
+#
+#     # Calcola FP rate e FN rate
+#     fp_rate = fp / (fp + tn) if (fp + tn) > 0 else 0
+#     fn_rate = fn / (fn + tp) if (fn + tp) > 0 else 0
+#
+#     return {
+#         'purity': purity,
+#         'precision': np.mean(precision),
+#         'recall': np.mean(recall),
+#         'f1_score': np.mean(f1),
+#         'adjusted_rand_index': ari,
+#         'silhouette_score': silhouette_avg,
+#         'fp_rate': fp_rate,
+#         'fn_rate': fn_rate,
+#         'model_name': model_name
+#     }
 
-    y_true_int = np.array([true_to_int[label] for label in y_true])
-    y_pred_int = np.array([pred_to_int[label] for label in y_pred])
 
-    # Calcola la matrice di confusione
-    conf_matrix = confusion_matrix(y_true_int, y_pred_int)
+def evaluate_clustering(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
+    """
+    Calcola le metriche di clustering usando l'approccio basato su coppie di istanze.
+    """
 
-    # Calcola la purezza
-    purity = np.sum(np.amax(conf_matrix, axis=0)) / np.sum(conf_matrix)
+    def count_pairs_in_group(n: int) -> int:
+        """Calcola il numero di coppie possibili in un gruppo di n elementi"""
+        return (n * (n - 1)) // 2
 
-    # Calcola precisione, richiamo e F1-score
-    with np.errstate(divide='ignore', invalid='ignore'):
-        precision = np.diag(conf_matrix) / np.sum(conf_matrix, axis=0)
-        recall = np.diag(conf_matrix) / np.sum(conf_matrix, axis=1)
-        f1 = 2 * (precision * recall) / (precision + recall)
+    # Inizializziamo i contatori
+    tp = 0
+    fp = 0
+    fn = 0
 
-    # precision = np.nan_to_num(precision, 0)
-    # recall = np.nan_to_num(recall, 0)
-    # f1 = np.nan_to_num(f1, 0)
+    # Calcolo TP e FP
+    for cluster_id in np.unique(y_pred):
+        cluster_mask = y_pred == cluster_id
+        cluster_size = np.sum(cluster_mask)
 
-    # Calcola l'indice di Rand aggiustato
-    ari = adjusted_rand_score(y_true_int, y_pred_int)
+        # Per ogni classe nel cluster
+        class_counts = {}
+        for class_id in np.unique(y_true):
+            count = np.sum((y_true == class_id) & cluster_mask)
+            if count > 0:
+                class_counts[class_id] = count
 
-    # Calcola il coefficiente di silhouette
-    silhouette_avg = silhouette_score(X, y_pred_int)
+        # Calcolo TP per ogni classe nel cluster
+        for count in class_counts.values():
+            if count > 1:
+                tp += count_pairs_in_group(count)
 
-    # Calcola TP, FP, TN, FN
-    tp, fp, tn, fn = calculate_tp_fp_tn_fn(y_true, y_pred)
+        # Calcolo FP tra coppie di classi diverse nel cluster
+        classes = list(class_counts.keys())
+        for i in range(len(classes)):
+            for j in range(i + 1, len(classes)):
+                fp += class_counts[classes[i]] * class_counts[classes[j]]
 
-    # Calcola FP rate e FN rate
-    fp_rate = fp / (fp + tn) if (fp + tn) > 0 else 0
-    fn_rate = fn / (fn + tp) if (fn + tp) > 0 else 0
+    # Calcolo FN tra cluster diversi
+    for class_id in np.unique(y_true):
+        class_distribution = {}
+        class_mask = y_true == class_id
+
+        for cluster_id in np.unique(y_pred):
+            count = np.sum((y_pred == cluster_id) & class_mask)
+            if count > 0:
+                class_distribution[cluster_id] = count
+
+        # Calcola FN per questa classe
+        clusters = list(class_distribution.keys())
+        for i in range(len(clusters)):
+            for j in range(i + 1, len(clusters)):
+                fn += class_distribution[clusters[i]] * class_distribution[clusters[j]]
+
+    # Calcolo TN
+    total_pairs = count_pairs_in_group(len(y_true))
+    tn = total_pairs - (tp + fp + fn)
+
+    # Calcolo metriche
+    rand_index = (tp + tn) / total_pairs
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
 
     return {
-        'purity': purity,
-        'precision': np.mean(precision),
-        'recall': np.mean(recall),
-        'f1_score': np.mean(f1),
-        'adjusted_rand_index': ari,
-        'silhouette_score': silhouette_avg,
-        'fp_rate': fp_rate,
-        'fn_rate': fn_rate,
-        'model_name': model_name
+        'tp': tp,
+        'fp': fp,
+        'tn': tn,
+        'fn': fn,
+        'rand_index': rand_index,
+        'precision': precision,
+        'recall': recall,
+        'f1_score': f1
     }
+
+
+# Funzione helper per verificare i risultati
+def print_cluster_statistics(y_true: np.ndarray, y_pred: np.ndarray):
+    """
+    Stampa statistiche dettagliate sui cluster per debug.
+    """
+    print("\nStatistiche dei cluster:")
+    for cluster in np.unique(y_pred):
+        cluster_mask = y_pred == cluster
+        print(f"\nCluster {cluster}:")
+        for label in np.unique(y_true):
+            count = np.sum((y_true == label) & cluster_mask)
+            if count > 0:
+                print(f"  Classe {label}: {count} elementi")
+
+
+def print_contingency_matrix(y_true: np.ndarray, y_pred: np.ndarray) -> None:
+    # Ottieni valori unici ordinati
+    unique_true = np.unique(y_true)
+    unique_pred = np.unique(y_pred)
+
+    # Crea la matrice di contingenza
+    matrix = np.zeros((len(unique_true), len(unique_pred)), dtype=int)
+
+    # Popola la matrice
+    for i, true_label in enumerate(unique_true):
+        for j, pred_label in enumerate(unique_pred):
+            mask = (y_true == true_label) & (y_pred == pred_label)
+            matrix[i, j] = np.sum(mask)
+
+    # Stampa intestazioni colonne
+    print("\nMatrice di Contingenza:")
+    print(" " * 10, end="")
+    for pred in unique_pred:
+        print(f"C{pred:4}", end=" ")
+    print("\n" + "-" * (10 + 5 * len(unique_pred)))
+
+    # Stampa righe con etichette
+    for i, true_label in enumerate(unique_true):
+        print(f"{true_label:8} |", end=" ")
+        for j in range(len(unique_pred)):
+            print(f"{matrix[i, j]:4}", end=" ")
+        print()
+
+    return matrix
