@@ -26,7 +26,7 @@ for dirpath, dirnames, filenames in os.walk(base_dir):
 # Combiniamo tutti i risultati in un unico DataFrame
 if results:
     all_results = pd.concat(results, ignore_index=True)
-    top = 20
+    top = 50
     # Ordiniamo per silhouette_score in ordine decrescente e prendiamo i primi 3
     top_3 = all_results.sort_values('f1_score', ascending=False).head(top)
 

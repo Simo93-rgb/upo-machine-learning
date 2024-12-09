@@ -54,11 +54,11 @@ def multi_run(
     print(f'Dataset {dataset_name} caricato e pre-processato')
 
     # Definizione dei metodi di linkage e delle metriche di distanza da utilizzare
-    linkage_methods = ['single', 'complete', 'average', 'centroid']
+    linkage_methods = ['single', 'complete', 'average', 'centroid', 'ward']
     distance_metrics = ['euclidean']
 
     # Esecuzione del clustering per ogni combinazione di linkage e distanza
-    for k in range(k_means_reduction - 5, k_means_reduction + 10):
+    for k in range(5, len(y), 15):
         for linkage_method in linkage_methods:
             for distance in distance_metrics:
                 run_clustering(X,
@@ -78,6 +78,16 @@ def multi_run(
 if __name__ == "__main__":
     # multi_run(k_means_reduction=35)
     dataset_name = ['Frogs_MFCCs', 'winequality-red', 'winequality-white', 'iris_dataset']
+    single_run(
+        linkage_method='ward',
+        distance_metric='euclidean',
+        k_means_reduction=151,
+        optimal_k=3,
+        max_clusters=3,
+        soglia=1.01,
+        dataset_name=dataset_name[3],
+        pre_clustering=False
+    )
     single_run(
         linkage_method='centroid',
         distance_metric='euclidean',

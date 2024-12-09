@@ -198,7 +198,17 @@ class HierarchicalClustering:
 
             # Calcola la distanza euclidea tra i due centroidi
             return np.linalg.norm(centroid1 - centroid2)
+        elif self.linkage == 'ward':
+            # Calcola i centroidi dei cluster
+            centroid1 = np.mean([self.X[int(i)] for i in cluster1.indices], axis=0)
+            centroid2 = np.mean([self.X[int(i)] for i in cluster2.indices], axis=0)
 
+            # Calcola le dimensioni dei cluster
+            n1 = len(cluster1.indices)
+            n2 = len(cluster2.indices)
+
+            # Calcola la distanza di Ward
+            return ((n1 * n2) / (n1 + n2)) * np.sum((centroid1 - centroid2) ** 2)
         else:
             raise ValueError("Metodo di linkage non supportato. Usa 'single', 'complete' o 'average'.")
 
