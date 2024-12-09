@@ -119,7 +119,7 @@ class HierarchicalClustering:
             # Trova la coppia di cluster più vicini e li unisce
             closest_pair, min_dist = self._find_closest_clusters()
             self._merge_clusters(*closest_pair, distance=min_dist)
-            print(f'Tempo una iterazione: {time.time() - tempo}')
+            # print(f'Tempo una iterazione: {time.time() - tempo}')
 
     def _find_closest_clusters(self) -> Tuple[Tuple[str, str], float]:
         min_dist = float('inf')

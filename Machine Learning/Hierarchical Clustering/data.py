@@ -12,14 +12,17 @@ class DataHandler:
         self.data: DataFrame = pd.read_csv(file_path)
 
 
-    def preprocess_data(self, soglia: float = 0.95, categorical=None):
+    def preprocess_data(self, soglia: float = 0.95, categorical:List[str]=None):
         # Esegui operazioni di pulizia, normalizzazione o riduzione delle caratteristiche, se necessario
         # Ad esempio: normalizzazione tra -1 e 1 per le caratteristiche MFCC
 
+        # Gestione delle colonne categoriche
         if categorical:
-            self.data.drop(columns=categorical)
-        self.data.iloc[:, :-1] = (self.data.iloc[:, :-1] - self.data.iloc[:, :-1].min()) / (
-                self.data.iloc[:, :-1].max() - self.data.iloc[:, :-1].min())
+            self.data = self.data.drop(columns=categorical)
+
+        # Normalizzazione Min-Max delle feature (esclusa la colonna target)
+        X = self.data.iloc[:, :-1]
+        self.data.iloc[:, :-1] = (X - X.min()) / (X.max() - X.min())
         if soglia <=1:
             self.elimina_feature_correlate(soglia)
 

@@ -13,7 +13,7 @@ def single_run(
         pre_clustering: bool = True
 ):
     # Setup iniziale
-    dataset_dir, output_dir, plot_dir = setup_directories()
+    dataset_dir, output_dir, plot_dir = setup_directories(dataset_name)
     dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
     if dataset_name == 'Frogs_MFCCs':
         categorical = ['Species', 'Genus', 'RecordID']
@@ -37,14 +37,13 @@ def single_run(
 
 def multi_run(
         max_clusters: int = 8,
-        k_means_reduction: int = 10,
         optimal_k=-1,
         categorical=None,
         soglia: float = 1.01,
         dataset_name='iris_dataset',
         pre_clustering: bool = True):
     # Setup iniziale
-    dataset_dir, output_dir, plot_dir = setup_directories()
+    dataset_dir, output_dir, plot_dir = setup_directories(dataset_name)
     if dataset_name == 'Frogs_MFCCs':
         categorical = ['Species', 'Genus', 'RecordID']
     dataset_path = os.path.join(dataset_dir, f'{dataset_name}.csv')
@@ -58,7 +57,7 @@ def multi_run(
     distance_metrics = ['euclidean']
 
     # Esecuzione del clustering per ogni combinazione di linkage e distanza
-    for k in range(5, len(y), 15):
+    for k in range(5, 45):
         for linkage_method in linkage_methods:
             for distance in distance_metrics:
                 run_clustering(X,
@@ -86,7 +85,7 @@ if __name__ == "__main__":
         max_clusters=3,
         soglia=1.01,
         dataset_name=dataset_name[3],
-        pre_clustering=False
+        pre_clustering=True
     )
     single_run(
         linkage_method='centroid',
@@ -119,14 +118,28 @@ if __name__ == "__main__":
         pre_clustering=False
     )
     single_run(
-        linkage_method='average', distance_metric='euclidean', k_means_reduction=151, optimal_k=3, max_clusters=3,
-        soglia=1.01, dataset_name=dataset_name[3], pre_clustering=False)
-    multi_run(
-        k_means_reduction=10,
+        linkage_method='average',
+        distance_metric='euclidean',
+        k_means_reduction=151,
         optimal_k=3,
         max_clusters=3,
         soglia=1.01,
         dataset_name=dataset_name[3],
+        pre_clustering=False
+    )
+    multi_run(
+        optimal_k=3,
+        max_clusters=3,
+        soglia=1.01,
+        dataset_name=dataset_name[3],
+        pre_clustering=True
+    )
+
+    multi_run(
+        optimal_k=4,
+        max_clusters=4,
+        soglia=1.01,
+        dataset_name=dataset_name[0],
         pre_clustering=True
     )
 

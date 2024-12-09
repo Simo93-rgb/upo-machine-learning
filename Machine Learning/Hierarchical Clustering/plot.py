@@ -135,25 +135,7 @@ def save_plot(plot, file_name: str, plot_dir: str):
     print(f"Plot salvato in {file_path}")
 
 
-def save_dendrogram(linkage_matrix: np.ndarray, plot_dir: str):
-    """
-    Crea e salva il dendrogramma.
-
-    Args:
-        linkage_matrix (np.ndarray): Matrice di linkage per il dendrogramma.
-        plot_dir (str): Directory di output per i plot.
-    """
-    from scipy.cluster.hierarchy import dendrogram
-    plt.figure(figsize=(10, 7))
-    dizionario = dendrogram(linkage_matrix)
-    plt.title("Dendrogram")
-    plt.xlabel("Sample Index")
-    plt.ylabel("Distance")
-    save_plot(plt, "dendrogram.png", plot_dir)
-    return len(set(dizionario['color_list']))
-
-
-def plot_dendrogram(linkage_matrix: np.ndarray, plot_dir: str, n_clusters: int = 3):
+def plot_dendrogram(linkage_matrix: np.ndarray, plot_dir: str, n_clusters: int):
     """
     Crea e salva il dendrogramma con un numero specifico di cluster colorati.
 
@@ -179,7 +161,7 @@ def plot_dendrogram(linkage_matrix: np.ndarray, plot_dir: str, n_clusters: int =
 
     save_plot(plt, f"dendrogram_{n_clusters}_clusters.png", plot_dir)
 
-    return len(set(dendrogram_dict['color_list']))
+    return threshold 
 
 def save_silhouette_plot(X: np.ndarray, labels: np.ndarray, k: int, plot_dir: str):
     """

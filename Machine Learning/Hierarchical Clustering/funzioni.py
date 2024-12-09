@@ -6,10 +6,10 @@ import pandas as pd
 from data import DataHandler
 from evaluation import *
 from hierarchical_clustering import HierarchicalClustering
-from plot import save_dendrogram, save_silhouette_plot, plot_dendrogram
+from plot import save_silhouette_plot, plot_dendrogram
 
 
-def setup_directories() -> Tuple[str, str, str]:
+def setup_directories(witch_dataset:str='Frogs_MFCCs') -> Tuple[str, str, str]:
     """
     Configura e crea le directory necessarie per il progetto.
 
@@ -18,8 +18,12 @@ def setup_directories() -> Tuple[str, str, str]:
     """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_dir = os.path.join(current_dir, 'Assets', 'Dataset')
-    output_dir = os.path.join(current_dir, 'Assets', 'Results')
-    plot_dir = os.path.join(current_dir, 'Assets', 'Plot')
+
+    output_dir = os.path.join(current_dir, 'Assets', witch_dataset)
+    output_dir = os.path.join(output_dir, 'Results')
+
+    plot_dir = os.path.join(current_dir, 'Assets', witch_dataset)
+    plot_dir = os.path.join(plot_dir, 'Plot')
 
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(plot_dir, exist_ok=True)
@@ -176,8 +180,8 @@ def run_clustering(
     print('Fine fit')
     # Creazione del dendrogramma
     linkage_matrix = create_linkage_matrix(hc)
-    clusters: int = save_dendrogram(linkage_matrix, sub_plot_dir)
-    clusters: int = plot_dendrogram(linkage_matrix, sub_plot_dir)
+    # clusters: int = save_dendrogram(linkage_matrix, sub_plot_dir)
+    clusters: int = plot_dendrogram(linkage_matrix, sub_plot_dir, optimal_k)
     print(f'Dendogramma con {clusters} cluster')
 
     # Trova il numero ottimale di cluster
