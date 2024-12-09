@@ -11,3 +11,6 @@ upo-machine-learning/Machine Learning/Logistic Regression With Gradient Descend/
 venv/
 .env/
 Zone.Identifier
+
+# Ignora i plot
+Machine Learning/Hierarchical Clustering/Assets/Plot/*
