@@ -8,9 +8,15 @@ upo-machine-learning/Machine Learning/Logistic Regression With Gradient Descend/
 *.swp
 
 # Ignora ambienti virtuali Python
-venv/
+**/venv/
+**/.venv/
 .env/
+**/env/
+**/virtualenv/
 Zone.Identifier
+
+# Ignora file
+*.pt
 
 # Ignora i plot
 Machine Learning/Hierarchical Clustering/Assets/Plot/*
