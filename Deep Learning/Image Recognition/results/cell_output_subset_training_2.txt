@@ -1,0 +1,1622 @@
+New https://pypi.org/project/ultralytics/8.3.121 available 😃 Update with 'pip install -U ultralytics'
+Ultralytics 8.3.116 🚀 Python-3.12.9 torch-2.7.0+cu126 CUDA:0 (NVIDIA GeForce RTX 4090, 24564MiB)
+[34m[1mengine/trainer: [0mtask=detect, mode=train, model=yolo11n.pt, data=objects365.yaml, epochs=50, time=None, patience=5, batch=-1, imgsz=640, save=True, save_period=-1, cache=False, device=0, workers=8, project=None, name=train9, exist_ok=False, pretrained=True, optimizer=AdamW, verbose=True, seed=0, deterministic=True, single_cls=False, rect=False, cos_lr=False, close_mosaic=10, resume=False, amp=True, fraction=1.0, profile=False, freeze=None, multi_scale=False, overlap_mask=True, mask_ratio=4, dropout=0.0, val=True, split=val, save_json=False, conf=None, iou=0.7, max_det=300, half=False, dnn=False, plots=True, source=None, vid_stride=1, stream_buffer=False, visualize=False, augment=False, agnostic_nms=False, classes=None, retina_masks=False, embed=None, show=False, save_frames=False, save_txt=False, save_conf=False, save_crop=False, show_labels=True, show_conf=True, show_boxes=True, line_width=None, format=torchscript, keras=False, optimize=False, int8=False, dynamic=False, simplify=True, opset=None, workspace=None, nms=False, lr0=0.01, lrf=0.01, momentum=0.937, weight_decay=0.0005, warmup_epochs=3.0, warmup_momentum=0.8, warmup_bias_lr=0.1, box=7.5, cls=0.5, dfl=1.5, pose=12.0, kobj=1.0, nbs=64, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, degrees=5.0, translate=0.1, scale=0.5, shear=0.0, perspective=0.0, flipud=0.0, fliplr=0.5, bgr=1.0, mosaic=1.0, mixup=0.0, copy_paste=0.0, copy_paste_mode=flip, auto_augment=randaugment, erasing=0.4, cfg=None, tracker=botsort.yaml, save_dir=/home/simon/GitHub/upo-machine-learning/runs/detect/train9
+Overriding model.yaml nc=80 with nc=365
+
+                   from  n    params  module                                       arguments                     
+  0                  -1  1       464  ultralytics.nn.modules.conv.Conv             [3, 16, 3, 2]                 
+  1                  -1  1      4672  ultralytics.nn.modules.conv.Conv             [16, 32, 3, 2]                
+  2                  -1  1      6640  ultralytics.nn.modules.block.C3k2            [32, 64, 1, False, 0.25]      
+  3                  -1  1     36992  ultralytics.nn.modules.conv.Conv             [64, 64, 3, 2]                
+  4                  -1  1     26080  ultralytics.nn.modules.block.C3k2            [64, 128, 1, False, 0.25]     
+  5                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+  6                  -1  1     87040  ultralytics.nn.modules.block.C3k2            [128, 128, 1, True]           
+  7                  -1  1    295424  ultralytics.nn.modules.conv.Conv             [128, 256, 3, 2]              
+  8                  -1  1    346112  ultralytics.nn.modules.block.C3k2            [256, 256, 1, True]           
+  9                  -1  1    164608  ultralytics.nn.modules.block.SPPF            [256, 256, 5]                 
+ 10                  -1  1    249728  ultralytics.nn.modules.block.C2PSA           [256, 256, 1]                 
+ 11                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 12             [-1, 6]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 13                  -1  1    111296  ultralytics.nn.modules.block.C3k2            [384, 128, 1, False]          
+ 14                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 15             [-1, 4]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 16                  -1  1     32096  ultralytics.nn.modules.block.C3k2            [256, 64, 1, False]           
+ 17                  -1  1     36992  ultralytics.nn.modules.conv.Conv             [64, 64, 3, 2]                
+ 18            [-1, 13]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 19                  -1  1     86720  ultralytics.nn.modules.block.C3k2            [192, 128, 1, False]          
+ 20                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+ 21            [-1, 10]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 22                  -1  1    378880  ultralytics.nn.modules.block.C3k2            [384, 256, 1, True]           
+ 23        [16, 19, 22]  1    576727  ultralytics.nn.modules.head.Detect           [365, [64, 128, 256]]         
+YOLO11n summary: 181 layers, 2,735,895 parameters, 2,735,879 gradients, 7.2 GFLOPs
+
+Transferred 448/499 items from pretrained weights
+Freezing layer 'model.23.dfl.conv.weight'
+[34m[1mAMP: [0mrunning Automatic Mixed Precision (AMP) checks...
+[34m[1mAMP: [0mchecks passed ✅
+[34m[1mtrain: [0mFast image access ✅ (ping: 2.4±0.2 ms, read: 26.6±11.2 MB/s, size: 120.6 KB)
+[34m[1mtrain: [0mScanning /mnt/d/objects365/labels/train/patch26... 14001 images, 0 backgrounds, 0 corrupt:  20%|██        | 14001/69115 [00:21<01:29, 615.88it/s] /home/simon/GitHub/upo-machine-learning/Deep Learning/Image Recognition/.venv/lib/python3.12/site-packages/PIL/Image.py:3442: DecompressionBombWarning: Image size (94080000 pixels) exceeds limit of 89478485 pixels, could be decompression bomb DOS attack.
+  warnings.warn(
+[34m[1mtrain: [0mScanning /mnt/d/objects365/labels/train/patch26... 69115 images, 0 backgrounds, 0 corrupt: 100%|██████████| 69115/69115 [01:48<00:00, 639.33it/s] [34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421262.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421299.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421312.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421506.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421514.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421546.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421637.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421643.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421903.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421974.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422029.jpg: 19 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422197.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422339.jpg: 19 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422401.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422460.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422480.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422670.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422698.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422731.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422760.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422900.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423013.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423093.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423108.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423128.jpg: 16 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423352.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423537.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423553.jpg: 17 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423598.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423714.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423717.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423825.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424032.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424346.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424520.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424541.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424558.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424566.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424704.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424708.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424782.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424790.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424896.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424902.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424973.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425107.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425300.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425305.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425341.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425415.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425426.jpg: 20 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425499.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425842.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425860.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425885.jpg: 37 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425888.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425912.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425929.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426105.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426349.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426425.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426516.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426630.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426639.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426877.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426893.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426929.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427042.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427302.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427310.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427338.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427404.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427616.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427658.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427730.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428010.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428047.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428069.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428190.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428241.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428401.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428500.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428696.jpg: 16 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428698.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428904.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428918.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428973.jpg: 14 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429012.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429014.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429260.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429349.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429541.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429605.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429635.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429654.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429726.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429893.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429900.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429906.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430040.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430087.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430354.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430371.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430403.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430404.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430539.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430604.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430627.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430655.jpg: 20 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430672.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430687.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430949.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430976.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431070.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431084.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431105.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431292.jpg: 17 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431342.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431344.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431509.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431547.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431812.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432011.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432173.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432243.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432251.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432259.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432300.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432401.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432459.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432806.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432876.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433078.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433182.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433581.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433605.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433624.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433660.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433663.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433711.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433862.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434022.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434067.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434111.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434263.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434352.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434386.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434443.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434763.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434766.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435024.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435072.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435137.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435144.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435155.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435203.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435241.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435250.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435400.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435555.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435574.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435631.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435703.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435923.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436044.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436176.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436418.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436524.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436558.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436583.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436813.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436842.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436869.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436927.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436993.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437136.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437183.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437265.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437283.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437359.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437367.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437434.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437545.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437565.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437592.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437645.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437689.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437773.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437885.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438048.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438050.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438096.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438152.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438297.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438368.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438390.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438393.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438408.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438432.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438456.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438538.jpg: 23 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438658.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438799.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438945.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439011.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439080.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439094.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439204.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439359.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439368.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439387.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439428.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439461.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439580.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439650.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439728.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439734.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439735.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439739.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439800.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439879.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439881.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439924.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440061.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440173.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440199.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440253.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440264.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440433.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440482.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440599.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440630.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440897.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440933.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440962.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441078.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441129.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441156.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441367.jpg: 30 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441410.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441473.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441525.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441550.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441561.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441629.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441630.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441829.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441948.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442082.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442117.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442230.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442489.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442553.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442666.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442697.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442805.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442848.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442935.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443027.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443131.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443186.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443712.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443766.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443775.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443861.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443880.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443966.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444094.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444285.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444366.jpg: 19 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444498.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444623.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444658.jpg: 23 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444798.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444810.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444836.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444921.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445069.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445287.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445420.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445725.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445755.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445768.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445787.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445833.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445894.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446017.jpg: 14 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446189.jpg: 14 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446252.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446276.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446364.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446408.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446413.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446457.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446826.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446830.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447017.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447148.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447220.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447277.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447704.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447752.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448229.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448245.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448282.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448531.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448622.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448721.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448732.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449235.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449237.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449346.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449696.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449809.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449845.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449940.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450081.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450258.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450270.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450453.jpg: 17 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450524.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450768.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450797.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450837.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450973.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451145.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451186.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451445.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451499.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451550.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451732.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451800.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451813.jpg: 24 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451863.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451870.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452082.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452218.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452521.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452690.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453095.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453129.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453130.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453183.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453245.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453270.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453283.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453363.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453395.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453797.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453848.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454087.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454189.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454247.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454304.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454513.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454656.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454769.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454854.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455067.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455188.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455245.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455391.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455434.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455472.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455473.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455597.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455771.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455802.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455873.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455920.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455937.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455947.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455951.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456043.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456057.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456137.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456192.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456311.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456415.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456476.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456510.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456615.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456650.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456742.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456776.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456807.jpg: 23 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456891.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457096.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457152.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457190.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457265.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457709.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457840.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457901.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458014.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458325.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458411.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458501.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458628.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459125.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459303.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459334.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459513.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459651.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459743.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459797.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460152.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460235.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460537.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460810.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461007.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461048.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461076.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461107.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461110.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461285.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461312.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461414.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461514.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461585.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461620.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461750.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461763.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461815.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461961.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462161.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462177.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462244.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462273.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462372.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462399.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462636.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462757.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462824.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462866.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463424.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463698.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463702.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463703.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463755.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463878.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00464593.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465217.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465427.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465534.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465629.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465719.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465780.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465836.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466147.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466191.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466237.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466337.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466518.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466797.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466917.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00467318.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00467338.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00467466.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468000.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468124.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468140.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468545.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468583.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468658.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468684.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00469031.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00469565.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00469595.jpg: 8 duplicate labels removed
+
+[34m[1mtrain: [0mNew cache created: /mnt/d/objects365/labels/train/patch26.cache
+[34m[1mAutoBatch: [0mComputing optimal batch size for imgsz=640 at 60.0% CUDA memory utilization.
+[34m[1mAutoBatch: [0mCUDA:0 (NVIDIA GeForce RTX 4090) 23.99G total, 0.12G reserved, 0.08G allocated, 23.79G free
+      Params      GFLOPs  GPU_mem (GB)  forward (ms) backward (ms)                   input                  output
+     2735895       7.216         0.516         66.97         323.4        (1, 3, 640, 640)                    list
+     2735895       14.43         0.759         34.67         104.7        (2, 3, 640, 640)                    list
+     2735895       28.86         1.118         38.19         104.6        (4, 3, 640, 640)                    list
+     2735895       57.73         1.801         149.6           104        (8, 3, 640, 640)                    list
+     2735895       115.5         3.311         63.75         94.83       (16, 3, 640, 640)                    list
+     2735895       230.9         6.197         108.5         115.2       (32, 3, 640, 640)                    list
+     2735895       461.8        12.117         177.1         126.4       (64, 3, 640, 640)                    list
+[34m[1mAutoBatch: [0mUsing batch-size 74 for CUDA:0 14.14G/23.99G (59%) ✅
+[34m[1mtrain: [0mFast image access ✅ (ping: 2.4±0.1 ms, read: 30.9±10.5 MB/s, size: 137.3 KB)
+[34m[1mtrain: [0mScanning /mnt/d/objects365/labels/train/patch26.cache... 69115 images, 0 backgrounds, 0 corrupt: 100%|██████████| 69115/69115 [00:00<?, ?it/s][34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421262.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421299.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421312.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421506.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421514.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421546.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421637.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421643.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421903.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00421974.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422029.jpg: 19 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422197.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422339.jpg: 19 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422401.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422460.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422480.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422670.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422698.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422731.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422760.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00422900.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423013.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423093.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423108.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423128.jpg: 16 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423352.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423537.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423553.jpg: 17 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423598.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423714.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423717.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00423825.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424032.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424346.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424520.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424541.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424558.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424566.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424704.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424708.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424782.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424790.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424896.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424902.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00424973.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425107.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425300.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425305.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425341.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425415.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425426.jpg: 20 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425499.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425842.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425860.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425885.jpg: 37 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425888.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425912.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00425929.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426105.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426349.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426425.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426516.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426630.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426639.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426877.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426893.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00426929.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427042.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427302.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427310.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427338.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427404.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427616.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427658.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00427730.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428010.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428047.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428069.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428190.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428241.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428401.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428500.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428696.jpg: 16 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428698.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428904.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428918.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00428973.jpg: 14 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429012.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429014.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429260.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429349.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429541.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429605.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429635.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429654.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429726.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429893.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429900.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00429906.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430040.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430087.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430354.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430371.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430403.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430404.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430539.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430604.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430627.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430655.jpg: 20 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430672.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430687.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430949.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00430976.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431070.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431084.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431105.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431292.jpg: 17 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431342.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431344.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431509.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431547.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00431812.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432011.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432173.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432243.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432251.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432259.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432300.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432401.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432459.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432806.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00432876.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433078.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433182.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433581.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433605.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433624.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433660.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433663.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433711.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00433862.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434022.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434067.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434111.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434263.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434352.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434386.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434443.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434763.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00434766.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435024.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435072.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435137.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435144.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435155.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435203.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435241.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435250.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435400.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435555.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435574.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435631.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435703.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00435923.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436044.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436176.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436418.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436524.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436558.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436583.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436813.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436842.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436869.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436927.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00436993.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437136.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437183.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437265.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437283.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437359.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437367.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437434.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437545.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437565.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437592.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437645.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437689.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437773.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00437885.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438048.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438050.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438096.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438152.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438297.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438368.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438390.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438393.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438408.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438432.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438456.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438538.jpg: 23 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438658.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438799.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00438945.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439011.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439080.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439094.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439204.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439359.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439368.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439387.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439428.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439461.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439580.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439650.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439728.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439734.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439735.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439739.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439800.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439879.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439881.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00439924.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440061.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440173.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440199.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440253.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440264.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440433.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440482.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440599.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440630.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440897.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440933.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00440962.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441078.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441129.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441156.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441367.jpg: 30 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441410.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441473.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441525.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441550.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441561.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441629.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441630.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441829.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00441948.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442082.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442117.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442230.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442489.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442553.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442666.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442697.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442805.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442848.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00442935.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443027.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443131.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443186.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443712.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443766.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443775.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443861.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443880.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00443966.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444094.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444285.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444366.jpg: 19 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444498.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444623.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444658.jpg: 23 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444798.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444810.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444836.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00444921.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445069.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445287.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445420.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445725.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445755.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445768.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445787.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445833.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00445894.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446017.jpg: 14 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446189.jpg: 14 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446252.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446276.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446364.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446408.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446413.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446457.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446826.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00446830.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447017.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447148.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447220.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447277.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447704.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00447752.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448229.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448245.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448282.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448531.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448622.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448721.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00448732.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449235.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449237.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449346.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449696.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449809.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449845.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00449940.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450081.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450258.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450270.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450453.jpg: 17 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450524.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450768.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450797.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450837.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00450973.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451145.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451186.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451445.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451499.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451550.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451732.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451800.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451813.jpg: 24 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451863.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00451870.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452082.jpg: 12 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452218.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452521.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00452690.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453095.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453129.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453130.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453183.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453245.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453270.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453283.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453363.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453395.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453797.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00453848.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454087.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454189.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454247.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454304.jpg: 15 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454513.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454656.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454769.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00454854.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455067.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455188.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455245.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455391.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455434.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455472.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455473.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455597.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455771.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455802.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455873.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455920.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455937.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455947.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00455951.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456043.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456057.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456137.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456192.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456311.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456415.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456476.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456510.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456615.jpg: 8 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456650.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456742.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456776.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456807.jpg: 23 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00456891.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457096.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457152.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457190.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457265.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457709.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457840.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00457901.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458014.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458325.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458411.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458501.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00458628.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459125.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459303.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459334.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459513.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459651.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459743.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00459797.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460152.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460235.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460537.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00460810.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461007.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461048.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461076.jpg: 9 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461107.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461110.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461285.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461312.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461414.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461514.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461585.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461620.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461750.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461763.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461815.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00461961.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462161.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462177.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462244.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462273.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462372.jpg: 10 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462399.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462636.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462757.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462824.jpg: 13 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00462866.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463424.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463698.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463702.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463703.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463755.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00463878.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00464593.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465217.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465427.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465534.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465629.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465719.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465780.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00465836.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466147.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466191.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466237.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466337.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466518.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466797.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00466917.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00467318.jpg: 7 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00467338.jpg: 3 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00467466.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468000.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468124.jpg: 11 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468140.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468545.jpg: 5 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468583.jpg: 2 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468658.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00468684.jpg: 6 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00469031.jpg: 1 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00469565.jpg: 4 duplicate labels removed
+[34m[1mtrain: [0m/mnt/d/objects365/images/train/patch9/objects365_v1_00469595.jpg: 8 duplicate labels removed
+
+[34m[1mval: [0mFast image access ✅ (ping: 3.4±0.5 ms, read: 20.3±4.1 MB/s, size: 123.5 KB)
+[34m[1mval: [0mScanning /mnt/d/objects365/labels/val/patch4... 1595 images, 0 backgrounds, 0 corrupt: 100%|██████████| 1595/1595 [00:04<00:00, 327.00it/s][34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00185879.jpg: 2 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00186526.jpg: 10 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00186741.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00187614.jpg: 6 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00189429.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00190212.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00193124.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00193926.jpg: 2 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00196142.jpg: 5 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00196379.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00199639.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00202820.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00203001.jpg: 2 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00205756.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00209189.jpg: 3 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00211525.jpg: 3 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00211692.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00212557.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00212860.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00213447.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00214344.jpg: 2 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00215111.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00215156.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00215305.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00217786.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00217953.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00218338.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00218752.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00219161.jpg: 6 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00223329.jpg: 6 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00225878.jpg: 1 duplicate labels removed
+[34m[1mval: [0m/mnt/d/objects365/images/val/patch4/objects365_v1_00226898.jpg: 6 duplicate labels removed
+
+[34m[1mval: [0mNew cache created: /mnt/d/objects365/labels/val/patch4.cache
+Plotting labels to /home/simon/GitHub/upo-machine-learning/runs/detect/train9/labels.jpg... 
+[34m[1moptimizer:[0m AdamW(lr=0.01, momentum=0.937) with parameter groups 81 weight(decay=0.0), 88 weight(decay=0.000578125), 87 bias(decay=0.0)
+Image sizes 640 train, 640 val
+Using 8 dataloader workers
+Logging results to [1m/home/simon/GitHub/upo-machine-learning/runs/detect/train9[0m
+Starting training for 50 epochs...
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       1/50      17.5G      1.697      2.975      1.537       1584        640: 100%|██████████| 934/934 [04:56<00:00,  3.15it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:53<00:00, 10.28s/it]
+                   all       1595      23648    0.00474     0.0112    0.00408    0.00228
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       2/50        18G      1.703       2.66      1.549       1656        640: 100%|██████████| 934/934 [05:15<00:00,  2.96it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:28<00:00, 13.54s/it]
+                   all       1595      23648     0.0101     0.0413    0.00859    0.00507
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       3/50      18.2G      1.663      2.522       1.52       1757        640: 100%|██████████| 934/934 [05:23<00:00,  2.89it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:27<00:00, 13.41s/it]
+                   all       1595      23648      0.239     0.0244      0.014    0.00765
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       4/50      17.4G      1.621       2.39      1.488       1889        640: 100%|██████████| 934/934 [05:12<00:00,  2.99it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [05:10<00:00, 28.22s/it]
+                   all       1595      23648      0.334     0.0356     0.0228     0.0131
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       5/50      18.1G      1.578      2.279      1.455       1514        640: 100%|██████████| 934/934 [05:13<00:00,  2.98it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:04<00:00,  5.85s/it]
+                   all       1595      23648      0.317     0.0363     0.0286     0.0169
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       6/50        18G      1.554      2.201      1.436       1563        640: 100%|██████████| 934/934 [05:13<00:00,  2.98it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:21<00:00, 12.90s/it]
+                   all       1595      23648      0.339     0.0515     0.0409     0.0243
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       7/50      17.6G      1.532      2.148      1.418       1907        640: 100%|██████████| 934/934 [05:14<00:00,  2.97it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:40<00:00, 14.58s/it]
+                   all       1595      23648      0.365     0.0598     0.0512     0.0303
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       8/50      17.5G      1.514      2.099      1.405       1521        640: 100%|██████████| 934/934 [04:54<00:00,  3.17it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:28<00:00, 13.48s/it]
+                   all       1595      23648      0.393     0.0668     0.0566     0.0334
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+       9/50      18.1G      1.498      2.058      1.391       1370        640: 100%|██████████| 934/934 [04:54<00:00,  3.17it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:32<00:00, 13.90s/it]
+                   all       1595      23648      0.402     0.0686     0.0616     0.0361
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      10/50      19.1G      1.485      2.029      1.381       1611        640: 100%|██████████| 934/934 [05:01<00:00,  3.10it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:28<00:00, 13.50s/it]
+                   all       1595      23648      0.436     0.0723     0.0646     0.0392
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      11/50        18G      1.474      1.998      1.372       1780        640: 100%|██████████| 934/934 [04:54<00:00,  3.17it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:11<00:00, 11.91s/it]
+                   all       1595      23648      0.458     0.0751     0.0709      0.043
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      12/50      18.1G      1.466      1.973      1.363       1519        640: 100%|██████████| 934/934 [05:02<00:00,  3.09it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:28<00:00, 13.48s/it]
+                   all       1595      23648      0.498     0.0787     0.0753     0.0464
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      13/50      17.5G      1.457      1.957      1.357       1428        640: 100%|██████████| 934/934 [05:00<00:00,  3.11it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:15<00:00, 12.33s/it]
+                   all       1595      23648      0.478     0.0781     0.0762     0.0468
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      14/50      18.2G      1.448      1.935      1.348       1499        640: 100%|██████████| 934/934 [04:58<00:00,  3.13it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:52<00:00, 10.24s/it]
+                   all       1595      23648      0.481     0.0825     0.0811     0.0488
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      15/50      17.5G      1.442      1.925      1.345       1645        640: 100%|██████████| 934/934 [05:00<00:00,  3.11it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:18<00:00, 12.59s/it]
+                   all       1595      23648        0.5     0.0795     0.0812     0.0495
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      16/50      18.9G      1.434      1.899      1.339       1670        640: 100%|██████████| 934/934 [04:53<00:00,  3.18it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:36<00:00, 14.21s/it]
+                   all       1595      23648      0.486     0.0814     0.0846     0.0514
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      17/50      18.4G       1.43       1.89      1.334       1474        640: 100%|██████████| 934/934 [05:01<00:00,  3.10it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:37<00:00, 14.28s/it]
+                   all       1595      23648      0.498     0.0824     0.0865     0.0529
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      18/50      18.1G      1.423      1.876      1.329       1573        640: 100%|██████████| 934/934 [04:53<00:00,  3.18it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:07<00:00, 11.55s/it]
+                   all       1595      23648      0.504     0.0837     0.0885     0.0538
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      19/50      17.5G      1.417      1.863      1.326       1589        640: 100%|██████████| 934/934 [05:02<00:00,  3.09it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:40<00:00,  9.12s/it]
+                   all       1595      23648      0.498     0.0851     0.0885     0.0543
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      20/50      17.6G      1.411      1.846       1.32       1504        640: 100%|██████████| 934/934 [04:59<00:00,  3.12it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:31<00:00, 13.80s/it]
+                   all       1595      23648      0.498     0.0856     0.0892     0.0547
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      21/50      18.1G      1.408      1.837      1.318       1319        640: 100%|██████████| 934/934 [04:52<00:00,  3.20it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:11<00:00, 11.94s/it]
+                   all       1595      23648      0.506     0.0862     0.0899      0.055
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      22/50      19.1G      1.404       1.83      1.315       1666        640: 100%|██████████| 934/934 [05:02<00:00,  3.09it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:24<00:00, 13.14s/it]
+                   all       1595      23648      0.501     0.0883     0.0907     0.0554
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      23/50      18.1G      1.399      1.817      1.311       1865        640: 100%|██████████| 934/934 [05:00<00:00,  3.10it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:54<00:00, 10.38s/it]
+                   all       1595      23648      0.503     0.0885     0.0907     0.0558
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      24/50      17.6G      1.396       1.81      1.308       1721        640: 100%|██████████| 934/934 [04:57<00:00,  3.13it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:21<00:00, 12.85s/it]
+                   all       1595      23648      0.503     0.0905     0.0916     0.0562
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      25/50      17.3G       1.39      1.796      1.305       1677        640: 100%|██████████| 934/934 [04:56<00:00,  3.15it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:45<00:00,  9.60s/it]
+                   all       1595      23648      0.508     0.0889      0.092     0.0565
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      26/50      18.3G      1.385      1.786      1.301       1462        640: 100%|██████████| 934/934 [05:01<00:00,  3.10it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:40<00:00, 14.56s/it]
+                   all       1595      23648      0.515     0.0891     0.0924     0.0568
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      27/50      18.5G      1.383      1.781      1.299       1352        640: 100%|██████████| 934/934 [05:00<00:00,  3.10it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:31<00:00, 13.74s/it]
+                   all       1595      23648      0.506     0.0905     0.0931     0.0573
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      28/50      17.5G      1.381      1.773      1.296       1626        640: 100%|██████████| 934/934 [05:02<00:00,  3.08it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:27<00:00, 13.45s/it]
+                   all       1595      23648      0.505     0.0914     0.0937     0.0576
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      29/50      18.2G      1.375      1.759      1.293       1715        640: 100%|██████████| 934/934 [05:02<00:00,  3.09it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:17<00:00, 12.51s/it]
+                   all       1595      23648      0.499     0.0925     0.0945     0.0581
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      30/50      17.5G      1.373      1.759      1.292       1483        640: 100%|██████████| 934/934 [05:01<00:00,  3.10it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:42<00:00, 14.80s/it]
+                   all       1595      23648      0.488     0.0951     0.0949     0.0584
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      31/50      17.5G       1.37      1.751      1.289       1654        640: 100%|██████████| 934/934 [05:06<00:00,  3.05it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:01<00:00, 11.06s/it]
+                   all       1595      23648      0.493     0.0947     0.0953     0.0588
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      32/50      17.4G      1.364      1.738      1.286       1589        640: 100%|██████████| 934/934 [05:20<00:00,  2.92it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [05:12<00:00, 28.37s/it]
+                   all       1595      23648      0.489     0.0971     0.0958     0.0594
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      33/50      20.1G      1.363      1.735      1.283       1426        640: 100%|██████████| 934/934 [05:05<00:00,  3.05it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [00:50<00:00,  4.57s/it]
+                   all       1595      23648      0.493     0.0965      0.096     0.0595
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      34/50        18G      1.358      1.726      1.281       1695        640: 100%|██████████| 934/934 [04:58<00:00,  3.12it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:36<00:00, 14.24s/it]
+                   all       1595      23648      0.496     0.0969     0.0966     0.0598
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      35/50        18G      1.355       1.72      1.279       1757        640: 100%|██████████| 934/934 [05:09<00:00,  3.02it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [04:11<00:00, 22.87s/it]
+                   all       1595      23648      0.504     0.0967     0.0978     0.0605
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      36/50      17.6G      1.353      1.712      1.277       1478        640: 100%|██████████| 934/934 [05:12<00:00,  2.99it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [00:58<00:00,  5.30s/it]
+                   all       1595      23648      0.505      0.097     0.0986      0.061
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      37/50      18.1G      1.349      1.705      1.274       1651        640: 100%|██████████| 934/934 [05:09<00:00,  3.02it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:07<00:00, 11.58s/it]
+                   all       1595      23648      0.507      0.097     0.0991     0.0611
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      38/50        18G      1.347      1.698      1.273       2013        640: 100%|██████████| 934/934 [05:12<00:00,  2.98it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [05:48<00:00, 31.68s/it]
+                   all       1595      23648      0.512     0.0969     0.0995     0.0616
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      39/50      18.1G      1.345      1.693      1.272       1550        640: 100%|██████████| 934/934 [05:05<00:00,  3.06it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [00:44<00:00,  4.01s/it]
+                   all       1595      23648       0.51     0.0965        0.1      0.062
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      40/50      17.6G      1.341      1.685      1.269       1353        640: 100%|██████████| 934/934 [04:59<00:00,  3.12it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:00<00:00, 10.99s/it]
+                   all       1595      23648       0.51     0.0967      0.101     0.0626
+Closing dataloader mosaic
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      41/50      17.2G      1.336      1.648      1.264        939        640: 100%|██████████| 934/934 [04:50<00:00,  3.22it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:39<00:00,  9.00s/it]
+                   all       1595      23648      0.485      0.101      0.103     0.0637
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      42/50      17.3G      1.326      1.624      1.258        811        640: 100%|██████████| 934/934 [04:48<00:00,  3.23it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:53<00:00, 10.32s/it]
+                   all       1595      23648      0.492      0.104      0.103     0.0639
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      43/50      17.4G       1.32      1.612      1.256        803        640: 100%|██████████| 934/934 [04:51<00:00,  3.21it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:52<00:00, 10.26s/it]
+                   all       1595      23648      0.498      0.103      0.104     0.0642
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      44/50      17.5G      1.317      1.603      1.253        763        640: 100%|██████████| 934/934 [04:50<00:00,  3.22it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:50<00:00, 10.08s/it]
+                   all       1595      23648      0.509      0.103      0.104     0.0645
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      45/50      17.3G      1.313      1.595      1.251       1074        640: 100%|██████████| 934/934 [04:50<00:00,  3.21it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:47<00:00,  9.75s/it]
+                   all       1595      23648       0.51      0.103      0.104     0.0645
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      46/50      17.2G      1.311      1.587      1.248        857        640: 100%|██████████| 934/934 [04:57<00:00,  3.14it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [05:30<00:00, 30.05s/it]
+                   all       1595      23648      0.508      0.103      0.104     0.0647
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      47/50      17.4G      1.305      1.575      1.245        890        640: 100%|██████████| 934/934 [05:03<00:00,  3.07it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [00:42<00:00,  3.86s/it]
+                   all       1595      23648      0.508      0.104      0.104      0.065
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      48/50      17.2G      1.301       1.57      1.244        939        640: 100%|██████████| 934/934 [04:48<00:00,  3.24it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:54<00:00, 10.41s/it]
+                   all       1595      23648      0.508      0.103      0.105     0.0656
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      49/50      17.1G      1.299      1.562      1.241        832        640: 100%|██████████| 934/934 [04:50<00:00,  3.22it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [01:56<00:00, 10.59s/it]
+                   all       1595      23648      0.516      0.104      0.106     0.0659
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      50/50      17.3G      1.297      1.556       1.24        956        640: 100%|██████████| 934/934 [04:49<00:00,  3.22it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [02:17<00:00, 12.53s/it]
+                   all       1595      23648      0.503      0.107      0.106      0.066
+
+50 epochs completed in 6.236 hours.
+Optimizer stripped from /home/simon/GitHub/upo-machine-learning/runs/detect/train9/weights/last.pt, 5.8MB
+Optimizer stripped from /home/simon/GitHub/upo-machine-learning/runs/detect/train9/weights/best.pt, 5.8MB
+
+Validating /home/simon/GitHub/upo-machine-learning/runs/detect/train9/weights/best.pt...
+Ultralytics 8.3.116 🚀 Python-3.12.9 torch-2.7.0+cu126 CUDA:0 (NVIDIA GeForce RTX 4090, 24564MiB)
+YOLO11n summary (fused): 100 layers, 2,727,883 parameters, 0 gradients, 7.1 GFLOPs
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 11/11 [00:14<00:00,  1.28s/it]
+                   all       1595      23648      0.502      0.107      0.105     0.0659
+              Sneakers        613       1509      0.363      0.614       0.55      0.373
+                 Chair        131        276      0.246      0.442      0.289      0.142
+           Other Shoes        276        423      0.295      0.577      0.452      0.331
+                   Car        116        168      0.255      0.488      0.398      0.263
+                  Lamp         76        134      0.164      0.269      0.116       0.07
+               Glasses        248        392       0.28      0.528      0.426      0.298
+                Bottle         88        107      0.256      0.299      0.239     0.0965
+                  Desk        306        537      0.145      0.218      0.103     0.0548
+                   Cup        338        423      0.322      0.617       0.45      0.285
+         Street Lights        211        337      0.229      0.341      0.214       0.13
+         Cabinet/shelf         33         75       0.24        0.4      0.214      0.106
+       Handbag/Satchel        532       1182      0.289      0.597      0.394      0.237
+              Bracelet        102        134      0.113      0.119     0.0465     0.0297
+                 Plate         47         57       0.23     0.0175     0.0254     0.0105
+         Picture/Frame        143        241        0.3      0.332      0.225      0.146
+                Helmet        119        173       0.28      0.665       0.52      0.431
+                  Book         15         25     0.0951       0.32      0.206      0.146
+                Gloves        129        204      0.179      0.255      0.149     0.0754
+           Storage box         24         36     0.0555     0.0833      0.016    0.00934
+                  Boat        107        176      0.086      0.176     0.0601     0.0374
+         Leather Shoes         16         46     0.0781      0.261       0.13     0.0575
+                Flower         35         71      0.201      0.197      0.113     0.0589
+                 Bench         63         80       0.36      0.425      0.305      0.181
+          Potted Plant         32         47     0.0962     0.0638     0.0388     0.0256
+            Bowl/Basin         58         92       0.33      0.489      0.347      0.206
+                  Flag        118        184      0.223      0.245      0.169      0.116
+                Pillow         17         41      0.352      0.244      0.218     0.0848
+                 Boots         70        115      0.249      0.696      0.334      0.196
+                  Vase          6          9     0.0935      0.333     0.0998      0.086
+            Microphone         50         59      0.206      0.237      0.161      0.119
+              Necklace         35         67      0.111     0.0896     0.0725      0.037
+                  Ring         15         15      0.206     0.0667     0.0815     0.0598
+                   SUV         23         29          1          0          0          0
+            Wine Glass         17         21     0.0673      0.143      0.026     0.0225
+                  Belt         31         48      0.274      0.292      0.253      0.156
+            Monitor/TV         23         23      0.346      0.348      0.339      0.147
+              Backpack        187        292      0.368       0.74      0.626      0.468
+              Umbrella         13         14      0.149      0.143     0.0304     0.0193
+         Traffic Light         20         52      0.271      0.135        0.1     0.0475
+               Speaker         16         39      0.263     0.0769     0.0897     0.0605
+                 Watch        133        308      0.393      0.396      0.356      0.225
+                   Tie         28         29      0.497      0.137      0.166     0.0952
+         Trash bin Can         18         25       0.28        0.2      0.149     0.0624
+              Slippers        132        153      0.321      0.379      0.247      0.176
+               Bicycle         49        103      0.509     0.0777      0.204      0.101
+                 Stool         22         41      0.283      0.241      0.204      0.135
+         Barrel/bucket         87        149      0.363      0.363       0.32      0.237
+                   Van        134        344      0.365      0.209       0.21      0.145
+                 Couch         23         34      0.285      0.147      0.127     0.0816
+               Sandals         24         34      0.314      0.529      0.396      0.308
+                Basket         18         42          0          0     0.0343     0.0193
+                  Drum        182        441      0.506      0.111      0.172     0.0979
+            Pen/Pencil         35        115      0.372      0.139      0.152     0.0858
+                   Bus        108        226      0.422     0.0487     0.0666     0.0342
+             Wild Bird         11         22     0.0562      0.046     0.0218     0.0165
+            High Heels         36        197     0.0442      0.102     0.0145    0.00788
+            Motorcycle         13         23      0.103     0.0435     0.0528     0.0253
+                Guitar         18         29      0.249      0.103      0.135     0.0688
+                Carpet         29         71      0.342      0.225      0.206      0.106
+            Cell Phone        112        144      0.407      0.472      0.368      0.248
+                 Bread         49         58      0.359      0.121     0.0977     0.0698
+                Camera         54        132     0.0299    0.00758     0.0135    0.00715
+                Canned         20         36      0.183     0.0278     0.0434     0.0285
+                 Truck         60        161      0.274      0.106     0.0961     0.0548
+          Traffic cone         25         38      0.148     0.0789     0.0598     0.0331
+                Cymbal         14         54      0.551      0.167      0.234       0.12
+             Lifesaver         28         80      0.443      0.325      0.324      0.178
+                 Towel          5         36      0.424     0.0278     0.0393     0.0274
+           Stuffed Toy        144        237      0.355      0.278       0.24      0.137
+                Candle         23         52      0.185     0.0577     0.0307     0.0143
+              Sailboat         14         27       0.19      0.037     0.0316     0.0111
+                Laptop          6         33      0.688      0.268      0.338       0.18
+                Awning         68         79       0.32      0.418      0.343      0.249
+                Faucet         88        113      0.523      0.805      0.753      0.544
+                  Tent        289        428      0.248      0.374      0.262      0.125
+                 Horse          2          6      0.146        0.5      0.517      0.409
+                Mirror          7         22      0.085      0.211     0.0815     0.0433
+          Power outlet        134        167      0.287      0.497      0.386      0.281
+                  Sink         86        114      0.221      0.289      0.138     0.0823
+                 Apple        294        414       0.35      0.423      0.378      0.228
+       Air Conditioner         85        194     0.0293    0.00515     0.0147    0.00753
+                 Knife         13         16     0.0898     0.0625     0.0306     0.0197
+          Hockey Stick         58         81      0.271     0.0617     0.0667     0.0337
+          Pickup Truck          2          2          0          0    0.00255     0.0023
+                  Fork         19         32          0          0     0.0529     0.0379
+          Traffic Sign         22         29      0.137      0.103     0.0995     0.0665
+               Balloon         12         24       0.17     0.0417     0.0675     0.0488
+                Tripod          6         26     0.0571     0.0769     0.0452     0.0244
+                   Dog         27         59      0.493      0.153      0.178     0.0666
+                 Spoon         14         25      0.102       0.12     0.0475     0.0335
+                 Clock         26         45      0.161     0.0222     0.0452     0.0173
+                   Pot         34         44      0.369      0.455      0.369      0.246
+                   Cow         75        115      0.301      0.157      0.134     0.0581
+                  Cake          3          4    0.00966       0.25      0.258      0.153
+          Dining Table         22         69      0.076      0.101     0.0216     0.0152
+                Hanger         11         49       0.13      0.102     0.0352     0.0217
+ Blackboard/Whiteboard         37        115      0.355     0.0783     0.0837     0.0336
+                Napkin         46         75      0.238       0.16       0.13      0.103
+            Other Fish          1          8          1          0          0          0
+      Orange/Tangerine         82        811      0.133    0.00617     0.0512     0.0314
+              Toiletry         33         79          1          0     0.0148    0.00836
+              Keyboard        112        377      0.463     0.0239     0.0692     0.0415
+                Tomato        121        158      0.378       0.57      0.513       0.31
+               Lantern         60        188          0          0     0.0354     0.0263
+     Machinery Vehicle         34        266      0.377     0.0113      0.202      0.123
+                   Fan         21         53        0.3      0.081       0.11      0.068
+      Green Vegetables         37         53      0.491      0.346      0.337      0.223
+                Banana          7          7          1          0          0          0
+        Baseball Glove         61        120          1          0     0.0118    0.00705
+              Airplane          3          8          1          0    0.00486    0.00292
+                 Mouse         14         46      0.275      0.087      0.123     0.0708
+                 Train        114        140      0.508      0.379      0.417      0.277
+               Pumpkin          6         13      0.614      0.462      0.504      0.344
+                Soccer         29        108       0.17    0.00926     0.0308     0.0173
+              Skiboard         12         45       0.19     0.0222     0.0179     0.0109
+               Luggage          1          1          1          0          0          0
+            Nightstand         12         36     0.0768    0.00854      0.044     0.0228
+               Tea pot         49         69      0.568      0.812      0.755      0.531
+             Telephone         68         83      0.201     0.0484      0.065     0.0388
+               Trolley         81         91      0.316      0.209      0.229      0.123
+            Head Phone         41         65      0.287     0.0308     0.0998     0.0663
+            Sports Car         37         52      0.298     0.0385     0.0841     0.0466
+             Stop Sign         15         89      0.671     0.0918      0.289      0.207
+               Dessert          6         11          0          0          0          0
+               Scooter         11         64          0          0    0.00824    0.00456
+                 Crane          9         10      0.184        0.1       0.13     0.0781
+                Remote          5         21      0.881     0.0476       0.18     0.0955
+          Refrigerator         40         58      0.334     0.0517     0.0568     0.0242
+                  Oven         89         95      0.321      0.421      0.379        0.3
+                 Lemon        133        154      0.301        0.5      0.339      0.197
+                  Duck         43         96          1          0     0.0247     0.0198
+          Baseball Bat         48        395      0.371    0.00749     0.0755      0.042
+   Surveillance Camera          3          7          1          0          0          0
+                   Cat         11         30          1          0     0.0152    0.00821
+                   Jug         13         35      0.654      0.055      0.135     0.0764
+                 Piano         17         20          1          0    0.00795    0.00636
+                 Pizza         25         46      0.357     0.0435     0.0898     0.0427
+              Elephant         13         45          1     0.0419      0.125     0.0926
+            Skateboard          5         35          1          0      0.279      0.223
+                   Gun          1          1          0          0          0          0
+Skating and Skiing shoes          6         42          0          0          0          0
+             Gas stove          3         19      0.568      0.421      0.518      0.343
+                 Donut        103        115      0.258       0.33        0.2     0.0893
+               Bow Tie          2          7          1          0     0.0127     0.0102
+                Carrot          6         16          1          0     0.0262     0.0113
+                Toilet         20         50          1          0          0          0
+                  Kite         77         85      0.408      0.518      0.487      0.367
+           Other Balls         20         34          1          0     0.0085     0.0068
+                Pepper         44        104          0          0    0.00185    0.00111
+          Computer Box         51         93          1          0      0.022     0.0164
+          Toilet Paper         67         88        0.3      0.227      0.194      0.111
+     Cleaning Products         56         79      0.168      0.038     0.0503     0.0234
+            Chopsticks         84        188      0.114    0.00532     0.0549     0.0348
+             Microwave          7          9          1          0     0.0445     0.0145
+                Pigeon         76         81      0.398      0.531      0.486      0.334
+              Baseball         10         92          1          0     0.0455     0.0271
+Cutting/chopping Board          8         33          0          0     0.0228     0.0106
+          Coffee Table         46         66          1          0     0.0258     0.0138
+              Scissors         12         16      0.363      0.125      0.151      0.103
+                Marker         31         53          1          0     0.0121    0.00452
+                   Pie         16         34          1          0     0.0393     0.0252
+                Ladder         19         52          1          0     0.0156     0.0096
+             Snowboard         14         21          1      0.094      0.214      0.126
+              Radiator         24         67          1          0     0.0632     0.0338
+          Fire Hydrant         22         30      0.279      0.233      0.177      0.131
+            Basketball          1          1          0          0          0          0
+                 Zebra          4         20          1          0          0          0
+                 Grape          1          1          1          0          0          0
+               Giraffe         36        115          0          0     0.0468      0.023
+               Sausage         31         45          1          0          0          0
+              Tricycle         10         17          1          0          0          0
+                Violin          4          5          1          0     0.0128    0.00385
+                   Egg         10         32          1          0          0          0
+     Fire Extinguisher         16         30          1          0     0.0061    0.00488
+                 Candy         16         17      0.192      0.118      0.192      0.121
+            Fire Truck         22        132          0          0     0.0157    0.00772
+             Billiards          4         18      0.396      0.222      0.222      0.131
+             Converter         17        114       0.44     0.0175      0.174      0.107
+               Bathtub         55         85          1          0      0.035     0.0187
+            Wheelchair         57         60      0.354       0.54      0.456      0.334
+             Golf Club          3          3          0          0    0.00943     0.0066
+             Briefcase          8         15      0.446     0.0667     0.0766     0.0507
+              Cucumber         10         32          1          0          0          0
+       Cigar/Cigarette         27         44          1          0          0          0
+           Paint Brush          3          3          0          0          0          0
+                  Pear         16         44          1          0     0.0718     0.0429
+           Heavy Truck         36         65          1          0     0.0147     0.0074
+             Extractor         14         34          1          0    0.00799    0.00601
+        Extension Cord         79         80      0.358      0.425        0.3      0.208
+                  Tong         51         61          1          0     0.0204     0.0046
+         Tennis Racket         24         35          1          0     0.0341     0.0204
+     American Football         12         38          1          0    0.00605    0.00192
+              earphone         10         35          0          0          0          0
+                  Mask          5          8          0          0          0          0
+                Kettle          9         13      0.264      0.154      0.199      0.099
+                Tennis         41         43      0.604      0.256      0.262      0.188
+                 Swing          8         25          0          0     0.0691     0.0363
+        Coffee Machine          5         17          1          0     0.0259     0.0181
+                 Slide         28         28      0.284      0.464      0.297      0.189
+              Carriage         10         20      0.538        0.1      0.197      0.101
+                 Onion          4          6          1      0.461      0.559      0.169
+           Green beans         22         31          1          0          0          0
+             Projector         18         24          1          0     0.0235     0.0211
+               Frisbee         17         25      0.497       0.28      0.295       0.11
+               Chicken         93        236      0.488      0.271      0.299      0.189
+               Printer         20        101          0          0          0          0
+            Watermelon         40         49      0.376      0.347      0.283      0.162
+             Saxophone         23         35          1          0          0          0
+                Tissue          9         14          1          0          0          0
+            Toothbrush         32         35          1          0     0.0894     0.0723
+             Ice cream         24         32          0          0          0          0
+       Hot-air balloon          9         35      0.902     0.0286     0.0483     0.0299
+          French Fries         16         31          1          0     0.0467     0.0267
+                 Scale          6          7          1          0     0.0469     0.0188
+                Trophy         17         24          1          0          0          0
+               Cabbage          6         33          1          0          0          0
+               Hot dog         18         25          1          0     0.0226    0.00226
+               Blender          4          7          1          0          0          0
+                 Peach         22         27      0.445      0.111      0.185      0.101
+                  Rice         15         46          1          0     0.0323     0.0181
+          Wallet/Purse          5          8          1          0          0          0
+            Volleyball          9          9          1          0     0.0249     0.0154
+                  Deer          6         14          1          0       0.16      0.117
+                 Goose         15        101          1          0      0.151     0.0728
+                  Tape         28        209          1          0      0.015    0.00963
+                Tablet         28         35          1          0     0.0182     0.0135
+             Cosmetics          7          7          0          0          0          0
+             Pineapple          6          8          1          0      0.135     0.0344
+             Golf Ball         22         37          1          0          0          0
+             Ambulance          9         83          0          0          0          0
+         Parking meter          1          1          1          0      0.166      0.116
+                 Mango          4          6          0          0          0          0
+                   Key         21         30          1          0          0          0
+                Hurdle         11         15          1          0     0.0431     0.0129
+           Fishing Rod          4         26          1          0     0.0653     0.0366
+                 Medal          2          5          1          0          0          0
+                 Flute          2          6          0          0          0          0
+                 Brush          4          9          0          0          0          0
+               Penguin         26         37          1          0          0          0
+             Megaphone          8         87          0          0          0          0
+                  Corn          5          7          1          0     0.0508     0.0457
+               Lettuce          7         13          0          0          0          0
+                Garlic          7          7          1          0          0          0
+                  Swan         22         30          1          0          0          0
+            Helicopter         18        101          0          0     0.0487      0.031
+           Green Onion          7         21      0.568     0.0476      0.095     0.0598
+              Sandwich          8          9          1          0          0          0
+                  Nuts          2          2          1          0      0.127     0.0615
+      Speed Limit Sign         15         38          1          0     0.0334      0.029
+                 Broom         33         34          0          0     0.0173    0.00975
+              Trombone         18         19          1          0      0.134     0.0773
+                  Plum          4          4          1          0          0          0
+              Rickshaw         21         26          1          0          0          0
+              Goldfish          7         10          1          0          0          0
+            Kiwi fruit         15        131          0          0    0.00345    0.00148
+          Router/modem         21         25          1          0          0          0
+            Poker Card         33         36          0          0     0.0094    0.00456
+                Shrimp         29         29      0.523      0.172      0.239      0.206
+                 Sushi          1          1          1          0          0          0
+                Cheese          1          1          1          0          0          0
+             Notepaper          5          7          1          0          0          0
+                Cherry         11         12          0          0          0          0
+                Pliers         13         27          1          0          0          0
+                    CD         22         40          1          0     0.0312     0.0219
+                 Pasta         15         31          0          0          0          0
+                Hammer          1          1          1          0          0          0
+                   Cue          9         10          1          0          0          0
+               Avocado         17         33      0.321     0.0303     0.0522     0.0123
+            Hami melon          9         23          1          0          0          0
+                 Flask          9         10          1          0          0          0
+           Screwdriver          6         11          1          0          0          0
+                  Soap         15         23          1          0          0          0
+              Recorder         30         32          1          0      0.107     0.0733
+                  Bear         21         22          1          0      0.111     0.0926
+              Eggplant          1          2          0          0          0          0
+          Board Eraser         17         19          1          0          0          0
+               Coconut         11         13          1          0     0.0212      0.017
+    Tape Measure/Ruler          9         13          0          0          0          0
+                   Pig         10         17          1          0          0          0
+            Showerhead          5         15          0          0          0          0
+                 Chips          9         25          0          0     0.0703     0.0557
+                 Steak          4         15          0          0          0          0
+        Crosswalk Sign          1          1          1          0          0          0
+               Stapler          5          7          0          0          0          0
+                 Camel         16         17          1          0    0.00321    0.00128
+             Formula 1          2          9          1          0     0.0648     0.0343
+            Dishwasher          5          7          1          0          0          0
+            Hoverboard          4         12          1          0          0          0
+              Meatball          1          1          0          0          0          0
+           Rice Cooker          5          9          0          0          0          0
+                  Tuba          4          4          1          0     0.0212      0.019
+            Calculator          6          7          0          0          0          0
+                Papaya         11         13       0.06    0.00924       0.18      0.119
+              Antelope          7         11          1          0          0          0
+                Parrot          5         27          1          0          0          0
+                  Seal          3          6          1          0          0          0
+             Butterfly          2         32          0          0    0.00247     0.0012
+              Dumbbell          5         19          0          0          0          0
+                Donkey          7         20          1          0          0          0
+                  Lion          5         22      0.769     0.0455      0.144      0.103
+               Dolphin          1          1          0          0          0          0
+        Electric Drill          2          4          1          0          0          0
+            Hair Dryer          5          6          1          0          0          0
+              Egg tart         10         11          1          0          0          0
+             Jellyfish          2          4          1          0          0          0
+             Treadmill          9         78          0          0     0.0123     0.0123
+               Lighter          8         20          1     0.0748       0.18     0.0906
+            Game board          6          9          0          0          0          0
+                   Mop          2          4          0          0          0          0
+                Radish          7          7          1          0          0          0
+                 Baozi          6          6          0          0          0          0
+                Target          2          7          1          0          0          0
+          Spring Rolls          1          2          0          0          0          0
+                Monkey          5          6          1          0          0          0
+                Rabbit          3         26          0          0          0          0
+                   Yak          2          4          0          0          0          0
+           Red Cabbage          1         10          1          0          0          0
+            Binoculars          3          4          0          0          0          0
+             Asparagus          2          3          0          0          0          0
+               Scallop          2         20          1          0          0          0
+               Noddles          1          2          0          0          0          0
+              Dumpling          2          9          0          0          0          0
+                Eraser          1          2          0          0          0          0
+               Lobster          4          4          0          0          0          0
+                  Okra          2          2          1          0          0          0
+Speed: 0.1ms preprocess, 1.7ms inference, 0.0ms loss, 2.1ms postprocess per image
+Results saved to [1m/home/simon/GitHub/upo-machine-learning/runs/detect/train9[0m
+Risultati del training salvati in 'results/training_results.txt'.
