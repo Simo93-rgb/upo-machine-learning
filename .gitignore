@@ -18,5 +18,6 @@ Zone.Identifier
 # Ignora file
 *.pt
 
-# Ignora i plot
+# Ignora i plot e le run
+**/runs/
 Machine Learning/Hierarchical Clustering/Assets/Plot/*
