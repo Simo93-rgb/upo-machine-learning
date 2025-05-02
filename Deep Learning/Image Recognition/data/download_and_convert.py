@@ -11,6 +11,7 @@ from zipfile import ZipFile, is_zipfile
 from itertools import repeat
 from multiprocessing.pool import ThreadPool
 from concurrent.futures import ThreadPoolExecutor
+import argparse
 
 # Verify that pycocotools is installed
 try:
@@ -161,10 +162,10 @@ def download_one(url: str,
     marker = f.with_suffix(f.suffix + ".downloaded")  # Marker file
 
     # Check if the file has already been downloaded and processed
-    if marker.exists():
+    if marker.exists() and unzip==False:
         print(f"Skipping download and extraction: {f} is already processed.")
         return
-
+        
     # Check if the compressed file already exists
     if f.exists():
         print(f"File already exists: {f}. Skipping download.")
@@ -340,7 +341,20 @@ def process_annotations_to_yolo(annotations_path: Path, labels: Path, split: str
     print(f"Finished processing {split} annotations to YOLO format.")
 
 if __name__ == "__main__":
-    threads = 20  # Number of threads for downloading
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="Download and process the Objects365 dataset.")
+    parser.add_argument("--threads", type=int, default=20, help="Number of threads for downloading (default: 20)")
+    parser.add_argument("--unzip", action="store_true", help="Unzip files after downloading (default: False)")
+    parser.add_argument("--delete", action="store_true", help="Delete compressed files after unzipping (default: False)")
+    parser.add_argument("--base_dir", type=str, default="/mnt/d/objects365", help="Base directory for dataset (default: /mnt/d/objects365)")
+    parser.add_argument("--process_annotationr", action="store_true", help="process_annotation after downloading (default: False)")
+    args = parser.parse_args()
+
+    threads = args.threads
+    unzip = args.unzip
+    delete = args.delete
+    process_annotation = args.process_annotationr
+    base_dir = Path(args.base_dir)
     # Set the base directory on local disk E (adapted for WSL)
     base_dir = Path("/mnt/d/objects365")
 
@@ -372,45 +386,48 @@ if __name__ == "__main__":
             download(
                 [f"{url}patch{i}.tar.gz" for i in range(patches)],
                 dir=images,
-                delete=True,
+                delete=delete,
                 threads=threads,
+                unzip=unzip
             )
         elif split == "val":
             print("Downloading validation images v1...")
             download(
                 [f"{url}images/v1/patch{i}.tar.gz" for i in range(15 + 1)],
                 dir=images,
-                delete=True,
+                delete=delete,
                 threads=threads,
+                unzip=unzip
             )
             print("Downloading validation images v2...")
             download(
                 [f"{url}images/v2/patch{i}.tar.gz" for i in range(16, patches)],
                 dir=images,
-                delete=True,
+                delete=delete,
                 threads=threads,
+                unzip=unzip
             )
 
-
-        # Process annotations in YOLO format
-        print(f"Processing annotations for {split}...")
-        annotations_path = base_dir / f"zhiyuan_objv2_{split}.json"
-        if split == "train" and not annotations_path.exists():
-            tar_path = base_dir / f"zhiyuan_objv2_{split}.tar.gz"
-            if tar_path.exists():
-                # Check if annotations have already been extracted
-                extracted_marker = tar_path.with_suffix(".extracted")
-                if extracted_marker.exists():
-                    print(f"Annotations already extracted from {tar_path}")
-                else:
-                    with tarfile.open(tar_path, "r:*") as tar:
-                        tar.extractall(path=base_dir)
-                    print(f"Annotations extracted from {tar_path}")
-                    extracted_marker.touch()  # Create marker for future runs
-        # Process annotations in YOLO format
-        print(f"Processing annotations for {split}...")
-        annotations_path = base_dir / f"zhiyuan_objv2_{split}.json"
-        process_annotations_to_yolo(annotations_path, labels, split, num_threads=threads)
+        if process_annotation:
+            # Process annotations in YOLO format
+            print(f"Processing annotations for {split}...")
+            annotations_path = base_dir / f"zhiyuan_objv2_{split}.json"
+            if split == "train" and not annotations_path.exists():
+                tar_path = base_dir / f"zhiyuan_objv2_{split}.tar.gz"
+                if tar_path.exists():
+                    # Check if annotations have already been extracted
+                    extracted_marker = tar_path.with_suffix(".extracted")
+                    if extracted_marker.exists():
+                        print(f"Annotations already extracted from {tar_path}")
+                    else:
+                        with tarfile.open(tar_path, "r:*") as tar:
+                            tar.extractall(path=base_dir)
+                        print(f"Annotations extracted from {tar_path}")
+                        extracted_marker.touch()  # Create marker for future runs
+            # Process annotations in YOLO format
+            print(f"Processing annotations for {split}...")
+            annotations_path = base_dir / f"zhiyuan_objv2_{split}.json"
+            process_annotations_to_yolo(annotations_path, labels, split, num_threads=threads)
 
     print("\nDownload and processing of Objects365 dataset completed!")
     print(f"Dataset saved in: {base_dir}")

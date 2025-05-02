@@ -58,6 +58,7 @@ def reorganize_labels(base_dir):
 
     print("Riorganizzazione delle etichette completata.")
 
-# Esegui la riorganizzazione
-base_dir = "/mnt/d/objects365"  # Percorso principale del dataset
-reorganize_labels(base_dir)
+if __name__ == "__main__":
+    # Esegui la riorganizzazione
+    base_dir = "/mnt/d/objects365"  # Percorso principale del dataset
+    reorganize_labels(base_dir)
