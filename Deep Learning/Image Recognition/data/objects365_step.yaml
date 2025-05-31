@@ -1,10 +1,3 @@
-# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
-path: /mnt/e/objects365  # Path to dataset root dir
-train: train_images.txt  # File con elenco immagini di training
-val: val_images.txt      # File con elenco immagini di validation
-test: test_images.txt    # File con elenco immagini di test
-
-# Classes
 names:
   0: Person
   1: Sneakers
@@ -372,3 +365,6 @@ names:
   363: Curling
   364: Table Tennis
   365: Unknown
+path: /mnt/e/objects365
+train: /mnt/e/objects365/patch_txts/train_patch1_b.txt
+val: /mnt/e/objects365/patch_txts/val_patch0_b.txt

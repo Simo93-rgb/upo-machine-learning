@@ -1,0 +1,7 @@
+ultralytics
+pycocotools
+opencv-python
+torch
+webdataset
+pillow
+numpy
