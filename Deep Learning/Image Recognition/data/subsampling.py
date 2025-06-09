@@ -52,6 +52,6 @@ def create_subsample_image_list(base_dir, output_dir, train_patches=2, val_patch
 
 if __name__ == "__main__":
     # Esegui la creazione del subsample
-    base_dir = "/mnt/d/objects365"  # Percorso del dataset originale
-    output_dir = "/mnt/d/objects365_subsample_4"  # Percorso per salvare i file di coordinate
+    base_dir = "/mnt/e/objects365"  # Percorso del dataset originale
+    output_dir = "/mnt/e/objects365_subsample_4"  # Percorso per salvare i file di coordinate
     create_subsample_image_list(base_dir, output_dir, train_patches=4, val_patches=1)

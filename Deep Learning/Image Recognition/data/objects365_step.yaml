@@ -366,5 +366,5 @@ names:
   364: Table Tennis
   365: Unknown
 path: /mnt/e/objects365
-train: /mnt/e/objects365/patch_txts/train_patch1_b.txt
-val: /mnt/e/objects365/patch_txts/val_patch0_b.txt
+train: /mnt/e/objects365/patch_txts/train_patch4_a.txt
+val: /mnt/e/objects365/patch_txts/val_patch4_a.txt
