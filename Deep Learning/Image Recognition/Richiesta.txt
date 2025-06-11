@@ -1,0 +1,6 @@
+L'esercizio consite nell'applicare una delle tecniche viste a lezione per l'object detection
+tramite bounding box per costruire un riconoscitore di oggetti all'interno di una immagine
+presa con una fotocamera.
+
+Il dataset da utlizzare è Object365, un dataset di HQ (high-quality) images con bounding boxes di oggetti . Contiene 365 oggetti, 600k imagini, e 10 millioni di bounding boxes.
+Se necessario eseguire un subsampling per ridurre le dimensioni del dataset.
