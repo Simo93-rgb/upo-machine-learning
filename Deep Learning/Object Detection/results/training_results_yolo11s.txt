@@ -1,0 +1,6 @@
+Training Results:
+mAP50: 0.1592
+mAP50-95: 0.1010
+Precision: 0.3590
+Recall: 0.1772
+Final Epoch: N/A
